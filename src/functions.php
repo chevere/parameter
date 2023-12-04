@@ -293,9 +293,12 @@ function parameterAttr(string $parameter, array $caller): ParameterAttributeInte
     throw new LogicException('No parameter attribute for ' . $parameter);
 }
 
-function reflectedParameterAttribute(string $parameter, ReflectionParameter $reflection): ParameterAttributeInterface
-{
-    $attributes = $reflection->getAttributes();
+function reflectedParameterAttribute(
+    string $parameter,
+    ReflectionParameter $reflection,
+    ?string $type = null,
+): ParameterAttributeInterface {
+    $attributes = $reflection->getAttributes($type);
     foreach ($attributes as $attribute) {
         $attribute = $attribute->newInstance();
 

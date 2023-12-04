@@ -13,9 +13,11 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Attributes;
 
+use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use LogicException;
 use ReflectionFunction;
 use ReflectionMethod;
+use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\parameterAttr;
 use function Chevere\Parameter\reflectedParameterAttribute;
 
@@ -80,4 +82,32 @@ function genericAttr(string $name): GenericAttr
 
     // @phpstan-ignore-next-line
     return parameterAttr($name, $caller);
+}
+
+function arrayArguments(string $name): ArgumentsInterface
+{
+    $caller = debug_backtrace(0, 2)[1];
+    $class = $caller['class'] ?? null;
+    $method = $caller['function'];
+    $reflection = $class
+        ? new ReflectionMethod($class, $method)
+        : new ReflectionFunction($method);
+    $parameters = $reflection->getParameters();
+    foreach ($parameters as $parameter) {
+        if ($parameter->getName() !== $name) {
+            continue;
+        }
+        $pos = $parameter->getPosition();
+        // @phpstan-ignore-next-line
+        $array = reflectedParameterAttribute(
+            $name,
+            $parameter,
+            ArrayAttr::class
+        )->parameter;
+
+        // @phpstan-ignore-next-line
+        return arguments($array, $caller['args'][$pos]);
+    }
+
+    throw new LogicException('No parameter attribute for ' . $name);
 }

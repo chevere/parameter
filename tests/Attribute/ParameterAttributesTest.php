@@ -25,10 +25,10 @@ final class ParameterAttributesTest extends TestCase
             [
                 'name' => 'Rodolfo',
                 'age' => 25,
-                'array' => [
+                'cols' => [
                     'id' => 1,
                 ],
-                'iterable' => ['Chevere', 'Chevere', 'Chevere', 'Uh'],
+                'tags' => ['Chevere', 'Chevere', 'Chevere', 'Uh'],
             ],
         ];
     }
@@ -39,46 +39,46 @@ final class ParameterAttributesTest extends TestCase
             [
                 'name' => 'Peoples Hernandez',
                 'age' => 66,
-                'array' => [
+                'cols' => [
                     'id' => 1,
                 ],
-                'iterable' => ['people'],
+                'tags' => ['people'],
                 'error' => "Argument value provided `Peoples Hernandez` doesn't match the regex `/^[A-Za-z]+$/`",
             ],
             [
                 'name' => 'zerothehero',
                 'age' => 0,
-                'array' => [
+                'cols' => [
                     'id' => 1,
                 ],
-                'iterable' => ['zero'],
+                'tags' => ['zero'],
                 'error' => 'Argument value provided `0` is less than `1`',
             ],
             [
                 'name' => 'SergioDalmata',
                 'age' => 101,
-                'array' => [
+                'cols' => [
                     'id' => 1,
                 ],
-                'iterable' => ['dalmata'],
+                'tags' => ['dalmata'],
                 'error' => 'Argument value provided `101` is greater than `100`',
             ],
             [
                 'name' => 'DonZeroId',
                 'age' => 42,
-                'array' => [
+                'cols' => [
                     'id' => 0,
                 ],
-                'iterable' => ['zeroid'],
+                'tags' => ['zeroid'],
                 'error' => '[id]: Argument value provided `0` is less than `1`',
             ],
             [
                 'name' => 'iterableNull',
                 'age' => 24,
-                'array' => [
+                'cols' => [
                     'id' => 42,
                 ],
-                'iterable' => [123],
+                'tags' => [123],
                 'error' => 'Argument #1 ($value) must be of type Stringable|string, int given',
             ],
         ];
