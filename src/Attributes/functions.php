@@ -13,7 +13,34 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Attributes;
 
+use LogicException;
+use ReflectionFunction;
+use ReflectionMethod;
 use function Chevere\Parameter\parameterAttr;
+use function Chevere\Parameter\reflectedParameterAttribute;
+
+function validate(string $name): void
+{
+    $caller = debug_backtrace(0, 2)[1];
+    $class = $caller['class'] ?? null;
+    $method = $caller['function'];
+    $reflection = $class
+        ? new ReflectionMethod($class, $method)
+        : new ReflectionFunction($method);
+    $parameters = $reflection->getParameters();
+    foreach ($parameters as $parameter) {
+        if ($parameter->getName() !== $name) {
+            continue;
+        }
+        $pos = $parameter->getPosition();
+        // @phpstan-ignore-next-line
+        reflectedParameterAttribute($name, $parameter)($caller['args'][$pos]);
+
+        return;
+    }
+
+    // throw new LogicException('No parameter attribute found');
+}
 
 function stringAttr(string $name): StringAttr
 {

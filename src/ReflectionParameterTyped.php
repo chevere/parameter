@@ -51,7 +51,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         $this->parameter = new $type();
 
         try {
-            $attribute = reflectedParameterAttribute($reflection);
+            $attribute = reflectedParameterAttribute('parameter', $reflection);
             $this->parameter = $attribute->parameter();
         } catch (Throwable) {
         }

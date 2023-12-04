@@ -113,4 +113,14 @@ final class ParameterAttributesTest extends TestCase
 
         new UsesParameterAttributes($name, $age, $array, $iterable);
     }
+
+    public function testWea(): void
+    {
+        $arguments = $this->dataProviderWillSuccess()[0];
+        $object = new UsesParameterAttributes(...$arguments);
+        $object->run(5);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Argument value provided `6` is greater than `5`');
+        $object->run(6);
+    }
 }

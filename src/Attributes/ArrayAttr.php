@@ -18,10 +18,12 @@ use Attribute;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Interfaces\ParametersAccessInterface;
+use Chevere\Parameter\Interfaces\ParametersInterface;
 use function Chevere\Parameter\arrayp;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class ArrayAttr implements ParameterAttributeInterface
+class ArrayAttr implements ParameterAttributeInterface, ParametersAccessInterface
 {
     public readonly ArrayParameterInterface $parameter;
 
@@ -49,5 +51,10 @@ class ArrayAttr implements ParameterAttributeInterface
     public function parameter(): ParameterInterface
     {
         return $this->parameter;
+    }
+
+    public function parameters(): ParametersInterface
+    {
+        return $this->parameter->parameters();
     }
 }

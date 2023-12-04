@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Parameter;
 
 use ArrayAccess;
+use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\BoolParameterInterface;
@@ -28,6 +29,7 @@ use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use InvalidArgumentException;
 use Iterator;
 use LogicException;
+use ReflectionAttribute;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionParameter;
@@ -254,6 +256,22 @@ function getType(mixed $variable): string
     };
 }
 
+function returnAttr(mixed $var): mixed
+{
+    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
+    $class = $caller['class'] ?? null;
+    $method = $caller['function'];
+    $reflection = $class
+        ? new ReflectionMethod($class, $method)
+        : new ReflectionFunction($method);
+    /** @var ReflectionAttribute<ReturnAttr> $attribute */
+    $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
+        ?? throw new LogicException('No return attribute found');
+
+    // @phpstan-ignore-next-line
+    return $attribute->newInstance()($var);
+}
+
 /**
  * Retrieves a Parameter attribute instance from a function or method parameter.
  * @param array<string, string> $caller The result of debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]
@@ -268,14 +286,14 @@ function parameterAttr(string $parameter, array $caller): ParameterAttributeInte
     $parameters = $reflection->getParameters();
     foreach ($parameters as $parameterReflection) {
         if ($parameterReflection->getName() === $parameter) {
-            return reflectedParameterAttribute($parameterReflection);
+            return reflectedParameterAttribute($parameter, $parameterReflection);
         }
     }
 
-    throw new LogicException('No parameter attribute found');
+    throw new LogicException('No parameter attribute for ' . $parameter);
 }
 
-function reflectedParameterAttribute(ReflectionParameter $reflection): ParameterAttributeInterface
+function reflectedParameterAttribute(string $parameter, ReflectionParameter $reflection): ParameterAttributeInterface
 {
     $attributes = $reflection->getAttributes();
     foreach ($attributes as $attribute) {
@@ -288,5 +306,5 @@ function reflectedParameterAttribute(ReflectionParameter $reflection): Parameter
         }
     }
 
-    throw new LogicException('No parameter attribute found');
+    throw new LogicException('No parameter attribute for ' . $parameter);
 }
