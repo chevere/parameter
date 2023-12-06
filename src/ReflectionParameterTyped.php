@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
+use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ReflectionParameterTypedInterface;
 use InvalidArgumentException;
@@ -47,20 +48,28 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
     ) {
         $this->type = $this->getType();
         $type = $this->getParameterType();
-        // @phpstan-ignore-next-line
-        $this->parameter = new $type();
+        /** @var ObjectParameterInterface $parameter */
+        $parameter = new $type();
+        if (is_subclass_of($type, ObjectParameterInterface::class)) {
+            $parameter = $parameter
+                ->withClassName($this->type->getName());
+        }
 
         try {
             $attribute = reflectedParameterAttribute('parameter', $reflection);
-            $this->parameter = $attribute->parameter();
+            $parameter = $attribute->parameter();
         } catch (Throwable) {
         }
-        if ($this->reflection->isDefaultValueAvailable() && method_exists($this->parameter, 'withDefault')) {
-            $this->parameter = $this->parameter
+        if ($this->reflection->isDefaultValueAvailable()
+            && method_exists($parameter, 'withDefault')
+        ) {
+            /** @var ParameterInterface $parameter */
+            $parameter = $parameter
                 ->withDefault(
                     $this->reflection->getDefaultValue()
                 );
         }
+        $this->parameter = $parameter;
     }
 
     public function parameter(): ParameterInterface
