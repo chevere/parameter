@@ -68,6 +68,7 @@ final class ObjectParameterTest extends TestCase
             'default' => stdClass::class,
         ], $withDefault->schema());
         $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('Default value must be of type `stdClass`');
         $parameter->withDefault(new self());
     }
 

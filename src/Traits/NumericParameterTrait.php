@@ -19,31 +19,36 @@ use InvalidArgumentException;
 use OverflowException;
 use function Chevere\Message\message;
 
+/**
+ * @template-covariant TValue
+ */
 trait NumericParameterTrait
 {
-    // @phpstan-ignore-next-line
+    /**
+     * @var array<TValue>
+     */
     private array $accept = [];
 
-    private function errorAcceptOverflow(string $property): string
+    /**
+     * @var array<TValue>
+     */
+    private array $reject = [];
+
+    private function errorOverflow(string $property, string $topic): string
     {
-        return strtr(
-            'Cannot set %property% value when accept range is set',
-            [
-                '%property%' => $property,
-            ]
+        return (string) message(
+            'Cannot set %property% value when %topic% range is set',
+            property: $property,
+            topic: $topic,
         );
     }
 
-    private function errorInvalidArgument(
-        string $target,
-        string $conflict
-    ): string {
-        return strtr(
+    private function errorMinMaxArgument(string $target, string $conflict): string
+    {
+        return (string) message(
             'Cannot set %target% value greater or equal than %conflict% value',
-            [
-                '%target%' => $target,
-                '%conflict%' => $conflict,
-            ]
+            target: $target,
+            conflict: $conflict,
         );
     }
 
@@ -54,12 +59,19 @@ trait NumericParameterTrait
         }
     }
 
+    private function assertRejectEmpty(string $message): void
+    {
+        if ($this->reject !== []) {
+            throw new OverflowException($message);
+        }
+    }
+
     private function setDefault(int|float $value): void
     {
         if (isset($this->min) && $value < $this->min) {
             throw new InvalidArgumentException(
                 (string) message(
-                    'Default value `%value%` cannot be less than minimum value `%min%`',
+                    "Default value `%value%` can't be less than min value `%min%`",
                     value: strval($value),
                     min: strval($this->min),
                 )
@@ -68,7 +80,7 @@ trait NumericParameterTrait
         if (isset($this->max) && $value > $this->max) {
             throw new InvalidArgumentException(
                 (string) message(
-                    'Default value `%value%` cannot be greater than maximum value `%max%`',
+                    "Default value `%value%` can't be greater than max value `%max%`",
                     value: strval($value),
                     max: strval($this->max),
                 )
@@ -85,32 +97,50 @@ trait NumericParameterTrait
                 )
             );
         }
+
+        if (in_array($value, $this->reject, true)) {
+            $list = implode(', ', $this->reject);
+
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Default value `%value%` must not be in reject list `%reject%`',
+                    value: strval($value),
+                    reject: "[{$list}]",
+                )
+            );
+        }
         // @phpstan-ignore-next-line
         $this->default = $value;
     }
 
-    private function setMin(int|float $value, int|float $maximum): void
+    private function setMin(int|float $value, int|float $max): void
     {
         $this->assertAcceptEmpty(
-            $this->errorAcceptOverflow('minimum')
+            $this->errorOverflow('min', 'accept')
         );
-        if ($value >= ($this->max ?? $maximum)) {
+        $this->assertRejectEmpty(
+            $this->errorOverflow('min', 'reject')
+        );
+        if ($value >= ($this->max ?? $max)) {
             throw new InvalidArgumentException(
-                $this->errorInvalidArgument('minimum', 'maximum')
+                $this->errorMinMaxArgument('min', 'max')
             );
         }
         // @phpstan-ignore-next-line
         $this->min = $value;
     }
 
-    private function setMax(int|float $value, int|float $minimum): void
+    private function setMax(int|float $value, int|float $min): void
     {
         $this->assertAcceptEmpty(
-            $this->errorAcceptOverflow('maximum')
+            $this->errorOverflow('max', 'accept')
         );
-        if ($value <= ($this->min ?? $minimum)) {
+        $this->assertRejectEmpty(
+            $this->errorOverflow('min', 'reject')
+        );
+        if ($value <= ($this->min ?? $min)) {
             throw new InvalidArgumentException(
-                $this->errorInvalidArgument('maximum', 'minimum')
+                $this->errorMinMaxArgument('max', 'min')
             );
         }
         // @phpstan-ignore-next-line
@@ -124,66 +154,83 @@ trait NumericParameterTrait
         $this->accept = $value;
         $this->min = null;
         $this->max = null;
+        $this->assertAcceptReject();
+    }
+
+    private function assertAcceptReject(): void
+    {
+        $intersect = array_intersect($this->accept, $this->reject);
+        if ($intersect !== []) {
+            $accept = implode(', ', $this->accept);
+            $reject = implode(', ', $this->reject);
+
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Accept list `%accept%` intersects with reject list `%reject%`',
+                    accept: "[{$accept}]",
+                    reject: "[{$reject}]",
+                )
+            );
+        }
+    }
+
+    private function setReject(int|float ...$value): void
+    {
+        sort($value);
+        // @phpstan-ignore-next-line
+        $this->reject = $value;
+        $this->min = null;
+        $this->max = null;
+        $this->assertAcceptReject();
     }
 
     private function assertNumericCompatible(
         IntParameterInterface|FloatParameterInterface $parameter
     ): void {
-        $this->assertNumericAccept($parameter);
-        $this->assertNumericMinimum($parameter);
-        $this->assertNumericMaximum($parameter);
+        $this->assertNumericList($parameter, 'accept');
+        $this->assertNumericList($parameter, 'reject');
+        $this->assertNumericLimit($parameter, 'min');
+        $this->assertNumericLimit($parameter, 'max');
     }
 
-    private function assertNumericAccept(
-        IntParameterInterface|FloatParameterInterface $parameter
+    private function assertNumericList(
+        IntParameterInterface|FloatParameterInterface $parameter,
+        string $property
     ): void {
+        // @infection-ignore-all
         $diff = array_merge(
-            array_diff($this->accept, $parameter->accept()),
-            array_diff($parameter->accept(), $this->accept)
+            array_diff($this->{$property}, $parameter->{$property}()),
+            array_diff($parameter->{$property}(), $this->{$property})
         );
         if ($diff !== []) {
-            $value = implode(', ', $this->accept());
-            $provided = implode(', ', $parameter->accept());
+            $value = implode(', ', $this->{$property});
+            $provided = implode(', ', $parameter->{$property}());
 
             throw new InvalidArgumentException(
                 (string) message(
-                    'Expected value in `%accept%`, provided `%provided%`',
-                    accept: "[{$value}]",
-                    provided: $provided,
+                    'Expected %topic% values in `%expect%`, provided `%provided%`',
+                    topic: $property,
+                    expect: "[{$value}]",
+                    provided: "[{$provided}]",
                 )
             );
         }
     }
 
-    private function assertNumericMinimum(
-        IntParameterInterface|FloatParameterInterface $parameter
+    private function assertNumericLimit(
+        IntParameterInterface|FloatParameterInterface $parameter,
+        string $property
     ): void {
-        if ($this->min !== $parameter->min()) {
-            $value = strval($this->min() ?? 'null');
-            $provided = strval($parameter->min() ?? 'null');
+        if ($this->{$property} !== $parameter->{$property}()) {
+            $value = strval($this->{$property} ?? 'null');
+            $provided = strval($parameter->{$property}() ?? 'null');
 
             throw new InvalidArgumentException(
                 (string) message(
-                    'Expected minimum value `%value%`, provided `%provided%`',
+                    'Expected %topic% value `%value%`, provided `%provided%`',
+                    topic: $property,
                     value: $value,
                     provided: $provided,
-                )
-            );
-        }
-    }
-
-    private function assertNumericMaximum(
-        IntParameterInterface|FloatParameterInterface $parameter
-    ): void {
-        if ($this->max !== $parameter->max()) {
-            $value = strval($this->max() ?? 'null');
-            $provided = strval($parameter->max() ?? 'null');
-
-            throw new InvalidArgumentException(
-                (string) message(
-                    'Expected maximum value `%value%`, provided `%provided%`',
-                    value: $value,
-                    provided: $provided
                 )
             );
         }

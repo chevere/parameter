@@ -21,6 +21,10 @@ use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\parameterAttr;
 use function Chevere\Parameter\reflectedParameterAttribute;
 
+/**
+ * Validates argument `$name` against attribute rules.
+ * @throws LogicException
+ */
 function validate(string $name): void
 {
     $caller = debug_backtrace(0, 2)[1];

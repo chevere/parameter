@@ -39,9 +39,10 @@ final class FloatParameterTest extends TestCase
             'type' => 'float',
             'description' => '',
             'default' => $default,
-            'minimum' => null,
-            'maximum' => null,
+            'min' => null,
+            'max' => null,
             'accept' => [],
+            'reject' => [],
         ], $parameterWithDefault->schema());
     }
 
@@ -54,7 +55,7 @@ final class FloatParameterTest extends TestCase
         $this->assertSame($accept, $withValue->accept());
     }
 
-    public function testWithMinimum(): void
+    public function testWithMin(): void
     {
         $parameter = new FloatParameter();
         $value = 1.0;
@@ -63,7 +64,7 @@ final class FloatParameterTest extends TestCase
         $this->assertSame($value, $parameterWith->min());
     }
 
-    public function testWithMaximum(): void
+    public function testWithMax(): void
     {
         $parameter = new FloatParameter();
         $value = 1.0;
@@ -90,7 +91,7 @@ final class FloatParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<STRING
-            Expected value in `[{$value}]`, provided `{$provided}`
+            Expected accept values in `[{$value}]`, provided `[{$provided}]`
             STRING
         );
         $parameter->assertCompatible($notCompatible);

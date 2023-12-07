@@ -21,6 +21,10 @@ use Chevere\Parameter\Traits\ParameterTrait;
 final class FloatParameter implements FloatParameterInterface
 {
     use ParameterTrait;
+
+    /**
+     * @template-use NumericParameterTrait<float>
+     */
     use NumericParameterTrait;
 
     private ?float $default = null;
@@ -28,11 +32,6 @@ final class FloatParameter implements FloatParameterInterface
     private ?float $min = null;
 
     private ?float $max = null;
-
-    /**
-     * @var float[]
-     */
-    private array $accept = [];
 
     public function __invoke(float $value): float
     {
@@ -71,6 +70,14 @@ final class FloatParameter implements FloatParameterInterface
         return $new;
     }
 
+    public function withReject(float ...$value): FloatParameterInterface
+    {
+        $new = clone $this;
+        $new->setReject(...$value);
+
+        return $new;
+    }
+
     public function default(): ?float
     {
         return $this->default;
@@ -91,15 +98,21 @@ final class FloatParameter implements FloatParameterInterface
         return $this->accept;
     }
 
+    public function reject(): array
+    {
+        return $this->reject;
+    }
+
     public function schema(): array
     {
         return [
             'type' => $this->type->primitive(),
-            'description' => $this->description(),
-            'default' => $this->default(),
-            'minimum' => $this->min(),
-            'maximum' => $this->max(),
-            'accept' => $this->accept(),
+            'description' => $this->description,
+            'default' => $this->default,
+            'min' => $this->min,
+            'max' => $this->max,
+            'accept' => $this->accept,
+            'reject' => $this->reject,
         ];
     }
 

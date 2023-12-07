@@ -20,6 +20,7 @@ use function Chevere\Message\message;
 
 /**
  * @param float[] $accept
+ * @param float[] $reject
  */
 function float(
     string $description = '',
@@ -27,6 +28,7 @@ function float(
     ?float $min = null,
     ?float $max = null,
     array $accept = [],
+    array $reject = [],
 ): FloatParameterInterface {
     $parameter = new FloatParameter($description);
     if ($default !== null) {
@@ -41,12 +43,16 @@ function float(
     if ($accept !== []) {
         $parameter = $parameter->withAccept(...$accept);
     }
+    if ($reject !== []) {
+        $parameter = $parameter->withReject(...$reject);
+    }
 
     return $parameter;
 }
 
 /**
  * @param int[] $accept
+ * @param int[] $reject
  */
 function int(
     string $description = '',
@@ -54,10 +60,14 @@ function int(
     ?int $min = null,
     ?int $max = null,
     array $accept = [],
+    array $reject = [],
 ): IntParameterInterface {
     $parameter = new IntParameter($description);
     if ($accept !== []) {
         $parameter = $parameter->withAccept(...$accept);
+    }
+    if ($reject !== []) {
+        $parameter = $parameter->withReject(...$reject);
     }
     if ($default !== null) {
         $parameter = $parameter->withDefault($default);
@@ -76,17 +86,31 @@ function assertNumeric(
     IntParameterInterface|FloatParameterInterface $parameter,
     int|float $argument,
 ): int|float {
-    $accept = $parameter->accept();
-    if ($accept !== []) {
-        if (in_array($argument, $accept, true)) {
+    if ($parameter->accept() !== []) {
+        if (in_array($argument, $parameter->accept(), true)) {
             return $argument;
         }
+        $values = implode(',', $parameter->accept());
 
         throw new InvalidArgumentException(
             (string) message(
-                'Argument value provided `%provided%` is not an accepted value `%value%`',
+                'Argument value provided `%provided%` is not an accepted value in `%value%`',
                 provided: strval($argument),
-                value: implode(',', $accept)
+                value: "[{$values}]"
+            )
+        );
+    }
+    if ($parameter->reject() !== []) {
+        if (! in_array($argument, $parameter->reject(), true)) {
+            return $argument;
+        }
+        $values = implode(',', $parameter->reject());
+
+        throw new InvalidArgumentException(
+            (string) message(
+                'Argument value provided `%provided%` is on rejected list `%value%`',
+                provided: strval($argument),
+                value: "[{$values}]"
             )
         );
     }

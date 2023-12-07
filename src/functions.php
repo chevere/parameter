@@ -256,6 +256,11 @@ function getType(mixed $variable): string
     };
 }
 
+/**
+ * Validates `$var` against the return attribute.
+ *
+ * @return mixed The validated `$var`.
+ */
 function returnAttr(mixed $var): mixed
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];

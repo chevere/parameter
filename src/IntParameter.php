@@ -21,6 +21,10 @@ use Chevere\Parameter\Traits\ParameterTrait;
 final class IntParameter implements IntParameterInterface
 {
     use ParameterTrait;
+
+    /**
+     * @template-use NumericParameterTrait<int>
+     */
     use NumericParameterTrait;
 
     private ?int $default = null;
@@ -71,6 +75,14 @@ final class IntParameter implements IntParameterInterface
         return $new;
     }
 
+    public function withReject(int ...$value): IntParameterInterface
+    {
+        $new = clone $this;
+        $new->setReject(...$value);
+
+        return $new;
+    }
+
     public function default(): ?int
     {
         return $this->default;
@@ -91,15 +103,21 @@ final class IntParameter implements IntParameterInterface
         return $this->accept;
     }
 
+    public function reject(): array
+    {
+        return $this->reject;
+    }
+
     public function schema(): array
     {
         return [
             'type' => $this->type()->primitive(),
-            'description' => $this->description(),
-            'default' => $this->default(),
-            'minimum' => $this->min(),
-            'maximum' => $this->max(),
-            'accept' => $this->accept(),
+            'description' => $this->description,
+            'default' => $this->default,
+            'min' => $this->min,
+            'max' => $this->max,
+            'accept' => $this->accept,
+            'reject' => $this->reject,
         ];
     }
 

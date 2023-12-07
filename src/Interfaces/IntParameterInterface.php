@@ -62,6 +62,16 @@ interface IntParameterInterface extends ParameterInterface
     public function withAccept(int ...$value): self;
 
     /**
+     * Return an instance with the specified rejected value(s).
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified rejected value(s).
+     *
+     * When using this method it will nullify the minimum and maximum values.
+     */
+    public function withReject(int ...$value): self;
+
+    /**
      * Provides access to the default value (if any).
      */
     public function default(): ?int;
@@ -82,6 +92,13 @@ interface IntParameterInterface extends ParameterInterface
      * @return int[]
      */
     public function accept(): array;
+
+    /**
+     * Provides access to the rejected value(s).
+     *
+     * @return int[]
+     */
+    public function reject(): array;
 
     public function assertCompatible(self $parameter): void;
 }
