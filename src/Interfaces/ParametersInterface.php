@@ -24,6 +24,11 @@ use Chevere\DataStructure\Interfaces\VectorInterface;
 interface ParametersInterface extends StringMappedInterface
 {
     /**
+     * Asserts the given named arguments are valid.
+     */
+    public function __invoke(mixed ...$argument): ArgumentsInterface;
+
+    /**
      * Return an instance with the specified required parameter added.
      *
      * This method MUST retain the state of the current instance, and return

@@ -46,7 +46,7 @@ class FloatAttribute implements ParameterAttributeInterface
 
     public function __invoke(float $float): float
     {
-        return ($this->parameter)($float);
+        return $this->parameter->__invoke($float);
     }
 
     public function parameter(): ParameterInterface

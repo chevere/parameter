@@ -15,6 +15,7 @@ namespace Chevere\Tests;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\assertGeneric;
 use function Chevere\Parameter\assertUnion;
@@ -36,7 +37,7 @@ final class FunctionsUnionTest extends TestCase
         assertUnion($union, $argument);
         $union = union($array, null());
         assertUnion($union, $argument);
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         assertUnion($union, []);
     }
 
@@ -57,7 +58,7 @@ final class FunctionsUnionTest extends TestCase
         assertUnion($union, $argument);
         $union = union($generic, null());
         assertUnion($union, $argument);
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         assertUnion($union, []);
     }
 
@@ -88,7 +89,7 @@ final class FunctionsUnionTest extends TestCase
         $union = union(arrayp(), $generic);
         assertUnion($union, []);
         assertUnion($union, [1, 2, 3]);
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         assertUnion($union, [[]]);
     }
 
@@ -98,7 +99,7 @@ final class FunctionsUnionTest extends TestCase
         $union = union(arrayp(), $generic);
         assertUnion($union, []);
         assertUnion($union, [[]]);
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         assertUnion($union, [[[]]]);
     }
 }

@@ -16,7 +16,6 @@ namespace Chevere\Tests;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\assertArgument;
 use function Chevere\Parameter\assertString;
 use function Chevere\Parameter\boolString;
 use function Chevere\Parameter\date;
@@ -40,7 +39,7 @@ final class FunctionsStringTest extends TestCase
     {
         $parameter = string();
         $this->assertSame('test', assertString($parameter, 'test'));
-        $this->assertSame('0', assertArgument($parameter, '0'));
+        $parameter('0');
     }
 
     public function testEnum(): void

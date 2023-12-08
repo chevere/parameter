@@ -45,7 +45,7 @@ class ArrayAttr implements ParameterAttributeInterface, ParametersAccessInterfac
     // @phpstan-ignore-next-line
     public function __invoke(array|ArrayAccess $array): array|ArrayAccess
     {
-        return ($this->parameter)($array);
+        return $this->parameter->__invoke($array);
     }
 
     public function parameter(): ParameterInterface

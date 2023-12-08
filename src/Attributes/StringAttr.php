@@ -36,7 +36,7 @@ class StringAttr implements ParameterAttributeInterface
 
     public function __invoke(string $string): string
     {
-        return ($this->parameter)($string);
+        return $this->parameter->__invoke($string);
     }
 
     public function parameter(): ParameterInterface

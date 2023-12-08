@@ -36,7 +36,7 @@ class BoolAttr implements ParameterAttributeInterface
 
     public function __invoke(bool $bool): bool
     {
-        return ($this->parameter)($bool);
+        return $this->parameter->__invoke($bool);
     }
 
     public function parameter(): ParameterInterface

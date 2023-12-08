@@ -39,7 +39,7 @@ class GenericAttr implements ParameterAttributeInterface
     // @phpstan-ignore-next-line
     public function __invoke(iterable $array): iterable
     {
-        return ($this->parameter)($array);
+        return $this->parameter->__invoke($array);
     }
 
     public function parameter(): ParameterInterface

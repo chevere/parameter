@@ -20,6 +20,7 @@ use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\float;
@@ -330,6 +331,8 @@ final class ArrayParameterTest extends TestCase
             name: string(),
             id: int()
         );
-        $this->assertSame($value, $parameter($value));
+        $parameter($value);
+        $this->expectException(TypeError::class);
+        $parameter(null);
     }
 }

@@ -46,7 +46,7 @@ class IntAttr implements ParameterAttributeInterface
 
     public function __invoke(int $int): int
     {
-        return ($this->parameter)($int);
+        return $this->parameter->__invoke($int);
     }
 
     public function parameter(): ParameterInterface

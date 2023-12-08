@@ -17,6 +17,7 @@ use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\UnionParameter;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\parameters;
@@ -101,7 +102,9 @@ final class UnionParameterTest extends TestCase
             string(),
             int()
         );
-        $this->assertSame(10, $parameter(10));
-        $this->assertSame('10', $parameter('10'));
+        $parameter(10);
+        $parameter('10');
+        $this->expectException(TypeError::class);
+        $parameter(1.1);
     }
 }

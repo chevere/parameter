@@ -15,7 +15,6 @@ namespace Chevere\Tests;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\assertArgument;
 use function Chevere\Parameter\assertInt;
 use function Chevere\Parameter\boolInt;
 use function Chevere\Parameter\int;
@@ -54,7 +53,7 @@ final class FunctionsIntTest extends TestCase
     {
         $parameter = int();
         $this->assertSame(0, assertInt($parameter, 0));
-        $this->assertSame(0, assertArgument($parameter, 0));
+        $parameter(0);
     }
 
     public function testBoolInt(): void

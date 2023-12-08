@@ -18,6 +18,7 @@ use Chevere\Parameter\StringParameter;
 use Chevere\Regex\Regex;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 use function Chevere\Parameter\string;
 
 final class StringParameterTest extends TestCase
@@ -102,8 +103,9 @@ final class StringParameterTest extends TestCase
 
     public function testInvoke(): void
     {
-        $value = '10';
         $parameter = new StringParameter();
-        $this->assertSame($value, $parameter($value));
+        $parameter('100');
+        $this->expectException(TypeError::class);
+        $parameter(false);
     }
 }

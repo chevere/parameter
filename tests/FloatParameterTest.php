@@ -16,6 +16,7 @@ namespace Chevere\Tests;
 use Chevere\Parameter\FloatParameter;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 use function Chevere\Parameter\float;
 
 final class FloatParameterTest extends TestCase
@@ -101,6 +102,8 @@ final class FloatParameterTest extends TestCase
     {
         $value = 10.0;
         $parameter = new FloatParameter();
-        $this->assertSame($value, $parameter($value));
+        $parameter(10.0);
+        $this->expectException(TypeError::class);
+        $parameter('value');
     }
 }

@@ -27,10 +27,9 @@ class ReturnAttr implements ParameterAttributeInterface
         $this->parameter = $attribute->parameter();
     }
 
-    public function __invoke(int $int): int
+    public function __invoke(mixed $mixed): mixed
     {
-        // @phpstan-ignore-next-line
-        return ($this->parameter)($int);
+        return $this->parameter->__invoke($mixed);
     }
 
     public function parameter(): ParameterInterface

@@ -21,7 +21,7 @@ use ArrayAccess;
 interface ArrayStringParameterInterface extends ArrayTypeParameterInterface
 {
     /**
-     * Asserts the given `$value` is valid, returning the value if so.
+     * Asserts the given `$value` is valid.
      *
      * @param array<string, mixed> $array
      * @return array<string, mixed>

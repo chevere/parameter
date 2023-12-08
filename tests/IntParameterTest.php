@@ -19,6 +19,7 @@ use Chevere\Parameter\Parameters;
 use InvalidArgumentException;
 use OverflowException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 final class IntParameterTest extends TestCase
 {
@@ -377,8 +378,9 @@ final class IntParameterTest extends TestCase
 
     public function testInvoke(): void
     {
-        $value = 10;
         $parameter = new IntParameter();
-        $this->assertSame($value, $parameter($value));
+        $parameter(10);
+        $this->expectException(TypeError::class);
+        $parameter(null);
     }
 }

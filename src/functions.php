@@ -134,7 +134,7 @@ function assertUnion(
         }
     }
 
-    throw new InvalidArgumentException(
+    throw new TypeError(
         (string) message(
             "Argument provided doesn't match the union type `%type%`",
             type: implode('|', $types)
@@ -167,11 +167,6 @@ function assertNamedArgument(
             )
         );
     }
-}
-
-function assertArgument(ParameterInterface $parameter, mixed $argument): mixed
-{
-    return $parameter->__invoke($argument);
 }
 
 function reflectionToParameters(ReflectionFunction|ReflectionMethod $functionOrMethod): ParametersInterface
@@ -286,8 +281,7 @@ function returnAttr(mixed $var): mixed
     $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
         ?? throw new LogicException('No return attribute found');
 
-    // @phpstan-ignore-next-line
-    return $attribute->newInstance()($var);
+    return $attribute->newInstance()->__invoke($var);
 }
 
 /**

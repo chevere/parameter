@@ -18,6 +18,7 @@ use Chevere\DataStructure\Interfaces\VectorInterface;
 use Chevere\DataStructure\Map;
 use Chevere\DataStructure\Traits\MapTrait;
 use Chevere\DataStructure\Vector;
+use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ParameterCastInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
@@ -61,6 +62,11 @@ final class Parameters implements ParametersInterface
             $name = strval($name);
             $this->addProperty('requiredKeys', $name, $item);
         }
+    }
+
+    public function __invoke(mixed ...$argument): ArgumentsInterface
+    {
+        return new Arguments($this, $argument);
     }
 
     public function withRequired(string $name, ParameterInterface $parameter): ParametersInterface

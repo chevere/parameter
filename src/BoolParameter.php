@@ -27,7 +27,7 @@ final class BoolParameter implements BoolParameterInterface
 
     public function __invoke(bool $value): bool
     {
-        return assertBool($this, $value);
+        return $value;
     }
 
     public function withDefault(bool $value): BoolParameterInterface

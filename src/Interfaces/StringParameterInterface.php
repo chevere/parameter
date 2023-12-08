@@ -24,7 +24,7 @@ interface StringParameterInterface extends ParameterInterface
     public const REGEX_DEFAULT = '/^.*$/';
 
     /**
-     * Asserts the given `$value` is valid, returning the value if so.
+     * Asserts the given `$value` is valid.
      */
     public function __invoke(Stringable|string $value): string;
 

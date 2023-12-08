@@ -23,7 +23,7 @@ interface FloatParameterInterface extends ParameterInterface
     public const MAX = PHP_FLOAT_MAX;
 
     /**
-     * Asserts the given `$value` is valid, returning the value if so.
+     * Asserts the given `$value` is valid.
      */
     public function __invoke(float $value): float;
 

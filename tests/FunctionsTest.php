@@ -22,7 +22,6 @@ use TypeError;
 use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\arrayFrom;
 use function Chevere\Parameter\arrayp;
-use function Chevere\Parameter\assertArgument;
 use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\assertNamedArgument;
 use function Chevere\Parameter\assertUnion;
@@ -70,13 +69,13 @@ final class FunctionsTest extends TestCase
         $parameter = arrayp();
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
-        assertArgument($parameter, []);
+        $parameter([]);
     }
 
     public function testBoolParameter(): void
     {
         $parameter = bool();
-        assertArgument($parameter, true);
+        $parameter(true);
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
         $parameter = bool(
@@ -86,23 +85,23 @@ final class FunctionsTest extends TestCase
         $this->assertSame('name', $parameter->description());
         $this->assertSame(true, $parameter->default());
         $this->expectException(TypeError::class);
-        assertArgument($parameter, null);
+        $parameter(null);
     }
 
     public function testNullParameter(): void
     {
         $parameter = null();
-        assertArgument($parameter, null);
+        $parameter(null);
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
         $this->expectException(TypeError::class);
-        assertArgument($parameter, 1);
+        $parameter(1);
     }
 
     public function testIntParameter(): void
     {
         $parameter = int();
-        assertArgument($parameter, 1);
+        $parameter(1);
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
         $parameter = int(
@@ -110,19 +109,19 @@ final class FunctionsTest extends TestCase
         );
         $this->assertSame(10, $parameter->default());
         $this->expectException(TypeError::class);
-        assertArgument($parameter, '');
+        $parameter('');
     }
 
     public function testFunctionObjectParameter(): void
     {
         $parameter = object(stdClass::class);
-        assertArgument($parameter, new stdClass());
+        $parameter(new stdClass());
         $this->assertSame('', $parameter->description());
         $this->assertSame(stdClass::class, $parameter->className());
         $parameter = object(stdClass::class, 'foo');
         $this->assertSame('foo', $parameter->description());
         $this->expectException(InvalidArgumentException::class);
-        assertArgument($parameter, parameters());
+        $parameter(parameters());
     }
 
     public function testFunctionStringParameter(): void
@@ -135,12 +134,12 @@ final class FunctionsTest extends TestCase
             default: $default,
             regex: $regex,
         );
-        assertArgument($parameter, $default);
+        $parameter($default);
         $this->assertSame($description, $parameter->description());
         $this->assertSame($default, $parameter->default());
         $this->assertSame($regex, $parameter->regex()->__toString());
         $this->expectException(TypeError::class);
-        assertArgument($parameter, 123);
+        $parameter(123);
     }
 
     public function testFunctionArrayParameter(): void
@@ -159,42 +158,36 @@ final class FunctionsTest extends TestCase
         $this->assertSame($assert, $expected);
         $this->assertCount(2, $parameter->parameters());
         $this->expectException(TypeError::class);
-        assertArgument($parameter, 1);
+        $parameter(1);
     }
 
     public function testFunctionArrayParameterNested(): void
     {
         $parameter = arrayp(
-            wea: arrayp(
-                one: string(),
-                two: int(default: 222),
-                nest: arrayp(
-                    one: int(default: 1),
-                    two: int(default: 2),
-                )
+            one: string(),
+            two: int(default: 222),
+            nest: arrayp(
+                nestOne: int(default: 1),
+                nestTwo: int(default: 2),
             )
         );
         $array = [
-            'wea' => [
-                'one' => 'foo',
-                'nest' => [],
-            ],
+            'one' => 'foo',
+            'nest' => [],
         ];
         $expected = [
-            'wea' => [
-                'one' => 'foo',
-                'nest' => [
-                    'one' => 1,
-                    'two' => 2,
-                ],
-                'two' => 222,
+            'one' => 'foo',
+            'nest' => [
+                'nestOne' => 1,
+                'nestTwo' => 2,
             ],
+            'two' => 222,
         ];
         $assert = assertArray($parameter, $array);
         $this->assertSame($assert, $expected);
-        $this->assertCount(1, $parameter->parameters());
+        $this->assertCount(3, $parameter->parameters());
         $this->expectException(TypeError::class);
-        assertArgument($parameter, 1);
+        $parameter(1);
     }
 
     public function testFunctionAssertArgument(): void
@@ -226,7 +219,7 @@ final class FunctionsTest extends TestCase
         );
         assertUnion($parameter, 'foo');
         assertUnion($parameter, 123);
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         assertUnion($parameter, []);
     }
 

@@ -21,7 +21,7 @@ use ArrayAccess;
 interface ArrayParameterInterface extends ArrayTypeParameterInterface
 {
     /**
-     * Asserts the given `$value` is valid, returning the value if so.
+     * Asserts the given `$value` is valid.
      * @phpstan-ignore-next-line
      */
     public function __invoke(array|ArrayAccess $value): array|ArrayAccess;

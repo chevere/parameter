@@ -149,6 +149,8 @@ final class GenericParameterTest extends TestCase
     {
         $value = [10, '10'];
         $parameter = generic(union(int(), string()));
-        $this->assertSame($value, $parameter($value));
+        $parameter($value);
+        $this->expectException(InvalidArgumentException::class);
+        $parameter([null, false]);
     }
 }

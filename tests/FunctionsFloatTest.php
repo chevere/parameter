@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\assertArgument;
 use function Chevere\Parameter\assertFloat;
 use function Chevere\Parameter\float;
 
@@ -53,7 +52,7 @@ final class FunctionsFloatTest extends TestCase
         $parameter = float();
         $this->assertSame(0.0, assertFloat($parameter, 0));
         $this->assertSame(0.0, assertFloat($parameter, 0.0));
-        $this->assertSame(0.0, assertArgument($parameter, 0));
-        $this->assertSame(0.0, assertArgument($parameter, 0.0));
+        $parameter(0);
+        $parameter(0.0);
     }
 }
