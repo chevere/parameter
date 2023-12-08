@@ -53,12 +53,12 @@ if($var > 10 || $var < 1) {
 To this:
 
 ```php
-int(min: 1, max:10)($var);
+int(min: 1, max: 10)($var);
 ```
 
-To use inline-validation invoke parameter with the value you need to validate.
+To use inline-validation invoke a parameter with the value you need to validate.
 
-* Validate an string starting with "a":
+* Validate string starting with "a":
 
 ```php
 use function Chevere\Parameter\string;
@@ -67,13 +67,13 @@ $value = 'ahhh';
 string('/^a.+/')($value);
 ```
 
-* Validate an int of min value `0`:
+* Validate an int of min value `100`:
 
 ```php
 use function Chevere\Parameter\int;
 
 $value = 100;
-int(min: 99)($value);
+int(min: 100)($value);
 ```
 
 * Validate a float accept list:
@@ -90,7 +90,7 @@ float(accept: [1.1, 2.1])($value);
 ```php
 use function Chevere\Parameter\float;
 
-$value = 1.2;
+$value = 3.1;
 float(reject: [1.1, 2.1])($value);
 ```
 
@@ -111,17 +111,34 @@ arrayp(
 )($value);
 ```
 
-* Validate a generic:
+* Validate a generic `int` list:
 
 ```php
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\generic;
 
-$value = [0, 1, 1, 2, 3, 5];
+$value = [1, 2, 3];
 generic(int())($value);
 ```
 
-* Validate an union:
+* Validate a generic `int` list with `string` key type:
+
+```php
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\generic;
+
+$value = [
+    'unila' => 1,
+    'dorila' => 2,
+    'tirifila' => 3,
+];
+generic(
+    K: string(),
+    V: int()
+)($value);
+```
+
+* Validate an union ot type `?int`:
 
 ```php
 use function Chevere\Parameter\int;
@@ -205,7 +222,7 @@ $value = [
 myArray($value);
 ```
 
-* Validate a generic:
+* Validate a generic `int` list:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
