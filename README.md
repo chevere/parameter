@@ -34,11 +34,11 @@ composer require chevere/parameter
 
 ## Cookbook
 
+`namespace Chevere\Parameter`
+
 The beauty™ of this package is that all PHP types have been abstracted into its own "type system" and you can mix them to form any data-structure.
 
 The following examples should give you a glimpse.
-
-`namespace Chevere\Parameter;`
 
 ### Inline validation
 
@@ -56,114 +56,165 @@ To this:
 int(min: 1, max:10)($var);
 ```
 
-To use inline-validation simply invoke any parameter with the value you need to validate.
+To use inline-validation invoke parameter with the value you need to validate.
 
-* Assert an string starting with "a":
+* Validate an string starting with "a":
 
 ```php
+use function Chevere\Parameter\string;
+
 $value = 'ahhh';
-$string = string('/^a.+/')($value);
+string('/^a.+/')($value);
 ```
 
-* Assert an int of min value zero:
+* Validate an int of min value `0`:
 
 ```php
+use function Chevere\Parameter\int;
+
 $value = 100;
-$int = int(min: 0)($value);
+int(min: 99)($value);
 ```
 
-* Assert a float list:
+* Validate a float accept list:
 
 ```php
+use function Chevere\Parameter\float;
+
 $value = 1.1;
-$float = float(accept: [1.1, 2.1])($value);
+float(accept: [1.1, 2.1])($value);
 ```
 
-* Assert an array:
+* Validate a float reject list:
 
 ```php
+use function Chevere\Parameter\float;
+
+$value = 1.2;
+float(reject: [1.1, 2.1])($value);
+```
+
+* Validate an array:
+
+```php
+use function Chevere\Parameter\arrayp;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\string;
+
 $value = [
     'id' => 1,
     'name' => 'José'
 ];
-$array = arrayp(id: int(), name: string())($value);
+arrayp(
+    id: int(min: 1),
+    name: string('/^[A-Z]{1}\w+$/')
+)($value);
 ```
 
-* Assert a generic:
+* Validate a generic:
 
 ```php
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\generic;
+
 $value = [0, 1, 1, 2, 3, 5];
-$generic = generic(int())($value);
+generic(int())($value);
 ```
 
-* Assert a union:
+* Validate an union:
 
 ```php
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\null;
+
 $value = 1;
-$union = union((int(), null()))($value);
+union(int(), null())($value);
 ```
 
 ### Attribute-based inline parameter validation
 
-Use attributes on the function/method parameters to define validation rules. Use `validate()` on the function body to trigger validation.
+Use attributes on the function/method parameters to define validation rules. Use `validate()` on the function body to trigger validation by passing the parameter name.
 
-* Assert an string starting with "a":
+* Validate an string enum:
 
 ```php
-function myString(
-    #[new StringAttr('/^a.+/')]
+use Chevere\Parameter\Attributes\EnumAttr;
+use function Chevere\Parameter\validate;
+
+function myEnum(
+    #[EnumAttr('Hugo', 'Paco', 'Luis')]
     string $name
 ): void
 {
     validate('name');
 }
+$value = 'Paco';
+myEnum($name);
 ```
 
-* Assert an int of min value zero:
+* Validate an int of any value but `0` and `100`:
 
 ```php
+use Chevere\Parameter\Attributes\IntAttr;
+use function Chevere\Parameter\validate;
+
 function myInt(
-    #[new IntAttr(min: 0)]
+    #[IntAttr(reject: [0, 100])]
     int $id
 ): void
 {
     validate('id');
 }
+$value = 50;
+myInt($value);
 ```
 
-* Assert a float list:
+* Validate a ~~nasty~~ nested array:
 
 ```php
-function myFloat(
-    #[new FloatAttr(accept: [1.1, 2.1])]
-    float $id
-): void
-{
-    validate('id');
-}
-```
+use Chevere\Parameter\Attributes\ArrayAttr;
+use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\StringAttr;
+use Chevere\Parameter\Attributes\GenericAttr;
+use function Chevere\Parameter\validate;
 
-* Assert an array:
-
-```php
 function myArray(
-    #[new ArrayAttr(
-        id: IntAttr(),
-        name: StringAttr()
+    #[ArrayAttr(
+        id: new IntAttr(min: 1),
+        role: new ArrayAttr(
+            mask: new IntAttr(),
+            name: new StringAttr(),
+            tenants: new GenericAttr(
+                new IntAttr(min: 1)
+            )
+        ),
     )]
-    array $map
+    array $spooky
 ): void
 {
-    validate('map');
+    validate('spooky');
 }
+$value = [
+    'id' => 10,
+    'role' => [
+        'mask' => 128,
+        'name' => 'admin',
+        'tenants' => [1, 2, 3, 4, 5]
+    ],
+];
+myArray($value);
 ```
 
-* Assert a generic:
+* Validate a generic:
 
 ```php
+use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\GenericAttr;
+use function Chevere\Parameter\validate;
+
 function myGeneric(
-    #[new GenericAttr(
-        IntAttr(),
+    #[GenericAttr(
+        new IntAttr(),
     )]
     array $list
 ): void
@@ -176,29 +227,102 @@ function myGeneric(
 
 Use attribute `ReturnAttr` on the function/method in combination with `returnAttr()` on the function body.
 
+* Validate int [min: 0, max: 5] return:
+
 ```php
+use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\ReturnAttr;
+use function Chevere\Parameter\returnAttr;
+
 #[ReturnAttr(
     new IntAttr(min: 0, max: 5)
 )]
-public function myReturn(int $int): int
+public function myReturnInt(): int
 {
-    return returnAttr($int);
+    $value = 1;
+    return returnAttr($value);
 }
 ```
 
-### Attribute-based injected validation
+* Validate array members return:
 
-When working with reiterative interfaces or code structures you may want to delegate validation on the *caller* and not directly in the function body.
+```php
+use Chevere\Parameter\Attributes\ArrayAttr;
+use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\StringAttr;
+use Chevere\Parameter\Attributes\ReturnAttr;
+use function Chevere\Parameter\returnAttr;
 
-By doing this validation will happen before passing the function arguments, and after getting the return value.
+#[ReturnAttr(
+    new ArrayAttr(
+        id: new IntAttr(min: 0),
+        name: new StringAttr()
+    )
+)]
+public function myReturnArray(): array
+{
+    $value = [
+        'id' => 1,
+        'name' => 'Peoples Hernandez'
+    ];
+    return returnAttr($value);
+}
+```
 
-`🚧 Work in progress`
+### Attribute-based delegated validation
+
+`namespace Chevere\Parameter`
+
+When working with reiterative interfaces you may want to delegate validation on the *caller* and not directly in the function body. This will save you time as validation wraps your function/method IO, you only need to worry about validation rules and wire the thing.
+
+This works with `ReflectionFunction` and `ReflectionMethod`.
+
+Use function `reflectionToParameters()` to get the parameters with rules for validating arguments. Use function `reflectionToReturnParameter()` to get the parameter rules for validating return value.
+
+* Validate anon class method arguments:
+
+```php
+use ReflectionMethod;
+use Chevere\Parameter\Attributes\IntAttr;
+use function Chevere\Parameter\arguments;
+
+$class = new class() {
+    public function wea(
+        #[IntAttr(accept: [1, 10, 100])]
+        int $base
+    ): void {
+    }
+};
+$reflection = new ReflectionMethod($class, 'wea');
+$parameters = reflectionToParameters($reflection);
+$object = new $class();
+$object->wea(0); // nothing happens...
+arguments($parameters, [
+    'base' => 0,
+]); // Validates!
+```
+
+```php
+use ReflectionFunction;
+use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\ReturnAttr;
+
+$function =
+    #[ReturnAttr(
+        new IntAttr(min: 1000)
+    )]
+    function (int $base): int {
+        return 10 * $base;
+    };
+$reflection = new ReflectionFunction($function);
+$return = reflectionToReturnParameter($reflection);
+$function(10); // nothing happens...
+$return($function(10)); // Validates!
+```
 
 ## Function reference
 
 Following functions enables to quickly spawn any parameter type.
-
-`namespace Chevere\Parameter;`
 
 | Type   | Function     |
 | ------ | ------------ |
@@ -217,18 +341,25 @@ Following functions enables to quickly spawn any parameter type.
 
 ### Attributes
 
-Following attributes enables to define validation rules using attributes.
+`namespace Chevere\Parameter\Attributes`
 
-`namespace Chevere\Parameter\Attributes;`
+Following attributes enables to define validation rules for parameters.
 
 | Type   | Attribute     |
 | ------ | ------------- |
 | string | `StringAttr`  |
+| string | `EnumAttr`    |
 | int    | `IntAttr`     |
 | float  | `FloatAttr`   |
+| bool   | `BoolAttr`    |
 | array  | `ArrayAttr`   |
 | array  | `GenericAttr` |
-| *      | `ReturnAttr`  |
+
+For `return` there's the `ReturnAttr` attribute.
+
+```php
+#[ReturnAttr(<TypeAttr>)]
+```
 
 ## Documentation
 

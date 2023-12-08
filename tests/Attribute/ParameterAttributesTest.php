@@ -114,7 +114,7 @@ final class ParameterAttributesTest extends TestCase
         new UsesParameterAttributes($name, $age, $array, $iterable);
     }
 
-    public function testWea(): void
+    public function testThisWea(): void
     {
         $arguments = $this->dataProviderWillSuccess()[0];
         $object = new UsesParameterAttributes(...$arguments);

@@ -14,39 +14,25 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\IntParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use function Chevere\Parameter\int;
+use Chevere\Parameter\Interfaces\StringParameterInterface;
+use function Chevere\Parameter\enum;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class IntAttr implements ParameterAttributeInterface
+class EnumAttr implements ParameterAttributeInterface
 {
-    public readonly IntParameterInterface $parameter;
+    public readonly StringParameterInterface $parameter;
 
-    /**
-     * @param int[] $accept
-     * @param int[] $reject
-     */
     public function __construct(
-        string $description = '',
-        ?int $min = null,
-        ?int $max = null,
-        array $accept = [],
-        array $reject = [],
+        string ...$string,
     ) {
-        $this->parameter = int(
-            description: $description,
-            min: $min,
-            max: $max,
-            accept: $accept,
-            reject: $reject,
-        );
+        $this->parameter = enum(...$string);
     }
 
-    public function __invoke(int $int): int
+    public function __invoke(string $string): string
     {
-        return ($this->parameter)($int);
+        return ($this->parameter)($string);
     }
 
     public function parameter(): ParameterInterface

@@ -14,39 +14,29 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\FloatParameterInterface;
+use Chevere\Parameter\Interfaces\BoolParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use function Chevere\Parameter\float;
+use function Chevere\Parameter\bool;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class FloatAttribute implements ParameterAttributeInterface
+class BoolAttr implements ParameterAttributeInterface
 {
-    public readonly FloatParameterInterface $parameter;
+    public readonly BoolParameterInterface $parameter;
 
-    /**
-     * @param float[] $accept
-     * @param float[] $reject
-     */
     public function __construct(
         string $description = '',
-        ?float $min = null,
-        ?float $max = null,
-        array $accept = [],
-        array $reject = [],
+        ?bool $default = null,
     ) {
-        $this->parameter = float(
+        $this->parameter = bool(
             description: $description,
-            min: $min,
-            max: $max,
-            accept: $accept,
-            reject: $reject,
+            default: $default
         );
     }
 
-    public function __invoke(float $float): float
+    public function __invoke(bool $bool): bool
     {
-        return ($this->parameter)($float);
+        return ($this->parameter)($bool);
     }
 
     public function parameter(): ParameterInterface

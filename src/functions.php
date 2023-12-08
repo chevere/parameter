@@ -174,23 +174,36 @@ function assertArgument(ParameterInterface $parameter, mixed $argument): mixed
     return $parameter->__invoke($argument);
 }
 
-function methodParameters(string $class, string $method): ParametersInterface
+function reflectionToParameters(ReflectionFunction|ReflectionMethod $functionOrMethod): ParametersInterface
 {
     $parameters = parameters();
-    $reflectionMethod = new ReflectionMethod($class, $method);
-    foreach ($reflectionMethod->getParameters() as $reflection) {
-        $typedReflection = new ReflectionParameterTyped($reflection);
+    foreach ($functionOrMethod->getParameters() as $reflection) {
+        $reflectionParameter = new ReflectionParameterTyped($reflection);
         $callable = match ($reflection->isOptional()) {
             true => 'withOptional',
             default => 'withRequired',
         };
+
         $parameters = $parameters->{$callable}(
             $reflection->getName(),
-            $typedReflection->parameter()
+            $reflectionParameter->parameter()
         );
     }
 
     return $parameters;
+}
+
+function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $functionOrMethod): ParameterInterface
+{
+    $attributes = $functionOrMethod->getAttributes(ReturnAttr::class);
+    if ($attributes === []) {
+        throw new LogicException('No `ReturnAttr` attribute found');
+    }
+
+    /** @var ReflectionAttribute<ReturnAttr> $attribute */
+    $attribute = $attributes[0];
+
+    return $attribute->newInstance()->parameter();
 }
 
 function arrayFrom(

@@ -37,6 +37,9 @@
         }
     },
     "autoload-dev": {
+        "files": [
+            "tests/src/functions.php"
+        ],
         "psr-4": {
             "Chevere\\Tests\\": "tests/"
         }

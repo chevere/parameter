@@ -56,6 +56,14 @@ function stringAttr(string $name): StringAttr
     return parameterAttr($name, $caller);
 }
 
+function enumAttr(string $name): EnumAttr
+{
+    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
+
+    // @phpstan-ignore-next-line
+    return parameterAttr($name, $caller);
+}
+
 function intAttr(string $name): IntAttr
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
