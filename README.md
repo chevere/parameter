@@ -103,7 +103,7 @@ use function Chevere\Parameter\string;
 
 $value = [
     'id' => 1,
-    'name' => 'José'
+    'name' => 'Pepe'
 ];
 arrayp(
     id: int(min: 1),
