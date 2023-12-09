@@ -30,7 +30,7 @@ final class UsesParameterAttributes
 {
     public function __construct(
         #[StringAttr('/^[A-Za-z]+$/')]
-        string $name = '',
+        string $name = 'Test',
         #[IntAttr(min: 1, max: 100)]
         int $age = 12,
         #[ArrayAttr(
@@ -46,6 +46,7 @@ final class UsesParameterAttributes
         validate('age');
         validate('cols');
         validate('tags');
+        validate();
         $name = stringAttr('name')($name);
         $age = intAttr('age')($age);
         $cols = arrayAttr('cols')($cols);

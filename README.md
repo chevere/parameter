@@ -150,9 +150,10 @@ union(int(), null())($value);
 
 ### Attribute-based inline parameter validation
 
-Use attributes on the function/method parameters to define validation rules. Use `validate()` on the function body to trigger validation by passing the parameter name.
+Use attributes on the function/method parameters to define validation rules. Use `validate()` on the function body to trigger validation on all parameters. Optionally pass the parameter name for single argument validation.
 
-* Validate an string enum:
+* Validate an string enum for `Hugo`, `Paco`, `Luis`:
+* Validate a min float value of `1000`:
 
 ```php
 use Chevere\Parameter\Attributes\EnumAttr;
@@ -160,10 +161,15 @@ use function Chevere\Parameter\validate;
 
 function myEnum(
     #[EnumAttr('Hugo', 'Paco', 'Luis')]
-    string $name
+    string $name,
+    #[FloatAttr(min: 1000)]
+    float $money
 ): void
 {
+    validate();
+    // Or single...
     validate('name');
+    validate('money');
 }
 $value = 'Paco';
 myEnum($name);
@@ -180,7 +186,7 @@ function myInt(
     int $id
 ): void
 {
-    validate('id');
+    validate();
 }
 $value = 50;
 myInt($value);
@@ -209,7 +215,7 @@ function myArray(
     array $spooky
 ): void
 {
-    validate('spooky');
+    validate();
 }
 $value = [
     'id' => 10,
@@ -236,7 +242,7 @@ function myGeneric(
     array $list
 ): void
 {
-    validate('list');
+    validate();
 }
 ```
 
@@ -257,6 +263,7 @@ use function Chevere\Parameter\returnAttr;
 public function myReturnInt(): int
 {
     $value = 1;
+
     return returnAttr($value);
 }
 ```
@@ -282,6 +289,7 @@ public function myReturnArray(): array
         'id' => 1,
         'name' => 'Peoples Hernandez'
     ];
+
     return returnAttr($value);
 }
 ```

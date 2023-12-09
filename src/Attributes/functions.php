@@ -19,33 +19,34 @@ use ReflectionFunction;
 use ReflectionMethod;
 use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\parameterAttr;
-use function Chevere\Parameter\reflectedParameterAttribute;
+use function Chevere\Parameter\reflectionToParameters;
 
 /**
  * Validates argument `$name` against attribute rules.
  * @throws LogicException
  */
-function validate(string $name): void
+function validate(?string $name = null): void
 {
     $caller = debug_backtrace(0, 2)[1];
     $class = $caller['class'] ?? null;
     $method = $caller['function'];
+    $args = $caller['args'];
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
-    $parameters = $reflection->getParameters();
-    foreach ($parameters as $parameter) {
-        if ($parameter->getName() !== $name) {
-            continue;
-        }
-        $pos = $parameter->getPosition();
-        // @phpstan-ignore-next-line
-        reflectedParameterAttribute($name, $parameter)($caller['args'][$pos]);
+    $parameters = reflectionToParameters($reflection);
+    $pos = -1;
+    $arguments = [];
+    foreach ($parameters->keys() as $named) {
+        $pos++;
+        $arguments[$named] = $args[$pos];
+    }
+    if ($name === null) {
+        $parameters(...$arguments);
 
         return;
     }
-
-    // throw new LogicException('No parameter attribute found');
+    $parameters->get($name)($arguments[$name]);
 }
 
 function stringAttr(string $name): StringAttr
@@ -101,25 +102,22 @@ function arrayArguments(string $name): ArgumentsInterface
     $caller = debug_backtrace(0, 2)[1];
     $class = $caller['class'] ?? null;
     $method = $caller['function'];
+    $args = $caller['args'];
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
-    $parameters = $reflection->getParameters();
-    foreach ($parameters as $parameter) {
-        if ($parameter->getName() !== $name) {
-            continue;
-        }
-        $pos = $parameter->getPosition();
-        // @phpstan-ignore-next-line
-        $array = reflectedParameterAttribute(
-            $name,
-            $parameter,
-            ArrayAttr::class
-        )->parameter;
-
-        // @phpstan-ignore-next-line
-        return arguments($array, $caller['args'][$pos]);
+    $parameters = reflectionToParameters($reflection);
+    $parameters->assertHas($name);
+    $array = match ($parameters->optionalKeys()->contains($name)) {
+        true => $parameters->optional($name)->array(),
+        default => $parameters->required($name)->array(),
+    };
+    $pos = -1;
+    $arguments = [];
+    foreach ($parameters->keys() as $named) {
+        $pos++;
+        $arguments[$named] = $args[$pos];
     }
 
-    throw new LogicException('No parameter attribute for ' . $name);
+    return arguments($array, $arguments[$name]);
 }
