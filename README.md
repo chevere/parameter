@@ -76,13 +76,13 @@ $value = 100;
 int(min: 100)($value);
 ```
 
-* Validate a float accept list:
+* Validate an int accept list:
 
 ```php
-use function Chevere\Parameter\float;
+use function Chevere\Parameter\int;
 
-$value = 1.1;
-float(accept: [1.1, 2.1])($value);
+$value = 1;
+int(accept: [1, 2, 3])($value);
 ```
 
 * Validate a float reject list:
@@ -133,8 +133,8 @@ $value = [
     'tirifila' => 3,
 ];
 generic(
-    K: string(),
-    V: int()
+    K: string('/ila$/'),
+    V: int(min: 1)
 )($value);
 ```
 
@@ -222,7 +222,7 @@ $value = [
 myArray($value);
 ```
 
-* Validate a generic `int` list:
+* Validate a generic int list:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
@@ -314,9 +314,7 @@ $reflection = new ReflectionMethod($class, 'wea');
 $parameters = reflectionToParameters($reflection);
 $object = new $class();
 $object->wea(0); // nothing happens...
-arguments($parameters, [
-    'base' => 0,
-]); // Validates!
+$parameters(base: 0); // Validates!
 ```
 
 ```php
