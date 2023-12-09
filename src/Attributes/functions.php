@@ -17,7 +17,6 @@ use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use LogicException;
 use ReflectionFunction;
 use ReflectionMethod;
-use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\parameterAttr;
 use function Chevere\Parameter\reflectionToParameters;
 
@@ -30,7 +29,7 @@ function validate(?string $name = null): void
     $caller = debug_backtrace(0, 2)[1];
     $class = $caller['class'] ?? null;
     $method = $caller['function'];
-    $args = $caller['args'];
+    $args = $caller['args'] ?? [];
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
@@ -46,7 +45,7 @@ function validate(?string $name = null): void
 
         return;
     }
-    $parameters->get($name)($arguments[$name]);
+    $parameters->get($name)->__invoke($arguments[$name]);
 }
 
 function stringAttr(string $name): StringAttr
@@ -102,7 +101,7 @@ function arrayArguments(string $name): ArgumentsInterface
     $caller = debug_backtrace(0, 2)[1];
     $class = $caller['class'] ?? null;
     $method = $caller['function'];
-    $args = $caller['args'];
+    $args = $caller['args'] ?? [];
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
@@ -119,5 +118,6 @@ function arrayArguments(string $name): ArgumentsInterface
         $arguments[$named] = $args[$pos];
     }
 
-    return arguments($array, $arguments[$name]);
+    // @phpstan-ignore-next-line
+    return $array->parameters()->__invoke(...$arguments[$name]);
 }

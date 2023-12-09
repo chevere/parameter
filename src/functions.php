@@ -74,7 +74,7 @@ function parameters(
 }
 
 /**
- * @param array<int|string, mixed>|ArrayAccess<int|string, mixed> $arguments
+ * @phpstan-ignore-next-line
  */
 function arguments(
     ParametersInterface|ParametersAccessInterface $parameters,
