@@ -121,7 +121,7 @@ $value = [1, 2, 3];
 generic(int())($value);
 ```
 
-* Validate a generic `int` list with `string` key type:
+* Validate a generic int list with string key type rules:
 
 ```php
 use function Chevere\Parameter\int;
@@ -138,7 +138,7 @@ generic(
 )($value);
 ```
 
-* Validate an union ot type `?int`:
+* Validate an union of type ?int:
 
 ```php
 use function Chevere\Parameter\int;
@@ -171,8 +171,9 @@ function myEnum(
     validate('name');
     validate('money');
 }
-$value = 'Paco';
-myEnum($name);
+$arg1 = 'Paco';
+$arg2 = 1000.50;
+myEnum($arg1, $arg2);
 ```
 
 * Validate an int of any value but `0` and `100`:
@@ -205,8 +206,8 @@ function myArray(
     #[ArrayAttr(
         id: new IntAttr(min: 1),
         role: new ArrayAttr(
-            mask: new IntAttr(),
-            name: new StringAttr(),
+            mask: new IntAttr(accept: [64, 128, 256]),
+            name: new StringAttr('/[a-z]+/'),
             tenants: new GenericAttr(
                 new IntAttr(min: 1)
             )
@@ -298,7 +299,7 @@ public function myReturnArray(): array
 
 `namespace Chevere\Parameter`
 
-When working with reiterative interfaces you may want to delegate validation on the *caller* and not directly in the function body. This will save you time as validation wraps your function/method IO, you only need to worry about validation rules and wire the thing.
+When working with reiterative interfaces you may want to delegate validation on the *caller* and not directly in the function body. This will save you time as validation wraps your function I/O, you only need to worry about validation rules and wire the thing.
 
 This works with `ReflectionFunction` and `ReflectionMethod`.
 
@@ -360,7 +361,7 @@ Following functions enables to quickly spawn any parameter type.
 | array  | `arrayp()`   |
 | array  | `file()`     |
 | array  | `generic()`  |
-| *      | `union()`    |
+| *many* | `union()`    |
 
 ### Attributes
 

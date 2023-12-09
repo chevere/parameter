@@ -14,39 +14,10 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
-use LogicException;
 use ReflectionFunction;
 use ReflectionMethod;
 use function Chevere\Parameter\parameterAttr;
 use function Chevere\Parameter\reflectionToParameters;
-
-/**
- * Validates argument `$name` against attribute rules.
- * @throws LogicException
- */
-function validate(?string $name = null): void
-{
-    $caller = debug_backtrace(0, 2)[1];
-    $class = $caller['class'] ?? null;
-    $method = $caller['function'];
-    $args = $caller['args'] ?? [];
-    $reflection = $class
-        ? new ReflectionMethod($class, $method)
-        : new ReflectionFunction($method);
-    $parameters = reflectionToParameters($reflection);
-    $pos = -1;
-    $arguments = [];
-    foreach ($parameters->keys() as $named) {
-        $pos++;
-        $arguments[$named] = $args[$pos];
-    }
-    if ($name === null) {
-        $parameters(...$arguments);
-
-        return;
-    }
-    $parameters->get($name)->__invoke($arguments[$name]);
-}
 
 function stringAttr(string $name): StringAttr
 {
@@ -99,7 +70,7 @@ function genericAttr(string $name): GenericAttr
 function arrayArguments(string $name): ArgumentsInterface
 {
     $caller = debug_backtrace(0, 2)[1];
-    $class = $caller['class'] ?? null;
+    $class = $caller['class'] ?? false;
     $method = $caller['function'];
     $args = $caller['args'] ?? [];
     $reflection = $class
@@ -120,4 +91,32 @@ function arrayArguments(string $name): ArgumentsInterface
 
     // @phpstan-ignore-next-line
     return $array->parameters()->__invoke(...$arguments[$name]);
+}
+
+/**
+ * Validates argument `$name` against attribute rules.
+ * @throws LogicException
+ */
+function validate(?string $name = null): void
+{
+    $caller = debug_backtrace(0, 2)[1];
+    $class = $caller['class'] ?? false;
+    $method = $caller['function'];
+    $args = $caller['args'] ?? [];
+    $reflection = $class
+        ? new ReflectionMethod($class, $method)
+        : new ReflectionFunction($method);
+    $parameters = reflectionToParameters($reflection);
+    $pos = -1;
+    $arguments = [];
+    foreach ($parameters->keys() as $named) {
+        $pos++;
+        $arguments[$named] = $args[$pos];
+    }
+    if ($name === null) {
+        $parameters(...$arguments);
+
+        return;
+    }
+    $parameters->get($name)->__invoke($arguments[$name]);
 }
