@@ -22,9 +22,9 @@ use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\genericAttr;
 use function Chevere\Parameter\Attributes\intAttr;
+use function Chevere\Parameter\Attributes\returnAttr;
 use function Chevere\Parameter\Attributes\stringAttr;
 use function Chevere\Parameter\Attributes\validate;
-use function Chevere\Parameter\returnAttr;
 
 final class UsesParameterAttributes
 {

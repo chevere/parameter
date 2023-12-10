@@ -26,18 +26,6 @@ use function Chevere\Message\message;
 
 final class ReflectionParameterTyped implements ReflectionParameterTypedInterface
 {
-    /**
-     * @var array<string, string>
-     */
-    public const TYPE_TO_PARAMETER = [
-        'array' => ArrayParameter::class,
-        'bool' => BoolParameter::class,
-        'float' => FloatParameter::class,
-        'int' => IntParameter::class,
-        'string' => StringParameter::class,
-        'object' => ObjectParameter::class,
-    ];
-
     private ReflectionNamedType $type;
 
     private ParameterInterface $parameter;
@@ -76,7 +64,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         if ($reflectionType === null) {
             throw new TypeError(
                 (string) message(
-                    'Missing type declaration for parameter %parameter%',
+                    'Missing type declaration for parameter `%parameter%`',
                     parameter: '$' . $this->reflection->getName()
                 )
             );

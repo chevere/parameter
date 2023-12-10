@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
+use LogicException;
 use ReflectionFunction;
 use ReflectionMethod;
 use function Chevere\Parameter\parameterAttr;
@@ -67,6 +68,9 @@ function genericAttr(string $name): GenericAttr
     return parameterAttr($name, $caller);
 }
 
+/**
+ * Get Arguments for an array parameter.
+ */
 function arrayArguments(string $name): ArgumentsInterface
 {
     $caller = debug_backtrace(0, 2)[1];
@@ -95,7 +99,6 @@ function arrayArguments(string $name): ArgumentsInterface
 
 /**
  * Validates argument `$name` against attribute rules.
- * @throws LogicException
  */
 function validate(?string $name = null): void
 {
@@ -119,4 +122,24 @@ function validate(?string $name = null): void
         return;
     }
     $parameters->get($name)->__invoke($arguments[$name]);
+}
+
+/**
+ * Validates `$var` against the return attribute.
+ *
+ * @return mixed The validated `$var`.
+ */
+function returnAttr(mixed $var): mixed
+{
+    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
+    $class = $caller['class'] ?? null;
+    $method = $caller['function'];
+    $reflection = $class
+        ? new ReflectionMethod($class, $method)
+        : new ReflectionFunction($method);
+    /** @var ReflectionAttribute<ReturnAttr> $attribute */
+    $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
+        ?? throw new LogicException('No return attribute found');
+
+    return $attribute->newInstance()->__invoke($var);
 }

@@ -170,37 +170,21 @@ function assertNamedArgument(
     }
 }
 
-function reflectionToParameters(ReflectionFunction|ReflectionMethod $functionOrMethod): ParametersInterface
+function toParameter(string $type): ParameterInterface
 {
-    $parameters = parameters();
-    foreach ($functionOrMethod->getParameters() as $reflection) {
-        $reflectionParameter = new ReflectionParameterTyped($reflection);
-        $callable = match ($reflection->isOptional()) {
-            true => 'withOptional',
-            default => 'withRequired',
-        };
-
-        $parameters = $parameters->{$callable}(
-            $reflection->getName(),
-            $reflectionParameter->parameter()
-        );
+    $class = TypeInterface::TYPE_TO_PARAMETER[$type]
+        ?? null;
+    if ($class === null) {
+        $class = TypeInterface::TYPE_TO_PARAMETER['object'];
+        $className = $type;
+    }
+    $parameter = new $class();
+    if (isset($className)) {
+        // @phpstan-ignore-next-line
+        $parameter = $parameter->withClassName($className);
     }
 
-    return $parameters;
-}
-
-function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $reflection): ParameterInterface
-{
-    $attributes = $reflection->getAttributes(ReturnAttr::class);
-    if ($attributes === []) {
-        $type =
-        throw new LogicException('No `ReturnAttr` attribute found');
-    }
-
-    /** @var ReflectionAttribute<ReturnAttr> $attribute */
-    $attribute = $attributes[0];
-
-    return $attribute->newInstance()->parameter();
+    return $parameter;
 }
 
 function arrayFrom(
@@ -267,26 +251,6 @@ function getType(mixed $variable): string
 }
 
 /**
- * Validates `$var` against the return attribute.
- *
- * @return mixed The validated `$var`.
- */
-function returnAttr(mixed $var): mixed
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-    $class = $caller['class'] ?? null;
-    $method = $caller['function'];
-    $reflection = $class
-        ? new ReflectionMethod($class, $method)
-        : new ReflectionFunction($method);
-    /** @var ReflectionAttribute<ReturnAttr> $attribute */
-    $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
-        ?? throw new LogicException('No return attribute found');
-
-    return $attribute->newInstance()->__invoke($var);
-}
-
-/**
  * Retrieves a Parameter attribute instance from a function or method parameter.
  * @param array<string, string> $caller The result of debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]
  */
@@ -309,6 +273,46 @@ function parameterAttr(string $parameter, array $caller): ParameterAttributeInte
     );
 }
 
+/**
+ * Get Parameters from a function or method reflection.
+ */
+function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection): ParametersInterface
+{
+    $parameters = parameters();
+    foreach ($reflection->getParameters() as $parameter) {
+        $reflectionParameter = new ReflectionParameterTyped($parameter);
+        $callable = match ($parameter->isOptional()) {
+            true => 'withOptional',
+            default => 'withRequired',
+        };
+
+        $parameters = $parameters->{$callable}(
+            $parameter->getName(),
+            $reflectionParameter->parameter()
+        );
+    }
+
+    return $parameters;
+}
+
+/**
+ * Get a return Parameter from a function or method reflection.
+ */
+function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $reflection): ParameterInterface
+{
+    $attributes = $reflection->getAttributes(ReturnAttr::class);
+    if ($attributes === []) {
+        $returnType = (string) $reflection->getReturnType();
+
+        return toParameter($returnType);
+    }
+
+    /** @var ReflectionAttribute<ReturnAttr> $attribute */
+    $attribute = $attributes[0];
+
+    return $attribute->newInstance()->parameter();
+}
+
 function reflectedParameterAttribute(
     string $parameter,
     ReflectionParameter $reflection,
@@ -328,20 +332,4 @@ function reflectedParameterAttribute(
     throw new LogicException(
         (string) message('No parameter attribute for `%name%`', name: $parameter)
     );
-}
-
-function toParameter(string $type): ParameterInterface
-{
-    $class = TypeInterface::TYPE_TO_PARAMETER[$type]
-        ?? null;
-    if ($class === null) {
-        $class = TypeInterface::TYPE_TO_PARAMETER['object'];
-        $className = $type;
-    }
-    $parameter = new $class();
-    if (isset($className)) {
-        $parameter = $parameter->withClassName($className);
-    }
-
-    return $parameter;
 }
