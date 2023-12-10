@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
-use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ReflectionParameterTypedInterface;
 use InvalidArgumentException;
@@ -47,13 +46,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         private ReflectionParameter $reflection
     ) {
         $this->type = $this->getType();
-        $type = $this->getParameterType();
-        /** @var ObjectParameterInterface $parameter */
-        $parameter = new $type();
-        if (is_subclass_of($type, ObjectParameterInterface::class)) {
-            $parameter = $parameter
-                ->withClassName($this->type->getName());
-        }
+        $parameter = toParameter($this->type->getName());
 
         try {
             $attribute = reflectedParameterAttribute('parameter', $reflection);
@@ -113,16 +106,5 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             $reflectionType instanceof ReflectionIntersectionType => 'intersection',
             default => 'unknown',
         };
-    }
-
-    private function getParameterType(): string
-    {
-        $type = self::TYPE_TO_PARAMETER[$this->type->getName()]
-            ?? null;
-        if ($type === null) {
-            return self::TYPE_TO_PARAMETER['object'];
-        }
-
-        return $type;
     }
 }

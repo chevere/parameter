@@ -13,6 +13,13 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Interfaces;
 
+use Chevere\Parameter\ArrayParameter;
+use Chevere\Parameter\BoolParameter;
+use Chevere\Parameter\FloatParameter;
+use Chevere\Parameter\IntParameter;
+use Chevere\Parameter\ObjectParameter;
+use Chevere\Parameter\StringParameter;
+
 /**
  * Describes the component in charge of dynamic type validation.
  */
@@ -83,6 +90,18 @@ interface TypeInterface
         self::STRING,
         self::UNION,
         self::GENERIC,
+    ];
+
+    /**
+     * @var array<string, string>
+     */
+    public const TYPE_TO_PARAMETER = [
+        'array' => ArrayParameter::class,
+        'bool' => BoolParameter::class,
+        'float' => FloatParameter::class,
+        'int' => IntParameter::class,
+        'string' => StringParameter::class,
+        'object' => ObjectParameter::class,
     ];
 
     /**

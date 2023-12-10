@@ -25,6 +25,7 @@ use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
+use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use InvalidArgumentException;
 use Iterator;
@@ -188,10 +189,11 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $functionOrM
     return $parameters;
 }
 
-function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $functionOrMethod): ParameterInterface
+function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $reflection): ParameterInterface
 {
-    $attributes = $functionOrMethod->getAttributes(ReturnAttr::class);
+    $attributes = $reflection->getAttributes(ReturnAttr::class);
     if ($attributes === []) {
+        $type =
         throw new LogicException('No `ReturnAttr` attribute found');
     }
 
@@ -302,7 +304,9 @@ function parameterAttr(string $parameter, array $caller): ParameterAttributeInte
         }
     }
 
-    throw new LogicException('No parameter attribute for ' . $parameter);
+    throw new LogicException(
+        (string) message('No parameter attribute for `%name%`', name: $parameter)
+    );
 }
 
 function reflectedParameterAttribute(
@@ -321,5 +325,23 @@ function reflectedParameterAttribute(
         }
     }
 
-    throw new LogicException('No parameter attribute for ' . $parameter);
+    throw new LogicException(
+        (string) message('No parameter attribute for `%name%`', name: $parameter)
+    );
+}
+
+function toParameter(string $type): ParameterInterface
+{
+    $class = TypeInterface::TYPE_TO_PARAMETER[$type]
+        ?? null;
+    if ($class === null) {
+        $class = TypeInterface::TYPE_TO_PARAMETER['object'];
+        $className = $type;
+    }
+    $parameter = new $class();
+    if (isset($className)) {
+        $parameter = $parameter->withClassName($className);
+    }
+
+    return $parameter;
 }
