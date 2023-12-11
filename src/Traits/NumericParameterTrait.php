@@ -235,4 +235,60 @@ trait NumericParameterTrait
             );
         }
     }
+
+    /**
+     * @return TValue
+     */
+    private function assert(
+        int|float $argument
+    ): int|float {
+        if ($this->accept !== []) {
+            if (in_array($argument, $this->accept, true)) {
+                return $argument;
+            }
+            $values = implode(',', $this->accept);
+
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Argument value provided `%provided%` is not an accepted value in `%value%`',
+                    provided: strval($argument),
+                    value: "[{$values}]"
+                )
+            );
+        }
+        if ($this->reject !== []) {
+            if (! in_array($argument, $this->reject, true)) {
+                return $argument;
+            }
+            $values = implode(',', $this->reject);
+
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Argument value provided `%provided%` is on rejected list `%value%`',
+                    provided: strval($argument),
+                    value: "[{$values}]"
+                )
+            );
+        }
+        if ($this->min() !== null && $argument < $this->min()) {
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Argument value provided `%provided%` is less than `%min%`',
+                    provided: strval($argument),
+                    min: strval($this->min())
+                )
+            );
+        }
+        if ($this->max !== null && $argument > $this->max) {
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Argument value provided `%provided%` is greater than `%max%`',
+                    provided: strval($argument),
+                    max: strval($this->max)
+                )
+            );
+        }
+
+        return $argument;
+    }
 }

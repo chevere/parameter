@@ -87,7 +87,7 @@ final class ObjectParameterTest extends TestCase
     {
         $parameter = object(__CLASS__);
         $parameter($this);
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         $parameter(new stdClass());
     }
 }

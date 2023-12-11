@@ -120,7 +120,7 @@ final class FunctionsTest extends TestCase
         $this->assertSame(stdClass::class, $parameter->className());
         $parameter = object(stdClass::class, 'foo');
         $this->assertSame('foo', $parameter->description());
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         $parameter(parameters());
     }
 

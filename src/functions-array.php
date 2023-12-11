@@ -106,18 +106,6 @@ function assertArrayString(
     return assertArray($parameter, $argument);
 }
 
-function assertNotEmpty(ParameterInterface $expected, mixed $value): void
-{
-    if ($expected instanceof ArrayTypeParameterInterface
-        && empty($value)
-        && count($expected->parameters()->requiredKeys()) > 0
-    ) {
-        throw new InvalidArgumentException(
-            (string) message('Argument value provided is empty')
-        );
-    }
-}
-
 // @phpstan-ignore-next-line
 function assertGeneric(
     GenericParameterInterface $parameter,
@@ -131,8 +119,6 @@ function assertGeneric(
     $generic = ' *generic';
     $genericKey = '_K' . $generic;
     $genericValue = '_V' . $generic;
-    $expected = $parameter->value();
-    // assertNotEmpty($expected, $argument);
 
     try {
         foreach ($argument as $key => $value) {

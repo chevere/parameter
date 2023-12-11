@@ -33,7 +33,16 @@ final class ObjectParameter implements ObjectParameterInterface
 
     public function __invoke(object $value): object
     {
-        return assertObject($this, $value);
+        if ($this->type->validate($value)) {
+            return $value;
+        }
+
+        throw new TypeError(
+            (string) message(
+                'Argument value provided is not of type `%type%`',
+                type: $this->className()
+            )
+        );
     }
 
     public function setUp(): void

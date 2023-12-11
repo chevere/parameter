@@ -40,7 +40,9 @@ final class IntParameter implements IntParameterInterface
 
     public function __invoke(int $value): int
     {
-        return assertInt($this, $value);
+        $this->assert($value);
+
+        return $value;
     }
 
     public function withDefault(int $value): IntParameterInterface

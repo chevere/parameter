@@ -49,11 +49,20 @@ final class FloatParameterTest extends TestCase
 
     public function testWithAccept(): void
     {
-        $accept = [1.1, 2.2, 3.3];
+        $values = [1.1, 2.2, 3.3];
         $parameter = new FloatParameter();
-        $withValue = $parameter->withAccept(...$accept);
+        $withValue = $parameter->withAccept(...$values);
         $this->assertNotSame($parameter, $withValue);
-        $this->assertSame($accept, $withValue->accept());
+        $this->assertSame($values, $withValue->accept());
+    }
+
+    public function testWithReject(): void
+    {
+        $values = [1.1, 2.2, 3.3];
+        $parameter = new FloatParameter();
+        $withValue = $parameter->withReject(...$values);
+        $this->assertNotSame($parameter, $withValue);
+        $this->assertSame($values, $withValue->reject());
     }
 
     public function testWithMin(): void

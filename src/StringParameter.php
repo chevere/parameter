@@ -32,7 +32,18 @@ final class StringParameter implements StringParameterInterface
 
     public function __invoke(string|Stringable $value): string
     {
-        return assertString($this, $value);
+        $value = strval($value);
+        if ($this->regex->match($value) !== []) {
+            return $value;
+        }
+
+        throw new InvalidArgumentException(
+            (string) message(
+                "Argument value provided `%provided%` doesn't match the regex `%regex%`",
+                provided: $value,
+                regex: strval($this->regex),
+            )
+        );
     }
 
     public function setUp(): void

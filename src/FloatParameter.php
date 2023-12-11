@@ -35,7 +35,9 @@ final class FloatParameter implements FloatParameterInterface
 
     public function __invoke(float $value): float
     {
-        return assertFloat($this, $value);
+        $this->assert($value);
+
+        return $value;
     }
 
     public function withDefault(float $value): FloatParameterInterface

@@ -15,6 +15,7 @@ namespace Chevere\Parameter\Attributes;
 
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use LogicException;
+use ReflectionAttribute;
 use ReflectionFunction;
 use ReflectionMethod;
 use function Chevere\Parameter\parameterAttr;

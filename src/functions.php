@@ -17,7 +17,6 @@ use ArrayAccess;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
-use Chevere\Parameter\Interfaces\BoolParameterInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
@@ -84,40 +83,6 @@ function arguments(
     $parameters = getParameters($parameters);
 
     return new Arguments($parameters, $arguments);
-}
-
-function assertBool(
-    BoolParameterInterface $parameter,
-    bool $argument
-): bool {
-    return $argument;
-}
-
-function assertNull(NullParameterInterface $parameter, mixed $argument): mixed
-{
-    if ($argument === null) {
-        return $argument;
-    }
-
-    throw new TypeError(
-        (string) message('Argument value provided is not of type null')
-    );
-}
-
-function assertObject(
-    ObjectParameterInterface $parameter,
-    object $argument
-): object {
-    if ($parameter->type()->validate($argument)) {
-        return $argument;
-    }
-
-    throw new InvalidArgumentException(
-        (string) message(
-            'Argument value provided is not of type `%type%`',
-            type: $parameter->className()
-        )
-    );
 }
 
 function assertUnion(

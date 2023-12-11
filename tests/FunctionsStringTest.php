@@ -16,7 +16,6 @@ namespace Chevere\Tests;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\assertString;
 use function Chevere\Parameter\boolString;
 use function Chevere\Parameter\date;
 use function Chevere\Parameter\datetime;
@@ -27,18 +26,18 @@ use function Chevere\Parameter\time;
 
 final class FunctionsStringTest extends TestCase
 {
-    public function testStringp(): void
+    public function testString(): void
     {
         $parameter = string();
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
-        $this->assertSame('', assertString($parameter, ''));
+        $this->assertSame('', $parameter(''));
     }
 
     public function testAssertString(): void
     {
         $parameter = string();
-        $this->assertSame('test', assertString($parameter, 'test'));
+        $this->assertSame('test', $parameter('test'));
         $parameter('0');
     }
 
@@ -47,19 +46,19 @@ final class FunctionsStringTest extends TestCase
         $parameter = enum('test');
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
-        $this->assertSame('test', assertString($parameter, 'test'));
+        $this->assertSame('test', $parameter('test'));
     }
 
     public function testAssertEnum(): void
     {
         $parameter = enum('foo', 'bar');
-        $this->assertSame('foo', assertString($parameter, 'foo'));
-        $this->assertSame('bar', assertString($parameter, 'bar'));
+        $this->assertSame('foo', $parameter('foo'));
+        $this->assertSame('bar', $parameter('bar'));
         $this->expectException(InvalidArgumentException::class);
-        assertString($parameter, 'barr');
+        $parameter('barr');
     }
 
-    public function testDatepDefault(): void
+    public function testDateDefault(): void
     {
         $parameter = date(default: '2023-04-10');
         $this->assertSame('2023-04-10', $parameter->default());
@@ -67,16 +66,16 @@ final class FunctionsStringTest extends TestCase
         date(default: 'fail');
     }
 
-    public function testAssertDatep(): void
+    public function testAssertDate(): void
     {
         $parameter = date();
-        $this->assertSame('1000-01-01', assertString($parameter, '1000-01-01'));
-        $this->assertSame('9999-12-31', assertString($parameter, '9999-12-31'));
+        $this->assertSame('1000-01-01', $parameter('1000-01-01'));
+        $this->assertSame('9999-12-31', $parameter('9999-12-31'));
         $this->expectException(InvalidArgumentException::class);
-        assertString($parameter, '9999-99-99');
+        $parameter('9999-99-99');
     }
 
-    public function testTimepDefault(): void
+    public function testTimeDefault(): void
     {
         $parameter = time(default: '23:59:59');
         $this->assertSame('23:59:59', $parameter->default());
@@ -84,16 +83,16 @@ final class FunctionsStringTest extends TestCase
         time(default: '999:99:99');
     }
 
-    public function testAssertTimep(): void
+    public function testAssertTime(): void
     {
         $parameter = time();
-        $this->assertSame('00:00:00', assertString($parameter, '00:00:00'));
-        $this->assertSame('999:59:59', assertString($parameter, '999:59:59'));
+        $this->assertSame('00:00:00', $parameter('00:00:00'));
+        $this->assertSame('999:59:59', $parameter('999:59:59'));
         $this->expectException(InvalidArgumentException::class);
-        assertString($parameter, '9999:99:99');
+        $parameter('9999:99:99');
     }
 
-    public function testDatetimepDefault(): void
+    public function testDatetimeDefault(): void
     {
         $parameter = datetime(default: '1000-01-01 23:59:59');
         $this->assertSame('1000-01-01 23:59:59', $parameter->default());
@@ -101,12 +100,12 @@ final class FunctionsStringTest extends TestCase
         datetime(default: '9999-99-99 999:99:99');
     }
 
-    public function testAssertDatetimep(): void
+    public function testAssertDatetime(): void
     {
         $parameter = datetime();
-        $this->assertSame('1000-01-01 23:59:59', assertString($parameter, '1000-01-01 23:59:59'));
+        $this->assertSame('1000-01-01 23:59:59', $parameter('1000-01-01 23:59:59'));
         $this->expectException(InvalidArgumentException::class);
-        assertString($parameter, '9999-99-99 999:99:99');
+        $parameter('9999-99-99 999:99:99');
     }
 
     public function testBoolString(): void
@@ -176,9 +175,9 @@ final class FunctionsStringTest extends TestCase
         $parameter = intString();
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
-        assertString($parameter, '0');
-        assertString($parameter, '1');
+        $this->assertSame('0', $parameter('0'));
+        $this->assertSame('1', $parameter('1'));
         $this->expectException(InvalidArgumentException::class);
-        assertString($parameter, '1abc');
+        $parameter('1abc');
     }
 }

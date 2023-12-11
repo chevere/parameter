@@ -15,9 +15,6 @@ namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Regex\Regex;
-use InvalidArgumentException;
-use Stringable;
-use function Chevere\Message\message;
 
 function string(
     string $regex = '',
@@ -46,14 +43,10 @@ function intString(
     );
 }
 
-function enum(string ...$string): StringParameterInterface
+function enum(string $string, string ...$strings): StringParameterInterface
 {
-    if ($string === []) {
-        throw new InvalidArgumentException(
-            (string) message('At least one string must be provided')
-        );
-    }
-    $cases = implode('|', $string);
+    array_unshift($strings, $string);
+    $cases = implode('|', $strings);
     $regex = "/\b({$cases})\b/";
 
     return string($regex);
@@ -93,23 +86,4 @@ function datetime(
     $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\s{1}\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
 
     return string($regex, $description, $default);
-}
-
-function assertString(
-    StringParameterInterface $parameter,
-    Stringable|string $argument,
-): string {
-    $regex = $parameter->regex();
-    $argument = strval($argument);
-    if ($regex->match($argument) !== []) {
-        return $argument;
-    }
-
-    throw new InvalidArgumentException(
-        (string) message(
-            "Argument value provided `%provided%` doesn't match the regex `%regex%`",
-            provided: $argument,
-            regex: strval($regex),
-        )
-    );
 }
