@@ -18,6 +18,7 @@ use LogicException;
 use ReflectionAttribute;
 use ReflectionFunction;
 use ReflectionMethod;
+use Throwable;
 use function Chevere\Parameter\parameterAttr;
 use function Chevere\Parameter\reflectionToParameters;
 
@@ -99,11 +100,14 @@ function arrayArguments(string $name): ArgumentsInterface
 }
 
 /**
- * Validates argument `$name` against attribute rules.
+ * Validates argument `$name` against parameter attribute rules.
+ *
+ * @param ?string $name Argument name or `null` to validate all arguments.
  */
-function validate(?string $name = null): void
+function valid(?string $name = null): void
 {
-    $caller = debug_backtrace(0, 2)[1];
+    $trace = debug_backtrace(0, 2);
+    $caller = $trace[1];
     $class = $caller['class'] ?? false;
     $method = $caller['function'];
     $args = $caller['args'] ?? [];
@@ -122,7 +126,18 @@ function validate(?string $name = null): void
 
         return;
     }
-    $parameters->get($name)->__invoke($arguments[$name]);
+
+    try {
+        $parameters->get($name)->__invoke($arguments[$name]);
+    } catch (Throwable $e) {
+        $invoker = $trace[0];
+        // @phpstan-ignore-next-line
+        $fileLine = $invoker['file'] . ':' . $invoker['line'];
+
+        throw new $e(
+            $e->getMessage() . ' >>> ' . $fileLine
+        );
+    }
 }
 
 /**
@@ -130,9 +145,10 @@ function validate(?string $name = null): void
  *
  * @return mixed The validated `$var`.
  */
-function returnAttr(mixed $var): mixed
+function validReturn(mixed $var): mixed
 {
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
+    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+    $caller = $trace[1];
     $class = $caller['class'] ?? null;
     $method = $caller['function'];
     $reflection = $class
@@ -142,5 +158,15 @@ function returnAttr(mixed $var): mixed
     $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
         ?? throw new LogicException('No return attribute found');
 
-    return $attribute->newInstance()->__invoke($var);
+    try {
+        return $attribute->newInstance()->__invoke($var);
+    } catch (Throwable $e) {
+        $invoker = $trace[0];
+        // @phpstan-ignore-next-line
+        $fileLine = $invoker['file'] . ':' . $invoker['line'];
+
+        throw new $e(
+            $e->getMessage() . ' >>> ' . $fileLine
+        );
+    }
 }

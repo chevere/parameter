@@ -19,7 +19,7 @@ use Chevere\Parameter\Attributes\GenericAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
-use function Chevere\Parameter\Attributes\validate;
+use function Chevere\Parameter\Attributes\valid;
 
 #[ReturnAttr(
     new BoolAttr()
@@ -37,7 +37,7 @@ function myArray(
     )]
     array $spooky
 ): bool {
-    validate('spooky');
+    valid('spooky');
 
     return true;
 }

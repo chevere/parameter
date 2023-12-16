@@ -14,20 +14,26 @@ declare(strict_types=1);
 namespace Chevere\Tests\src;
 
 use Chevere\Parameter\Attributes\ArrayAttr;
+use Chevere\Parameter\Attributes\CallableAttr;
 use Chevere\Parameter\Attributes\GenericAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
+use Chevere\Parameter\Interfaces\ParameterInterface;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\genericAttr;
 use function Chevere\Parameter\Attributes\intAttr;
-use function Chevere\Parameter\Attributes\returnAttr;
 use function Chevere\Parameter\Attributes\stringAttr;
-use function Chevere\Parameter\Attributes\validate;
+use function Chevere\Parameter\Attributes\valid;
+use function Chevere\Parameter\Attributes\validReturn;
+use function Chevere\Parameter\int;
 
 final class UsesParameterAttributes
 {
+    #[ReturnAttr(
+        new CallableAttr(__CLASS__ . '::acceptResponse')
+    )]
     public function __construct(
         #[StringAttr('/^[A-Za-z]+$/')]
         string $name = 'Test',
@@ -42,16 +48,22 @@ final class UsesParameterAttributes
         )]
         iterable $tags = [],
     ) {
-        validate('name');
-        validate('age');
-        validate('cols');
-        validate('tags');
-        validate();
+        valid('name');
+        valid('age');
+        valid('cols');
+        valid('tags');
+        valid();
         $name = stringAttr('name')($name);
         $age = intAttr('age')($age);
         $cols = arrayAttr('cols')($cols);
         $id = arrayArguments('cols')->required('id')->int();
         $tags = genericAttr('tags')($tags);
+        validReturn($id);
+    }
+
+    public static function acceptResponse(): ParameterInterface
+    {
+        return int();
     }
 
     #[ReturnAttr(
@@ -59,6 +71,6 @@ final class UsesParameterAttributes
     )]
     public function run(int $int): int
     {
-        return returnAttr($int);
+        return validReturn($int);
     }
 }
