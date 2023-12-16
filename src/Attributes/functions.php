@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
+use Chevere\Parameter\Interfaces\ParameterInterface;
 use LogicException;
-use ReflectionAttribute;
 use ReflectionFunction;
 use ReflectionMethod;
 use Throwable;
@@ -154,9 +154,18 @@ function validReturn(mixed $var): mixed
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
-    /** @var ReflectionAttribute<ReturnAttr> $attribute */
-    $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
-        ?? throw new LogicException('No return attribute found');
+    $attribute = $reflection->getAttributes(ReturnAttr::class)[0] ?? null;
+    if ($attribute === null) {
+        $function = "{$class}::return";
+        if (is_callable($function)) {
+            $parameter = $function($var);
+            if ($parameter instanceof ParameterInterface) {
+                return $parameter->__invoke($var);
+            }
+        }
+
+        throw new LogicException('No rules defined for return');
+    }
 
     try {
         return $attribute->newInstance()->__invoke($var);

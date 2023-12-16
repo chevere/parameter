@@ -16,7 +16,6 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use LogicException;
 use function Chevere\Parameter\object;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION)]
@@ -28,12 +27,6 @@ class CallableAttr implements ParameterAttributeInterface
     {
         $return = $callable();
         object(ParameterInterface::class)($return);
-        // if (!is_object($return)) {
-        //     throw new LogicException('DynamicAttr must return an object');
-        // }
-        // if (! $return instanceof ParameterInterface) {
-        //     throw new LogicException('DynamicAttr must return an object implementing ParameterInterface');
-        // }
         $this->parameter = $return;
     }
 

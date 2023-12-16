@@ -32,7 +32,7 @@ use function Chevere\Parameter\int;
 final class UsesParameterAttributes
 {
     #[ReturnAttr(
-        new CallableAttr(__CLASS__ . '::acceptResponse')
+        new CallableAttr(__CLASS__ . '::return')
     )]
     public function __construct(
         #[StringAttr('/^[A-Za-z]+$/')]
@@ -61,7 +61,7 @@ final class UsesParameterAttributes
         validReturn($id);
     }
 
-    public static function acceptResponse(): ParameterInterface
+    public static function return(): ParameterInterface
     {
         return int();
     }
