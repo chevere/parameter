@@ -19,6 +19,7 @@ use LogicException;
 use ReflectionFunction;
 use ReflectionMethod;
 use Throwable;
+use function Chevere\Message\message;
 use function Chevere\Parameter\parameterAttr;
 use function Chevere\Parameter\reflectionToParameters;
 
@@ -151,31 +152,41 @@ function validReturn(mixed $var): mixed
     $caller = $trace[1];
     $class = $caller['class'] ?? null;
     $method = $caller['function'];
+    $magicReturn = "{$class}::return";
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
     $attribute = $reflection->getAttributes(ReturnAttr::class)[0] ?? null;
     if ($attribute === null) {
-        $function = "{$class}::return";
-        if (is_callable($function)) {
-            $parameter = $function($var);
-            if ($parameter instanceof ParameterInterface) {
-                return $parameter->__invoke($var);
-            }
+        if (! is_callable($magicReturn)) {
+            throw new LogicException(
+                (string) message(
+                    'No applicable return rules to validate',
+                )
+            );
         }
-
-        throw new LogicException('No rules defined for return');
+        $parameter = $magicReturn();
+        if (! $parameter instanceof ParameterInterface) {
+            throw new LogicException(
+                (string) message(
+                    'Callable return must return a %type% instance',
+                    type: ParameterInterface::class
+                )
+            );
+        }
+    } else {
+        $attribute = $attribute->newInstance();
+        /** @var ReturnAttr $attribute */
+        $parameter = $attribute->parameter();
     }
 
     try {
-        return $attribute->newInstance()->__invoke($var);
+        return $parameter->__invoke($var);
     } catch (Throwable $e) {
         $invoker = $trace[0];
         // @phpstan-ignore-next-line
         $fileLine = $invoker['file'] . ':' . $invoker['line'];
 
-        throw new $e(
-            $e->getMessage() . ' >>> ' . $fileLine
-        );
+        throw new $e($e->getMessage() . ' >>> ' . $fileLine);
     }
 }

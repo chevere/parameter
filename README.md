@@ -150,7 +150,7 @@ union(int(), null())($value);
 
 ### Attribute-based inline parameter validation
 
-Use attributes on the function/method parameters to define validation rules. Use `validate()` on the function body to trigger validation on all parameters. Optionally pass the parameter name for single argument validation.
+Use attributes on the function/method parameters to define validation rules. Use `valid()` on the function body to trigger validation on all parameters. Optionally pass the parameter name for single argument validation.
 
 * Validate an string enum for `Hugo`, `Paco`, `Luis`:
 * Validate a min float value of `1000`:
@@ -166,10 +166,10 @@ function myEnum(
     float $money
 ): void
 {
-    validate();
+    valid();
     // Or single...
-    validate('name');
-    validate('money');
+    valid('name');
+    valid('money');
 }
 $arg1 = 'Paco';
 $arg2 = 1000.50;
@@ -187,7 +187,7 @@ function myInt(
     int $id
 ): void
 {
-    validate();
+    valid();
 }
 $value = 50;
 myInt($value);
@@ -216,7 +216,7 @@ function myArray(
     array $spooky
 ): void
 {
-    validate();
+    valid();
 }
 $value = [
     'id' => 10,
@@ -243,20 +243,20 @@ function myGeneric(
     array $list
 ): void
 {
-    validate();
+    valid();
 }
 ```
 
 ### Attribute-based inline return validation
 
-Use attribute `ReturnAttr` on the function/method in combination with `returnAttr()` on the function body.
+Use attribute `ReturnAttr` on the function/method in combination with `validReturn($value)` on the function body. When omitting `ReturnAttr` the method `public static function return(): ParameterInterface` will be used to determine return validation rules (if present).
 
 * Validate int [min: 0, max: 5] return:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
-use function Chevere\Parameter\returnAttr;
+use function Chevere\Parameter\validReturn;
 
 #[ReturnAttr(
     new IntAttr(min: 0, max: 5)
@@ -265,7 +265,7 @@ public function myReturnInt(): int
 {
     $value = 1;
 
-    return returnAttr($value);
+    return validReturn($value);
 }
 ```
 
@@ -276,7 +276,7 @@ use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\StringAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
-use function Chevere\Parameter\returnAttr;
+use function Chevere\Parameter\validReturn;
 
 #[ReturnAttr(
     new ArrayAttr(
@@ -291,7 +291,7 @@ public function myReturnArray(): array
         'name' => 'Peoples Hernandez'
     ];
 
-    return returnAttr($value);
+    return validReturn($value);
 }
 ```
 
@@ -369,17 +369,20 @@ Following functions enables to quickly spawn any parameter type.
 
 Following attributes enables to define validation rules for parameters.
 
-| Type   | Attribute     |
-| ------ | ------------- |
-| string | `StringAttr`  |
-| string | `EnumAttr`    |
-| int    | `IntAttr`     |
-| float  | `FloatAttr`   |
-| bool   | `BoolAttr`    |
-| array  | `ArrayAttr`   |
-| array  | `GenericAttr` |
+| Type   | Attribute      |
+| ------ | -------------- |
+| string | `StringAttr`   |
+| string | `EnumAttr`     |
+| int    | `IntAttr`      |
+| float  | `FloatAttr`    |
+| bool   | `BoolAttr`     |
+| array  | `ArrayAttr`    |
+| array  | `GenericAttr`  |
+| *      | `CallableAttr` |
 
-For `return` there's the `ReturnAttr` attribute.
+The `CallableAttr` enables to forward parameter assignment to a callable returning `ParameterInterface`.
+
+For `return` there's the `ReturnAttr` attribute:
 
 ```php
 #[ReturnAttr(<TypeAttr>)]

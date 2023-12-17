@@ -40,7 +40,7 @@ final class UsesParameterAttributes
         #[IntAttr(min: 1, max: 100)]
         int $age = 12,
         #[ArrayAttr(
-            id: new IntAttr(min: 1),
+            id: new CallableAttr(__CLASS__ . '::callable'),
         )]
         array $cols = [],
         #[GenericAttr(
@@ -59,6 +59,11 @@ final class UsesParameterAttributes
         $id = arrayArguments('cols')->required('id')->int();
         $tags = genericAttr('tags')($tags);
         validReturn($id);
+    }
+
+    public static function callable(): ParameterInterface
+    {
+        return int(min: 1);
     }
 
     public static function return(): ParameterInterface
