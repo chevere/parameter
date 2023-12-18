@@ -18,6 +18,7 @@ use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
+use Chevere\Parameter\Interfaces\MixedParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
@@ -46,6 +47,12 @@ function null(
     string $description = '',
 ): NullParameterInterface {
     return new NullParameter($description);
+}
+
+function mixed(
+    string $description = '',
+): MixedParameterInterface {
+    return new MixedParameter($description);
 }
 
 function object(

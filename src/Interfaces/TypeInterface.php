@@ -17,6 +17,7 @@ use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\BoolParameter;
 use Chevere\Parameter\FloatParameter;
 use Chevere\Parameter\IntParameter;
+use Chevere\Parameter\NullParameter;
 use Chevere\Parameter\ObjectParameter;
 use Chevere\Parameter\StringParameter;
 
@@ -45,6 +46,8 @@ interface TypeInterface
 
     public const NULL = 'null';
 
+    public const MIXED = 'mixed';
+
     public const UNION = 'union';
 
     public const GENERIC = 'generic';
@@ -65,6 +68,7 @@ interface TypeInterface
         self::INT => 'is_int',
         self::ITERABLE => 'is_iterable',
         self::NULL => 'is_null',
+        self::MIXED => 'is_mixed',
         self::OBJECT => 'is_object',
         self::RESOURCE => 'is_resource',
         self::STRING => 'is_string',
@@ -85,6 +89,7 @@ interface TypeInterface
         self::INT,
         self::ITERABLE,
         self::NULL,
+        self::MIXED,
         self::OBJECT,
         self::RESOURCE,
         self::STRING,
@@ -102,6 +107,7 @@ interface TypeInterface
         'int' => IntParameter::class,
         'string' => StringParameter::class,
         'object' => ObjectParameter::class,
+        'null' => NullParameter::class,
     ];
 
     /**
