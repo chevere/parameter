@@ -361,6 +361,8 @@ Following functions enables to quickly spawn any parameter type.
 | array  | `arrayp()`   |
 | array  | `file()`     |
 | array  | `generic()`  |
+| null   | `null()`     |
+| mixed  | `mixed()`    |
 | *many* | `union()`    |
 
 ### Attributes
@@ -378,6 +380,7 @@ Following attributes enables to define validation rules for parameters.
 | bool   | `BoolAttr`     |
 | array  | `ArrayAttr`    |
 | array  | `GenericAttr`  |
+| null   | `NullAttr`     |
 | *      | `CallableAttr` |
 
 The `CallableAttr` enables to forward parameter assignment to a callable returning `ParameterInterface`.
