@@ -255,7 +255,7 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
         try {
             $push = reflectedParameterAttribute($parameter->getName(), $parameter);
         } catch (LogicException) {
-            $push = (new ReflectionParameterTyped($parameter));
+            $push = new ReflectionParameterTyped($parameter);
         }
         $callable = match ($parameter->isOptional()) {
             true => 'withOptional',
@@ -294,17 +294,13 @@ function reflectedParameterAttribute(
     ReflectionParameter $reflection,
 ): ParameterAttributeInterface {
     $attributes = $reflection->getAttributes(ParameterAttributeInterface::class, ReflectionAttribute::IS_INSTANCEOF);
-    foreach ($attributes as $attribute) {
-        $attribute = $attribute->newInstance();
-
-        try {
-            // @phpstan-ignore-next-line
-            return $attribute;
-        } catch (TypeError) { // @phpstan-ignore-line
-        }
+    if ($attributes === []) {
+        throw new LogicException(
+            (string) message('No parameter attribute for `%name%`', name: $parameter)
+        );
     }
+    /** @var ReflectionAttribute<ParameterAttributeInterface> $attribute */
+    $attribute = $attributes[0];
 
-    throw new LogicException(
-        (string) message('No parameter attribute for `%name%`', name: $parameter)
-    );
+    return $attribute->newInstance();
 }
