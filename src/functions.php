@@ -252,7 +252,11 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
 {
     $parameters = parameters();
     foreach ($reflection->getParameters() as $parameter) {
-        $reflectionParameter = new ReflectionParameterTyped($parameter);
+        try {
+            $push = reflectedParameterAttribute($parameter->getName(), $parameter);
+        } catch (LogicException) {
+            $push = (new ReflectionParameterTyped($parameter));
+        }
         $callable = match ($parameter->isOptional()) {
             true => 'withOptional',
             default => 'withRequired',
@@ -260,7 +264,7 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
 
         $parameters = $parameters->{$callable}(
             $parameter->getName(),
-            $reflectionParameter->parameter()
+            $push->parameter()
         );
     }
 
@@ -288,9 +292,8 @@ function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $reflec
 function reflectedParameterAttribute(
     string $parameter,
     ReflectionParameter $reflection,
-    ?string $type = null,
 ): ParameterAttributeInterface {
-    $attributes = $reflection->getAttributes($type);
+    $attributes = $reflection->getAttributes(ParameterAttributeInterface::class, ReflectionAttribute::IS_INSTANCEOF);
     foreach ($attributes as $attribute) {
         $attribute = $attribute->newInstance();
 
