@@ -132,11 +132,14 @@ function valid(?string $name = null): void
         $parameters->get($name)->__invoke($arguments[$name]);
     } catch (Throwable $e) {
         $invoker = $trace[0];
-        // @phpstan-ignore-next-line
-        $fileLine = $invoker['file'] . ':' . $invoker['line'];
 
         throw new $e(
-            $e->getMessage() . ' >>> ' . $fileLine
+            (string) message(
+                '%message% → %invokedAt%',
+                message: $e->getMessage(),
+                // @phpstan-ignore-next-line
+                invokedAt: $invoker['file'] . ':' . $invoker['line'],
+            )
         );
     }
 }
@@ -184,9 +187,14 @@ function validReturn(mixed $var): mixed
         return $parameter->__invoke($var);
     } catch (Throwable $e) {
         $invoker = $trace[0];
-        // @phpstan-ignore-next-line
-        $fileLine = $invoker['file'] . ':' . $invoker['line'];
 
-        throw new $e($e->getMessage() . ' >>> ' . $fileLine);
+        throw new $e(
+            (string) message(
+                '%message% → %invokedAt%',
+                message: $e->getMessage(),
+                // @phpstan-ignore-next-line
+                invokedAt: $invoker['file'] . ':' . $invoker['line'],
+            )
+        );
     }
 }
