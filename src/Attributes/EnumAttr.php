@@ -25,9 +25,10 @@ class EnumAttr implements ParameterAttributeInterface
     public readonly StringParameterInterface $parameter;
 
     public function __construct(
-        string ...$string,
+        string $string,
+        string ...$strings,
     ) {
-        $this->parameter = enum(...$string);
+        $this->parameter = enum($string, ...$strings);
     }
 
     public function __invoke(string $string): string

@@ -20,9 +20,9 @@
 
 ## Summary
 
-Parameter is a user-land typed layer abstraction around parameter-argument. Its goal is to provide *more* validation rules for PHP and is intended to be used in I/O validation systems.
+Parameter is a user-land validation library around parameter-argument, it extends built-in parameter validation rules using attributes backed on its own type system.
 
-Parameter enables to validate **any** type of arguments for **any** kind of data-structure.
+💡 Check [chevere/action](https://github.com/chevere/action) for a higher-level abstraction around this package.
 
 ## Quick start
 
@@ -32,17 +32,118 @@ Install with [Composer](https://packagist.org/packages/chevere/parameter).
 composer require chevere/parameter
 ```
 
+Check the [cookbook](#cookbook) and don't miss the [function](#function-reference) and [attribute](#attribute-reference) reference.
+
+## Function reference
+
+`namespace Chevere\Parameter`
+
+Following functions are available to create types and pseudo-types.
+
+| Type   | Function        | Arguments                                                                  |
+| ------ | --------------- | -------------------------------------------------------------------------- |
+| string | `string()`      | description, regex, default                                                |
+| string | `intString()`   | description, default                                                       |
+| string | `boolString()`  | description, default                                                       |
+| string | `enum()`        | `string,`                                                                  |
+| string | `date()`        | description, default                                                       |
+| string | `time()`        | description, default                                                       |
+| string | `datetime()`    | description, default                                                       |
+| int    | `int()`         | description, default, min, max, accept, reject                             |
+| int    | `boolInt()`     | description, default                                                       |
+| float  | `float()`       | description, default, min, max, accept, reject                             |
+| bool   | `bool()`        | description, default                                                       |
+| array  | `arrayp()`      | Named `ParameterInterface,`                                                |
+| array  | `arrayString()` | Named `StringParameterInterface,`                                          |
+| array  | `file()`        | error, name, type, tmp_name, size, contents                                |
+| array  | `generic()`     | `V: ParameterInterface` (value), `K: ParameterInterface`(key), description |
+| null   | `null()`        | description                                                                |
+| mixed  | `mixed()`       | description                                                                |
+| *many* | `union()`       | `ParameterInterface,`                                                      |
+
+### Function example usage
+
+* Inline validation:
+
+```php
+use function Chevere\Parameter\string;
+
+$string = string('/^oh/');
+$value = 'ohhhhh';
+$string($value);
+```
+
+* Array composition:
+
+```php
+use function Chevere\Parameter\arrayp;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\string;
+
+$array = arrayp(
+    id: int(min: 1),
+    name: string('/^R/'),
+);
+$value = ['id' => 1, 'name' => 'Rodolfo'];
+$array($value);
+
+```
+
+## Attribute reference
+
+Following attributes enables to define validation rules for **parameters**.
+
+`namespace Chevere\Parameter\Attributes`
+
+| Type   | Attribute      | Arguments                                                                  |
+| ------ | -------------- | -------------------------------------------------------------------------- |
+| string | `StringAttr`   | description, regex                                                         |
+| string | `EnumAttr`     | `string,`                                                                  |
+| int    | `IntAttr`      | description, min, max, accept, reject                                      |
+| float  | `FloatAttr`    | description, min, max, accept, reject                                      |
+| bool   | `BoolAttr`     | description                                                                |
+| array  | `ArrayAttr`    | `ParameterAttributeInterface,`                                             |
+| array  | `GenericAttr`  | `V: ParameterInterface` (value), `K: ParameterInterface`(key), description |
+| null   | `NullAttr`     | description                                                                |
+| *      | `CallableAttr` | callable                                                                   |
+
+💡 `CallableAttr` enables to forward parameter assignment to a callable returning `ParameterInterface` (bypass attribute limitation).
+
+For hinting **return** there's the `ReturnAttr` attribute, which takes any `ParameterAttributeInterface`:
+
+```php
+#[ReturnAttr(<ParameterAttributeInterface>)]
+```
+
+### Attribute example usage
+
+* Inline validation for parameters and return:
+
+```php
+use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\StringAttr;
+use function Chevere\Parameter\valid;
+use function Chevere\Parameter\validAttr;
+
+#[ReturnAttr(new StringAttr('/ok$/'))]
+function myFunction(
+    #[IntAttr(min: 1)]
+    int $value
+): string
+{
+    valid();
+
+    return validAttr('Estamos ok');
+}
+```
+
 ## Cookbook
 
 `namespace Chevere\Parameter`
 
-The beauty™ of this package is that all PHP types have been abstracted into its own "type system" and you can mix them to form any data-structure.
-
-The following examples should give you a glimpse.
-
 ### Inline validation
 
-It refers to classic on-site validation, it enables to go from this:
+Inline validation enables to go from this:
 
 ```php
 if($var > 10 || $var < 1) {
@@ -56,7 +157,7 @@ To this:
 int(min: 1, max: 10)($var);
 ```
 
-To use inline-validation invoke a parameter with the value you need to validate.
+To use inline-validation invoke a **parameter** with the argument you need to validate.
 
 * Validate string starting with "a":
 
@@ -342,53 +443,6 @@ $reflection = new ReflectionFunction($function);
 $return = reflectionToReturnParameter($reflection);
 $function(10); // nothing happens...
 $return($function(10)); // Validates!
-```
-
-## Function reference
-
-Following functions enables to quickly spawn any parameter type.
-
-| Type   | Function     |
-| ------ | ------------ |
-| string | `string()`   |
-| string | `enum()`     |
-| string | `date()`     |
-| string | `time()`     |
-| string | `datetime()` |
-| int    | `int()`      |
-| float  | `float()`    |
-| bool   | `bool()`     |
-| array  | `arrayp()`   |
-| array  | `file()`     |
-| array  | `generic()`  |
-| null   | `null()`     |
-| mixed  | `mixed()`    |
-| *many* | `union()`    |
-
-### Attributes
-
-`namespace Chevere\Parameter\Attributes`
-
-Following attributes enables to define validation rules for parameters.
-
-| Type   | Attribute      |
-| ------ | -------------- |
-| string | `StringAttr`   |
-| string | `EnumAttr`     |
-| int    | `IntAttr`      |
-| float  | `FloatAttr`    |
-| bool   | `BoolAttr`     |
-| array  | `ArrayAttr`    |
-| array  | `GenericAttr`  |
-| null   | `NullAttr`     |
-| *      | `CallableAttr` |
-
-The `CallableAttr` enables to forward parameter assignment to a callable returning `ParameterInterface`.
-
-For `return` there's the `ReturnAttr` attribute:
-
-```php
-#[ReturnAttr(<TypeAttr>)]
 ```
 
 ## Documentation
