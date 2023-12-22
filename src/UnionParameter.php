@@ -20,6 +20,9 @@ use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use Chevere\Parameter\Traits\ArrayParameterTrait;
 use Chevere\Parameter\Traits\ParameterAssertArrayTypeTrait;
 use Chevere\Parameter\Traits\ParameterTrait;
+use Throwable;
+use TypeError;
+use function Chevere\Message\message;
 
 final class UnionParameter implements UnionParameterInterface
 {
@@ -42,7 +45,28 @@ final class UnionParameter implements UnionParameterInterface
 
     public function __invoke(mixed $value): mixed
     {
-        return assertUnion($this, $value);
+        $types = [];
+        $errors = [];
+        foreach ($this->parameters() as $item) {
+            try {
+                assertNamedArgument('', $item, $value);
+
+                return $value;
+            } catch (Throwable $e) {
+                $types[] = $item::class;
+                $errors[] = $e->getMessage();
+            }
+        }
+        $types = implode('|', $types);
+        $errors = implode('; ', $errors);
+
+        throw new TypeError(
+            (string) message(
+                "Argument provided doesn't match the union type `%types%`. Error(s): %errors%",
+                types: $types,
+                errors: $errors,
+            )
+        );
     }
 
     public function withAdded(ParameterInterface ...$parameter): static

@@ -35,7 +35,6 @@ use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionParameter;
 use Throwable;
-use TypeError;
 use function Chevere\Message\message;
 
 function cast(mixed $argument): CastInterface
@@ -90,29 +89,6 @@ function arguments(
     $parameters = getParameters($parameters);
 
     return new Arguments($parameters, $arguments);
-}
-
-function assertUnion(
-    UnionParameterInterface $parameter,
-    mixed $argument,
-): mixed {
-    $types = [];
-    foreach ($parameter->parameters() as $item) {
-        try {
-            assertNamedArgument('', $item, $argument);
-
-            return $argument;
-        } catch (Throwable $e) {
-            $types[] = $item::class;
-        }
-    }
-
-    throw new TypeError(
-        (string) message(
-            "Argument provided doesn't match the union type `%type%`",
-            type: implode('|', $types)
-        )
-    );
 }
 
 function assertNamedArgument(

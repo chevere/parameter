@@ -24,7 +24,6 @@ use function Chevere\Parameter\arrayFrom;
 use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\assertNamedArgument;
-use function Chevere\Parameter\assertUnion;
 use function Chevere\Parameter\bool;
 use function Chevere\Parameter\float;
 use function Chevere\Parameter\generic;
@@ -37,7 +36,6 @@ use function Chevere\Parameter\parametersFrom;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
-use function Chevere\Parameter\union;
 
 final class FunctionsTest extends TestCase
 {
@@ -209,18 +207,6 @@ final class FunctionsTest extends TestCase
             description: 'foo'
         );
         $this->assertSame('foo', $parameter->description());
-    }
-
-    public function testFunctionUnionParameter(): void
-    {
-        $parameter = union(
-            int(),
-            string(),
-        );
-        assertUnion($parameter, 'foo');
-        assertUnion($parameter, 123);
-        $this->expectException(TypeError::class);
-        assertUnion($parameter, []);
     }
 
     public function testAssertArrayExtraArguments(): void
