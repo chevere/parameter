@@ -18,7 +18,7 @@ use ArrayAccess;
 /**
  * Describes the component in charge of defining a parameter of type array.
  */
-interface ArrayParameterInterface extends ArrayTypeParameterInterface
+interface ArrayParameterInterface extends ArrayTypeParameterInterface, ArrayParameterModifyInterface
 {
     /**
      * Asserts the given `$value` is valid.
@@ -51,34 +51,6 @@ interface ArrayParameterInterface extends ArrayTypeParameterInterface
      * an instance that contains the specified optional parameters.
      */
     public function withOptional(ParameterInterface ...$parameter): self;
-
-    /**
-     * Return an instance with the specified now optional parameter(s).
-     *
-     * If no parameter is specified, all parameters are made optional.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified now optional parameter(s).
-     */
-    public function withMakeOptional(string ...$name): self;
-
-    /**
-     * Return an instance with the specified now required parameter(s).
-     *
-     * If no parameter is specified, all parameters are made required.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified now required parameter(s).
-     */
-    public function withMakeRequired(string ...$name): self;
-
-    /**
-     * Return an instance with removed parameters.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified added parameters.
-     */
-    public function without(string ...$name): self;
 
     /**
      * Return an instance with the specified parameter(s) modified.

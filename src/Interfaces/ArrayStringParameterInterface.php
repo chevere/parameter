@@ -18,7 +18,7 @@ use ArrayAccess;
 /**
  * Describes the component in charge of defining a parameter of type array with string members.
  */
-interface ArrayStringParameterInterface extends ArrayTypeParameterInterface
+interface ArrayStringParameterInterface extends ArrayTypeParameterInterface, ArrayParameterModifyInterface
 {
     /**
      * Asserts the given `$value` is valid.
@@ -56,21 +56,5 @@ interface ArrayStringParameterInterface extends ArrayTypeParameterInterface
      */
     public function withOptional(StringParameterInterface ...$parameter): self;
 
-    /**
-     * Return an instance with removed parameters.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified added parameters.
-     */
-    public function without(string ...$name): self;
-
     public function assertCompatible(self $parameter): void;
-
-    /**
-     * Return an instance requiring at least `$count` of optional arguments.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified optional parameters.
-     */
-    public function withOptionalMinimum(int $count): self;
 }

@@ -16,7 +16,7 @@ namespace Chevere\Parameter\Traits;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
 
-trait ArrayTypeParameterTrait
+trait ArrayParameterModifyTrait
 {
     private ParametersInterface $parameters;
 

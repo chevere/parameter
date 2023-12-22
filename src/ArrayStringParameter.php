@@ -15,15 +15,15 @@ namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\ArrayStringParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
+use Chevere\Parameter\Traits\ArrayParameterModifyTrait;
 use Chevere\Parameter\Traits\ArrayParameterTrait;
-use Chevere\Parameter\Traits\ArrayTypeParameterTrait;
 use Chevere\Parameter\Traits\ParameterAssertArrayTypeTrait;
 use Chevere\Parameter\Traits\ParameterTrait;
 
 final class ArrayStringParameter implements ArrayStringParameterInterface
 {
     use ArrayParameterTrait;
-    use ArrayTypeParameterTrait;
+    use ArrayParameterModifyTrait;
     use ParameterAssertArrayTypeTrait;
     use ParameterTrait;
 
