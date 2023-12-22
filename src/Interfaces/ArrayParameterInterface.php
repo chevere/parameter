@@ -61,12 +61,4 @@ interface ArrayParameterInterface extends ArrayTypeParameterInterface, ArrayPara
     public function withModify(ParameterInterface ...$parameter): self;
 
     public function assertCompatible(self $parameter): void;
-
-    /**
-     * Return an instance requiring at least `$count` of optional arguments.
-     *
-     * This method MUST retain the state of the current instance, and return
-     * an instance that contains the specified optional parameters.
-     */
-    public function withOptionalMinimum(int $count): self;
 }
