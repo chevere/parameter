@@ -45,26 +45,23 @@ final class UnionParameter implements UnionParameterInterface
 
     public function __invoke(mixed $value): mixed
     {
-        $types = [];
-        $errors = [];
-        foreach ($this->parameters() as $item) {
+        $messages = [];
+        foreach ($this->parameters() as $name => $parameter) {
             try {
-                assertNamedArgument('', $item, $value);
-
-                return $value;
+                return $parameter->__invoke($value);
             } catch (Throwable $e) {
-                $types[] = $item::class;
-                $errors[] = $e->getMessage();
+                $type = $parameter::class;
+                $messages[] = <<<PLAIN
+                Parameter `{$name}` <{$type}>: {$e->getMessage()}
+                PLAIN;
             }
         }
-        $types = implode('|', $types);
-        $errors = implode('; ', $errors);
+        $message = implode(';' . PHP_EOL, $messages);
 
         throw new TypeError(
             (string) message(
-                "Argument provided doesn't match the union type `%types%`. Error(s): %errors%",
-                types: $types,
-                errors: $errors,
+                "Argument provided doesn't match union parameter. Error(s): %message%",
+                message: $message,
             )
         );
     }
