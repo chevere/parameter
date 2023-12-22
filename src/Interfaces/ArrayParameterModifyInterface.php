@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Interfaces;
 
 /**
- * Describes the component in charge of defining a array modifications.
+ * Describes the component in charge of defining array modifications.
  */
 interface ArrayParameterModifyInterface
 {
@@ -26,7 +26,7 @@ interface ArrayParameterModifyInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified now optional parameter(s).
      */
-    public function withMakeOptional(string ...$name): self;
+    public function withMakeOptional(string ...$name): static;
 
     /**
      * Return an instance with the specified now required parameter(s).
@@ -36,7 +36,7 @@ interface ArrayParameterModifyInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified now required parameter(s).
      */
-    public function withMakeRequired(string ...$name): self;
+    public function withMakeRequired(string ...$name): static;
 
     /**
      * Return an instance with removed parameters.
@@ -44,7 +44,7 @@ interface ArrayParameterModifyInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified added parameters.
      */
-    public function without(string ...$name): self;
+    public function without(string ...$name): static;
 
     /**
      * Return an instance requiring at least `$count` of optional arguments.
@@ -52,5 +52,5 @@ interface ArrayParameterModifyInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified optional parameters.
      */
-    public function withOptionalMinimum(int $count): self;
+    public function withOptionalMinimum(int $count): static;
 }
