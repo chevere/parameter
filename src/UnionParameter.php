@@ -60,7 +60,7 @@ final class UnionParameter implements UnionParameterInterface
 
         throw new TypeError(
             (string) message(
-                "Argument provided doesn't match union parameter. Error(s): %message%",
+                "Argument provided doesn't match union: %message%",
                 message: $message,
             )
         );
