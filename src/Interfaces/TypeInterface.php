@@ -17,6 +17,7 @@ use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\BoolParameter;
 use Chevere\Parameter\FloatParameter;
 use Chevere\Parameter\IntParameter;
+use Chevere\Parameter\MixedParameter;
 use Chevere\Parameter\NullParameter;
 use Chevere\Parameter\ObjectParameter;
 use Chevere\Parameter\StringParameter;
@@ -108,6 +109,7 @@ interface TypeInterface
         'string' => StringParameter::class,
         'object' => ObjectParameter::class,
         'null' => NullParameter::class,
+        'mixed' => MixedParameter::class,
     ];
 
     /**
