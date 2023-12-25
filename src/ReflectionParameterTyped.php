@@ -21,12 +21,11 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use Throwable;
-use TypeError;
 use function Chevere\Message\message;
 
 final class ReflectionParameterTyped implements ReflectionParameterTypedInterface
 {
-    private ReflectionNamedType $type;
+    private ?ReflectionNamedType $type;
 
     private ParameterInterface $parameter;
 
@@ -34,7 +33,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         private ReflectionParameter $reflection
     ) {
         $this->type = $this->getType();
-        $parameter = toParameter($this->type->getName());
+        $parameter = toParameter($this->type?->getName() ?? 'mixed');
 
         try {
             $attribute = reflectedParameterAttribute('parameter', $reflection);
@@ -58,22 +57,17 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         return $this->parameter;
     }
 
-    private function getType(): ReflectionNamedType
+    private function getType(): ?ReflectionNamedType
     {
-        $reflectionType = $this->reflection->getType();
-        if ($reflectionType === null) {
-            throw new TypeError(
-                (string) message(
-                    'Missing type declaration for parameter `%parameter%`',
-                    parameter: '$' . $this->reflection->getName()
-                )
-            );
+        $reflection = $this->reflection->getType();
+        if ($reflection === null) {
+            return null;
         }
-        if ($reflectionType instanceof ReflectionNamedType) {
-            return $reflectionType;
+        if ($reflection instanceof ReflectionNamedType) {
+            return $reflection;
         }
         $name = '$' . $this->reflection->getName();
-        $type = $this->getReflectionType($reflectionType);
+        $type = $this->getReflectionType($reflection);
 
         throw new InvalidArgumentException(
             (string) message(
