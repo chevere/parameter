@@ -20,7 +20,7 @@
 
 ## Summary
 
-Parameter is a user-land validation library around parameter-argument, it extends built-in parameter validation rules using attributes backed on its own type system.
+Parameter is a user-land validation library around parameter-argument, it provides parameter validation rules using attributes backed on its own type system.
 
 💡 Check [chevere/action](https://github.com/chevere/action) for a higher-level abstraction around this package.
 
@@ -32,7 +32,7 @@ Install with [Composer](https://packagist.org/packages/chevere/parameter).
 composer require chevere/parameter
 ```
 
-Check the [cookbook](#cookbook) and don't miss the [function](#function-reference) and [attribute](#attribute-reference) reference.
+Check the [cookbook](#cookbook), the [function reference](#function-reference) and [attribute reference](#attribute-reference).
 
 ## Function reference
 
