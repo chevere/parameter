@@ -280,3 +280,14 @@ function reflectedParameterAttribute(
 
     return $attribute->newInstance();
 }
+
+function validated(
+    ReflectionFunction|ReflectionMethod $reflection,
+    mixed ...$args
+): mixed {
+    $parameters = reflectionToParameters($reflection);
+    $return = reflectionToReturnParameter($reflection);
+    $result = $parameters(...$args);
+
+    return $return->__invoke($result);
+}
