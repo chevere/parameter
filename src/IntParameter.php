@@ -47,8 +47,9 @@ final class IntParameter implements IntParameterInterface
 
     public function withDefault(int $value): IntParameterInterface
     {
+        $this($value);
         $new = clone $this;
-        $new->setDefault($value);
+        $new->default = $value;
 
         return $new;
     }

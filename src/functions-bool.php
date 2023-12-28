@@ -15,7 +15,7 @@ namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\BoolParameterInterface;
 use Chevere\Parameter\Interfaces\IntParameterInterface;
-use Chevere\Parameter\Interfaces\RegexParameterInterface;
+use Chevere\Parameter\Interfaces\StringParameterInterface;
 
 function bool(
     string $description = '',
@@ -43,9 +43,9 @@ function boolInt(
 function boolString(
     string $description = '',
     ?string $default = null,
-): RegexParameterInterface {
-    return regex(
-        pattern: '/^[01]$/',
+): StringParameterInterface {
+    return string(
+        regex: '/^[01]$/',
         description: $description,
         default: $default
     );

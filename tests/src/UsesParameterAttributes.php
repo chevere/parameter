@@ -17,8 +17,8 @@ use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\CallableAttr;
 use Chevere\Parameter\Attributes\GenericAttr;
 use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\RegexAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Attributes\StringAttr;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
@@ -35,7 +35,7 @@ final class UsesParameterAttributes
         new CallableAttr(__CLASS__ . '::return')
     )]
     public function __construct(
-        #[RegexAttr('/^[A-Za-z]+$/')]
+        #[StringAttr('/^[A-Za-z]+$/')]
         string $name = 'Test',
         #[IntAttr(min: 1, max: 100)]
         int $age = 12,
@@ -44,7 +44,7 @@ final class UsesParameterAttributes
         )]
         array $cols = [],
         #[GenericAttr(
-            new RegexAttr('/^[A-Za-z]+$/'),
+            new StringAttr('/^[A-Za-z]+$/'),
         )]
         iterable $tags = [],
     ) {

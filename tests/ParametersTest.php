@@ -30,7 +30,6 @@ use OutOfBoundsException;
 use OverflowException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\int;
-use function Chevere\Parameter\regex;
 use function Chevere\Parameter\string;
 
 final class ParametersTest extends TestCase
@@ -78,7 +77,7 @@ final class ParametersTest extends TestCase
 
     public function testConstructPositional(): void
     {
-        $foo = regex();
+        $foo = string();
         $bar = int();
         $parameters = new Parameters($foo, $bar);
         $this->assertCount(2, $parameters);
@@ -135,12 +134,12 @@ final class ParametersTest extends TestCase
     public function testWithout(): void
     {
         $parameters = (new Parameters())
-            ->withRequired('a', regex())
-            ->withRequired('b', regex())
-            ->withRequired('c', regex())
-            ->withOptional('x', regex())
-            ->withOptional('y', regex())
-            ->withOptional('z', regex());
+            ->withRequired('a', string())
+            ->withRequired('b', string())
+            ->withRequired('c', string())
+            ->withOptional('x', string())
+            ->withOptional('y', string())
+            ->withOptional('z', string());
         $parametersWith = $parameters->without('a', 'y');
         $this->assertNotSame($parameters, $parametersWith);
         $this->assertCount(4, $parametersWith);
@@ -221,7 +220,7 @@ final class ParametersTest extends TestCase
     {
         $name = 'test';
         $parameter = new GenericParameter(
-            value: regex(),
+            value: string(),
             key: int(),
         );
         $parameters = new Parameters(...[
@@ -237,7 +236,7 @@ final class ParametersTest extends TestCase
 
     public function testWithOptionalMinimum(): void
     {
-        $parameters = (new Parameters())->withOptional('a', regex());
+        $parameters = (new Parameters())->withOptional('a', string());
         $parametersWith = $parameters->withOptionalMinimum(1);
         $this->assertNotSame($parameters, $parametersWith);
         $this->assertSame(1, $parametersWith->optionalMinimum());
@@ -252,14 +251,14 @@ final class ParametersTest extends TestCase
 
     public function testWithOptionalMinimumInvalidArgument(): void
     {
-        $parameters = (new Parameters())->withOptional('foo', regex());
+        $parameters = (new Parameters())->withOptional('foo', string());
         $this->expectException(InvalidArgumentException::class);
         $parameters->withOptionalMinimum(2);
     }
 
     public function testWithOptionalMinimumInvalidArgumentNumber(): void
     {
-        $parameters = (new Parameters())->withOptional('foo', regex());
+        $parameters = (new Parameters())->withOptional('foo', string());
         $this->expectException(InvalidArgumentException::class);
         $parameters->withOptionalMinimum(-1);
     }
@@ -267,8 +266,8 @@ final class ParametersTest extends TestCase
     public function testWithOptionalMinimumWithout(): void
     {
         $parameters = (new Parameters())
-            ->withOptional('foo', regex())
-            ->withOptional('bar', regex());
+            ->withOptional('foo', string())
+            ->withOptional('bar', string());
         $parametersWith = $parameters->withOptionalMinimum(1);
         $parametersWith = $parametersWith->without('foo');
         $parametersWith = $parametersWith->withOptionalMinimum(0);
@@ -278,7 +277,7 @@ final class ParametersTest extends TestCase
 
     public function testWithOptionalMinimumWithoutInvalidArgument(): void
     {
-        $parameters = (new Parameters())->withOptional('foo', regex());
+        $parameters = (new Parameters())->withOptional('foo', string());
         $parametersWith = $parameters->withOptionalMinimum(1);
         $this->expectException(InvalidArgumentException::class);
         $parametersWith->without('foo');
@@ -287,7 +286,7 @@ final class ParametersTest extends TestCase
     public function testWithMakeOptional(): void
     {
         $parameters = new Parameters(
-            foo: regex(),
+            foo: string(),
             bar: int()
         );
         $parametersWith = $parameters->withMakeOptional('foo');
@@ -304,7 +303,7 @@ final class ParametersTest extends TestCase
     public function testWithMakeRequired(): void
     {
         $parameters = (new Parameters())
-            ->withOptional('foo', regex())
+            ->withOptional('foo', string())
             ->withOptional('bar', int());
         $parametersWith = $parameters->withMakeRequired('bar');
         $this->assertNotSame($parameters, $parametersWith);

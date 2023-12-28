@@ -332,7 +332,7 @@ final class IntParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<STRING
-            Default value `0` can't be less than min value `1`
+            Argument value provided `0` is less than `1`
             STRING
         );
         $parameter->withDefault(0);
@@ -346,7 +346,7 @@ final class IntParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<STRING
-            Default value `2` can't be greater than max value `1`
+            Argument value provided `2` is greater than `1`
             STRING
         );
         $parameter->withDefault(2);
@@ -358,7 +358,7 @@ final class IntParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<STRING
-            Default value `5` must be in accept list `[1, 2, 3]`
+            Argument value provided `5` is not an accepted value in `[1,2,3]`
             STRING
         );
         $parameter->withDefault(5);
@@ -370,7 +370,7 @@ final class IntParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<STRING
-            Default value `1` must not be in reject list `[1, 2, 3]`
+            Argument value provided `1` is on rejected list `[1,2,3]`
             STRING
         );
         $parameter->withDefault(1);

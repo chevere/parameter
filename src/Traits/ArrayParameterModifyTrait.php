@@ -24,6 +24,8 @@ trait ArrayParameterModifyTrait
 
     public function withDefault(array $value): static
     {
+        // @phpstan-ignore-next-line
+        $this($value);
         $new = clone $this;
         $new->default = $value;
 

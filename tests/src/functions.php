@@ -17,8 +17,8 @@ use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\BoolAttr;
 use Chevere\Parameter\Attributes\GenericAttr;
 use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\RegexAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Attributes\StringAttr;
 use function Chevere\Parameter\Attributes\valid;
 
 #[ReturnAttr(
@@ -29,7 +29,7 @@ function myArray(
         id: new IntAttr(min: 1),
         role: new ArrayAttr(
             mask: new IntAttr(min: 64),
-            name: new RegexAttr(),
+            name: new StringAttr(),
             tenants: new GenericAttr(
                 new IntAttr(min: 1, max: 5)
             )

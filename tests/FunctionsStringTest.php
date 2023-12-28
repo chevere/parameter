@@ -21,14 +21,14 @@ use function Chevere\Parameter\date;
 use function Chevere\Parameter\datetime;
 use function Chevere\Parameter\enum;
 use function Chevere\Parameter\intString;
-use function Chevere\Parameter\regex;
+use function Chevere\Parameter\string;
 use function Chevere\Parameter\time;
 
 final class FunctionsStringTest extends TestCase
 {
     public function testString(): void
     {
-        $parameter = regex();
+        $parameter = string();
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
         $this->assertSame('', $parameter(''));
@@ -36,7 +36,7 @@ final class FunctionsStringTest extends TestCase
 
     public function testAssertString(): void
     {
-        $parameter = regex();
+        $parameter = string();
         $this->assertSame('test', $parameter('test'));
         $parameter('0');
     }

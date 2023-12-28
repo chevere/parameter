@@ -66,53 +66,6 @@ trait NumericParameterTrait
         }
     }
 
-    private function setDefault(int|float $value): void
-    {
-        if (isset($this->min) && $value < $this->min) {
-            throw new InvalidArgumentException(
-                (string) message(
-                    "Default value `%value%` can't be less than min value `%min%`",
-                    value: strval($value),
-                    min: strval($this->min),
-                )
-            );
-        }
-        if (isset($this->max) && $value > $this->max) {
-            throw new InvalidArgumentException(
-                (string) message(
-                    "Default value `%value%` can't be greater than max value `%max%`",
-                    value: strval($value),
-                    max: strval($this->max),
-                )
-            );
-        }
-        if ($this->accept !== [] && ! in_array($value, $this->accept, true)) {
-            $list = implode(', ', $this->accept);
-
-            throw new InvalidArgumentException(
-                (string) message(
-                    'Default value `%value%` must be in accept list `%accept%`',
-                    value: strval($value),
-                    accept: "[{$list}]",
-                )
-            );
-        }
-
-        if (in_array($value, $this->reject, true)) {
-            $list = implode(', ', $this->reject);
-
-            throw new InvalidArgumentException(
-                (string) message(
-                    'Default value `%value%` must not be in reject list `%reject%`',
-                    value: strval($value),
-                    reject: "[{$list}]",
-                )
-            );
-        }
-        // @phpstan-ignore-next-line
-        $this->default = $value;
-    }
-
     private function setMin(int|float $value, int|float $max): void
     {
         $this->assertAcceptEmpty(

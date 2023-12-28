@@ -16,13 +16,13 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use Chevere\Parameter\Interfaces\RegexParameterInterface;
+use Chevere\Parameter\Interfaces\StringParameterInterface;
 use function Chevere\Parameter\enum;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class EnumAttr implements ParameterAttributeInterface
 {
-    public readonly RegexParameterInterface $parameter;
+    public readonly StringParameterInterface $parameter;
 
     public function __construct(
         string $string,

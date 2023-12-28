@@ -65,14 +65,7 @@ final class ObjectParameter implements ObjectParameterInterface
 
     public function withDefault(object $value): ObjectParameterInterface
     {
-        if (! $this->type->validate($value)) {
-            throw new TypeError(
-                (string) message(
-                    'Default value must be of type `%type%`',
-                    type: $this->className
-                )
-            );
-        }
+        $this($value);
         $new = clone $this;
         $new->default = $value;
 

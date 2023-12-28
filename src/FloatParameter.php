@@ -42,8 +42,9 @@ final class FloatParameter implements FloatParameterInterface
 
     public function withDefault(float $value): FloatParameterInterface
     {
+        $this($value);
         $new = clone $this;
-        $new->setDefault($value);
+        $new->default = $value;
 
         return $new;
     }

@@ -33,7 +33,7 @@ use function Chevere\Parameter\null;
 use function Chevere\Parameter\object;
 use function Chevere\Parameter\parameters;
 use function Chevere\Parameter\parametersFrom;
-use function Chevere\Parameter\regex;
+use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
 
@@ -44,7 +44,7 @@ final class FunctionsTest extends TestCase
         $parameters = parameters();
         $this->assertCount(0, $parameters);
         $parameters = parameters(
-            foo: regex()
+            foo: string()
         );
         $this->assertCount(1, $parameters);
         $this->assertTrue($parameters->requiredKeys()->contains('foo'));
@@ -53,7 +53,7 @@ final class FunctionsTest extends TestCase
     public function testArguments(): void
     {
         $parameters = parameters(
-            foo: regex()
+            foo: string()
         );
         $args = [
             'foo' => 'bar',
@@ -127,10 +127,10 @@ final class FunctionsTest extends TestCase
         $description = 'some description';
         $default = 'abcd';
         $regex = '/^[a-z]+$/';
-        $parameter = regex(
+        $parameter = string(
             description: $description,
             default: $default,
-            pattern: $regex,
+            regex: $regex,
         );
         $parameter($default);
         $this->assertSame($description, $parameter->description());
@@ -143,7 +143,7 @@ final class FunctionsTest extends TestCase
     public function testFunctionArrayParameter(): void
     {
         $parameter = arrayp(
-            one: regex(),
+            one: string(),
             two: int(default: 222)
         );
         $array = [
@@ -162,7 +162,7 @@ final class FunctionsTest extends TestCase
     public function testFunctionArrayParameterNested(): void
     {
         $parameter = arrayp(
-            one: regex(),
+            one: string(),
             two: int(default: 222),
             nest: arrayp(
                 nestOne: int(default: 1),
@@ -192,18 +192,18 @@ final class FunctionsTest extends TestCase
     {
         assertNamedArgument('test', int(), 123);
         $this->expectException(InvalidArgumentException::class);
-        assertNamedArgument('fail', regex(), 13.13);
+        assertNamedArgument('fail', string(), 13.13);
     }
 
     public function testFunctionGenericParameter(): void
     {
         $parameter = generic(
-            V: regex()
+            V: string()
         );
         $this->assertSame('', $parameter->description());
         $parameter = generic(
-            K: regex(),
-            V: regex(),
+            K: string(),
+            V: string(),
             description: 'foo'
         );
         $this->assertSame('foo', $parameter->description());
@@ -212,7 +212,7 @@ final class FunctionsTest extends TestCase
     public function testAssertArrayExtraArguments(): void
     {
         $parameter = arrayp(
-            OK: regex(),
+            OK: string(),
         );
         $this->expectException(ArgumentCountError::class);
         assertArray($parameter, [
@@ -224,7 +224,7 @@ final class FunctionsTest extends TestCase
     public function testAssertArrayConflictType(): void
     {
         $parameter = arrayp(
-            OK: regex(),
+            OK: string(),
         );
         $this->expectException(InvalidArgumentException::class);
         assertArray($parameter, [
@@ -235,7 +235,7 @@ final class FunctionsTest extends TestCase
     public function testAssertArrayConflictNull(): void
     {
         $parameter = arrayp(
-            OK: regex(),
+            OK: string(),
         );
         $this->expectException(InvalidArgumentException::class);
         assertArray($parameter, [
@@ -245,7 +245,7 @@ final class FunctionsTest extends TestCase
 
     public function testWithParametersFrom(): void
     {
-        $foo = regex(default: 'foo');
+        $foo = string(default: 'foo');
         $bar = int(default: 1);
         $parameters = parameters()
             ->withRequired('foo', $foo)
@@ -269,14 +269,14 @@ final class FunctionsTest extends TestCase
 
     public function testTakeKeys(): void
     {
-        $parameters = parameters(foo: regex())
+        $parameters = parameters(foo: string())
             ->withOptional('bar', int());
         $this->assertSame(['foo', 'bar'], takeKeys($parameters));
     }
 
     public function testTakeFrom(): void
     {
-        $foo = regex(default: 'foo');
+        $foo = string(default: 'foo');
         $bar = int(default: 1);
         $parameters = parameters()
             ->withRequired('foo', $foo)
@@ -323,7 +323,7 @@ final class FunctionsTest extends TestCase
     public function testArrayFrom(): void
     {
         $foo = int();
-        $bar = regex();
+        $bar = string();
         $baz = float();
         $parameter = arrayp(
             foo: $foo,

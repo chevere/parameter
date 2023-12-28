@@ -26,7 +26,6 @@ use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\float;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\null;
-use function Chevere\Parameter\regex;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\union;
 
@@ -43,7 +42,16 @@ final class ArrayParameterTest extends TestCase
             'default' => null,
             'parameters' => [],
         ], $parameter->schema());
-        $default = ['test', 1];
+    }
+
+    public function testWithDefault(): void
+    {
+        $parameter = new ArrayParameter();
+        $int = int(min: 1);
+        $parameter = $parameter->withRequired(test: $int);
+        $default = [
+            'test' => 1,
+        ];
         $withDefault = $parameter->withDefault($default);
         (new ParameterHelper())->testWithParameterDefault(
             primitive: 'array',
@@ -55,7 +63,11 @@ final class ArrayParameterTest extends TestCase
             'type' => 'array#map',
             'description' => '',
             'default' => $default,
-            'parameters' => [],
+            'parameters' => [
+                'test' => [
+                    'required' => true,
+                ] + $int->schema(),
+            ],
         ], $withDefault->schema());
     }
 
@@ -156,7 +168,7 @@ final class ArrayParameterTest extends TestCase
 
     public function testWithOut(): void
     {
-        $string = regex();
+        $string = string();
         $int = int();
         $parameter = (new ArrayParameter())->withRequired(
             one: $string,
@@ -169,12 +181,12 @@ final class ArrayParameterTest extends TestCase
 
     public function testAssertCompatible(): void
     {
-        $string = regex();
+        $string = string();
         $int = int();
         $parameter = (new ArrayParameter())->withRequired(
             one: $string,
         );
-        $altString = regex();
+        $altString = string();
         $compatible = (new ArrayParameter())->withRequired(
             one: $altString,
         );
@@ -196,7 +208,7 @@ final class ArrayParameterTest extends TestCase
 
     public function testAssertCompatibleMissingKey(): void
     {
-        $string = regex();
+        $string = string();
         $parameter = (new ArrayParameter())->withRequired(
             one: $string,
         );
@@ -209,7 +221,7 @@ final class ArrayParameterTest extends TestCase
 
     public function testIsList(): void
     {
-        $string = regex();
+        $string = string();
         $int = int();
         $parameter = (new ArrayParameter())->withRequired(
             a: $string,
@@ -228,8 +240,8 @@ final class ArrayParameterTest extends TestCase
     {
         $array = (new ArrayParameter())
             ->withOptional(
-                foo: regex(),
-                bar: regex(),
+                foo: string(),
+                bar: string(),
             );
         $arrayWith = $array->withOptionalMinimum(1);
         $this->assertNotSame($array, $arrayWith);
@@ -240,8 +252,8 @@ final class ArrayParameterTest extends TestCase
     {
         $array = (new ArrayParameter())
             ->withRequired(
-                foo: regex(),
-                bar: regex(),
+                foo: string(),
+                bar: string(),
             );
         $arrayWith = $array->withMakeOptional('foo');
         $this->assertNotSame($array, $arrayWith);
@@ -253,8 +265,8 @@ final class ArrayParameterTest extends TestCase
     {
         $array = (new ArrayParameter())
             ->withOptional(
-                foo: regex(),
-                bar: regex(),
+                foo: string(),
+                bar: string(),
             );
         $arrayWith = $array->withMakeRequired('bar');
         $this->assertNotSame($array, $arrayWith);
@@ -266,8 +278,8 @@ final class ArrayParameterTest extends TestCase
     {
         $array = (new ArrayParameter())
             ->withRequired(
-                foo: regex(),
-                bar: regex(),
+                foo: string(),
+                bar: string(),
             );
         $arrayWith = $array->withMakeOptional();
         $this->assertNotSame($array, $arrayWith);
@@ -279,8 +291,8 @@ final class ArrayParameterTest extends TestCase
     {
         $array = (new ArrayParameter())
             ->withOptional(
-                foo: regex(),
-                bar: regex(),
+                foo: string(),
+                bar: string(),
             );
         $arrayWith = $array->withMakeRequired();
         $this->assertNotSame($array, $arrayWith);
@@ -294,10 +306,10 @@ final class ArrayParameterTest extends TestCase
         $int = int();
         $array = (new ArrayParameter())
             ->withRequired(
-                foo: regex(),
+                foo: string(),
             )
             ->withOptional(
-                bar: regex(),
+                bar: string(),
             );
         $arrayWith = $array->withModify(
             foo: $float,
@@ -329,7 +341,7 @@ final class ArrayParameterTest extends TestCase
             'id' => 10,
         ];
         $parameter = arrayp(
-            name: regex(),
+            name: string(),
             id: int()
         );
         $parameter($value);

@@ -21,7 +21,6 @@ use Chevere\Parameter\Interfaces\IntParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterCastInterface;
-use Chevere\Parameter\Interfaces\RegexParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
 
@@ -84,12 +83,6 @@ final class ParameterCast implements ParameterCastInterface
     public function string(): StringParameterInterface
     {
         /** @var StringParameterInterface */
-        return $this->argument;
-    }
-
-    public function regex(): RegexParameterInterface
-    {
-        /** @var RegexParameterInterface */
         return $this->argument;
     }
 }
