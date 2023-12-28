@@ -31,13 +31,13 @@ use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\bool;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\parameters;
-use function Chevere\Parameter\string;
+use function Chevere\Parameter\regex;
 
 final class ArgumentsTest extends TestCase
 {
     public function testInvalidArgument(): void
     {
-        $parameters = parameters(test: string());
+        $parameters = parameters(test: regex());
         $this->assertTrue($parameters->requiredKeys()->contains('test'));
         $this->assertFalse($parameters->optionalKeys()->contains('test'));
         $this->expectException(InvalidArgumentException::class);
@@ -54,7 +54,7 @@ final class ArgumentsTest extends TestCase
         ];
         $parameters = parameters(
             id: new IntParameter(),
-            name: string()
+            name: regex()
         );
         $arguments = new Arguments($parameters, $args);
         $this->assertSame($parameters, $arguments->parameters());
@@ -71,14 +71,14 @@ final class ArgumentsTest extends TestCase
 
     public function testMissingArgument(): void
     {
-        $parameters = parameters(test: string());
+        $parameters = parameters(test: regex());
         $this->expectException(ArgumentCountError::class);
         new Arguments($parameters, []);
     }
 
     public function testExtraArguments(): void
     {
-        $parameters = parameters(test: string());
+        $parameters = parameters(test: regex());
         $this->expectException(ArgumentCountError::class);
         new Arguments($parameters, [
             'test' => '123',
@@ -88,7 +88,7 @@ final class ArgumentsTest extends TestCase
 
     public function testInvalidArgumentType(): void
     {
-        $parameters = parameters(test: string());
+        $parameters = parameters(test: regex());
         $this->expectException(InvalidArgumentException::class);
         new Arguments($parameters, [
             'test' => 123,
@@ -98,7 +98,7 @@ final class ArgumentsTest extends TestCase
     public function testInvalidRegexArgument(): void
     {
         $parameters = parameters(
-            id: string()
+            id: regex()
                 ->withRegex(new Regex('/^[0-9]+$/')),
         );
         $this->expectException(InvalidArgumentException::class);
@@ -110,7 +110,7 @@ final class ArgumentsTest extends TestCase
     public function testWithMissingArgument(): void
     {
         $name = 'test';
-        $parameters = parameters(test: string());
+        $parameters = parameters(test: regex());
         $arguments = new Arguments($parameters, [
             $name => '123',
         ]);
@@ -125,7 +125,7 @@ final class ArgumentsTest extends TestCase
         $valueAlt = '321';
         $arguments = new Arguments(
             parameters(
-                id: string()
+                id: regex()
                     ->withRegex(new Regex('/^[0-9]+$/'))
             ),
             [
@@ -148,7 +148,7 @@ final class ArgumentsTest extends TestCase
         $valueAlt = '321';
         $arguments = new Arguments(
             parameters(
-                id: string()
+                id: regex()
             ),
             [
                 $name => $value,
@@ -162,7 +162,7 @@ final class ArgumentsTest extends TestCase
     {
         $arguments = new Arguments(
             parameters(
-                id: string()
+                id: regex()
             ),
             [
                 'id' => '123',
@@ -175,7 +175,7 @@ final class ArgumentsTest extends TestCase
     public function testArgumentsRequiredException(): void
     {
         $parameters = parameters(
-            id: string()
+            id: regex()
                 ->withRegex(new Regex('/^[0-9]+$/'))
         );
         $this->expectException(ArgumentCountError::class);
@@ -184,10 +184,10 @@ final class ArgumentsTest extends TestCase
 
     public function testParameterOptional(): void
     {
-        $parameters = parameters(id: string())
-            ->withOptional('opt', string())
-            ->withOptional('alt', string())
-            ->withRequired('name', string());
+        $parameters = parameters(id: regex())
+            ->withOptional('opt', regex())
+            ->withOptional('alt', regex())
+            ->withRequired('name', regex());
         $arguments = new Arguments(
             $parameters,
             [
@@ -225,7 +225,7 @@ final class ArgumentsTest extends TestCase
         $parameters = parameters()
             ->withOptional(
                 $optional,
-                string()
+                regex()
                     ->withRegex(new Regex('/^a|b$/'))
                     ->withDefault($default),
             );
@@ -252,7 +252,7 @@ final class ArgumentsTest extends TestCase
         $parameters = parameters()
             ->withOptional(
                 $optionalString,
-                string()
+                regex()
                     ->withRegex(new Regex('/^a|b$/'))
                     ->withDefault($optionalStringDefault),
             );
@@ -275,10 +275,10 @@ final class ArgumentsTest extends TestCase
     public function testToArrayFill(): void
     {
         $parameters = parameters(
-            foo: string(default: 'bar')
+            foo: regex(default: 'bar')
         )
-            ->withOptional('name', string())
-            ->withOptional('id', string());
+            ->withOptional('name', regex())
+            ->withOptional('id', regex());
         $arguments = new Arguments($parameters, []);
         $this->assertFalse($arguments->has('name', 'id'));
         $this->assertEquals([
@@ -297,8 +297,8 @@ final class ArgumentsTest extends TestCase
     public function testSkipOptional(): void
     {
         $parameters = parameters()
-            ->withOptional('name', string())
-            ->withOptional('id', string());
+            ->withOptional('name', regex())
+            ->withOptional('id', regex());
         $expected = [
             'name' => 'foo',
             'id' => 'bar',
@@ -364,7 +364,7 @@ final class ArgumentsTest extends TestCase
             'bool' => false,
         ];
         $parameter = arrayp(
-            string: string(),
+            string: regex(),
             int: int(),
             bool: bool()
         );
@@ -387,7 +387,7 @@ final class ArgumentsTest extends TestCase
             ],
             [
                 $parameter->withRequired(
-                    dynamic: string()
+                    dynamic: regex()
                 ),
                 new ArrayAccessMixed(...$named),
                 $named + [
@@ -399,8 +399,8 @@ final class ArgumentsTest extends TestCase
 
     public function testMinimumOptional(): void
     {
-        $parameters = (new Parameters(foo: string()))
-            ->withOptional('bar', string());
+        $parameters = (new Parameters(foo: regex()))
+            ->withOptional('bar', regex());
         new Arguments($parameters, [
             'foo' => '',
         ]);
@@ -417,7 +417,7 @@ final class ArgumentsTest extends TestCase
 
     public function testOptionalNullPass(): void
     {
-        $parameters = (new Parameters())->withOptional('foo', string());
+        $parameters = (new Parameters())->withOptional('foo', regex());
         $arguments = [
             'foo' => 'string',
         ];

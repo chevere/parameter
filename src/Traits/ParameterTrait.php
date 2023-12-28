@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Traits;
 
 use Chevere\Parameter\Interfaces\TypeInterface;
+use Chevere\Parameter\Type;
 
 trait ParameterTrait
 {
@@ -36,7 +37,7 @@ trait ParameterTrait
      */
     final public function type(): TypeInterface
     {
-        return $this->type ??= $this->getType();
+        return $this->type ??= new Type($this->typeName());
     }
 
     final public function description(): string
@@ -52,5 +53,5 @@ trait ParameterTrait
         return $new;
     }
 
-    abstract private function getType(): TypeInterface;
+    abstract private function typeName(): string;
 }

@@ -88,8 +88,8 @@ final class UnionParameter implements UnionParameterInterface
         return $this->type->primitive();
     }
 
-    private function getType(): TypeInterface
+    private function typeName(): string
     {
-        return new Type(Type::UNION);
+        return TypeInterface::UNION;
     }
 }

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
-use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Traits\ParameterTrait;
 use Chevere\Parameter\Traits\SchemaTrait;
 use InvalidArgumentException;
@@ -111,8 +110,8 @@ final class ObjectParameter implements ObjectParameterInterface
         );
     }
 
-    private function getType(): TypeInterface
+    private function typeName(): string
     {
-        return new Type($this->className);
+        return $this->className;
     }
 }

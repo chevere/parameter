@@ -16,20 +16,20 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use Chevere\Parameter\Interfaces\StringParameterInterface;
-use function Chevere\Parameter\string;
+use Chevere\Parameter\Interfaces\RegexParameterInterface;
+use function Chevere\Parameter\regex;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class StringAttr implements ParameterAttributeInterface
+class RegexAttr implements ParameterAttributeInterface
 {
-    public readonly StringParameterInterface $parameter;
+    public readonly RegexParameterInterface $parameter;
 
     public function __construct(
-        string $regex = '',
+        string $pattern = '',
         string $description = '',
     ) {
-        $this->parameter = string(
-            regex: $regex,
+        $this->parameter = regex(
+            pattern: $pattern,
             description: $description,
         );
     }

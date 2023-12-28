@@ -50,8 +50,8 @@ final class MixedParameter implements MixedParameterInterface
         return $this->default;
     }
 
-    private function getType(): TypeInterface
+    private function typeName(): string
     {
-        return new Type(Type::MIXED);
+        return TypeInterface::MIXED;
     }
 }

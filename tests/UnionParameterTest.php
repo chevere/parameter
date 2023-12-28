@@ -21,7 +21,7 @@ use TypeError;
 use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\parameters;
-use function Chevere\Parameter\string;
+use function Chevere\Parameter\regex;
 use function Chevere\Parameter\union;
 
 final class UnionParameterTest extends TestCase
@@ -44,7 +44,7 @@ final class UnionParameterTest extends TestCase
         $parameter = new UnionParameter(
             parameters()
         );
-        $one = string();
+        $one = regex();
         $two = int();
         $with = $parameter->withAdded($one, $two);
         $this->assertNotSame($parameter, $with);
@@ -56,10 +56,10 @@ final class UnionParameterTest extends TestCase
     public function testAssertCompatible(): void
     {
         $parameters = parameters(
-            string(),
+            regex(),
         );
         $parametersAlt = parameters(
-            string(description: 'one'),
+            regex(description: 'one'),
         );
         $parameter = new UnionParameter($parameters);
         $compatible = new UnionParameter($parametersAlt);
@@ -70,7 +70,7 @@ final class UnionParameterTest extends TestCase
     public function testAssertNotCompatible(): void
     {
         $parameters = parameters(
-            string(),
+            regex(),
         );
         $parametersAlt = parameters(
             int(),
@@ -84,7 +84,7 @@ final class UnionParameterTest extends TestCase
     public function testUnionArguments(): void
     {
         $parameter = union(
-            string(),
+            regex(),
             int()
         );
         $array = [
@@ -99,7 +99,7 @@ final class UnionParameterTest extends TestCase
     public function testInvoke(): void
     {
         $parameter = union(
-            string(),
+            regex(),
             int()
         );
         $parameter(10);

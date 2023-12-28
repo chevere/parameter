@@ -23,7 +23,7 @@ use function Chevere\Message\message;
 use function Chevere\Parameter\parameterAttr;
 use function Chevere\Parameter\reflectionToParameters;
 
-function stringAttr(string $name): StringAttr
+function stringAttr(string $name): RegexAttr
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 

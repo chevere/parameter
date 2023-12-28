@@ -13,17 +13,33 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Interfaces;
 
+use Chevere\Regex\Interfaces\RegexInterface;
 use Stringable;
 
 /**
- * Describes the component in charge of defining a parameter of type string.
+ * Describes the component in charge of defining a parameter of type regex string.
  */
-interface StringParameterInterface extends ParameterInterface
+interface RegexParameterInterface extends ParameterInterface
 {
+    public const PATTERN_DEFAULT = '/^.*$/';
+
     /**
      * Asserts the given `$value` is valid.
      */
     public function __invoke(Stringable|string $value): string;
+
+    /**
+     * Provides access to the regex instance.
+     */
+    public function regex(): RegexInterface;
+
+    /**
+     * Return an instance with the specified `$regex`.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified `$regex`.
+     */
+    public function withRegex(RegexInterface $regex): self;
 
     /**
      * Return an instance with the specified `$default` value.
@@ -39,28 +55,4 @@ interface StringParameterInterface extends ParameterInterface
     public function default(): ?string;
 
     public function assertCompatible(self $parameter): void;
-
-    public function withStartsWith(string $string): self;
-
-    public function startsWith(): ?string;
-
-    public function withEndsWith(string $string): self;
-
-    public function endsWith(): ?string;
-
-    public function withContains(string $string): self;
-
-    public function contains(): ?string;
-
-    public function withMinLength(int $int): self;
-
-    public function minLength(): ?int;
-
-    public function withMaxLength(int $int): self;
-
-    public function maxLength(): ?int;
-
-    public function withLength(int $int): self;
-
-    public function length(): ?int;
 }

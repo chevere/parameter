@@ -45,8 +45,8 @@ final class NullParameter implements NullParameterInterface
     {
     }
 
-    private function getType(): TypeInterface
+    private function typeName(): string
     {
-        return new Type(Type::NULL);
+        return TypeInterface::NULL;
     }
 }

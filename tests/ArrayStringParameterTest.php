@@ -56,9 +56,10 @@ final class ArrayStringParameterTest extends TestCase
     {
         $test = new ArrayStringParameter();
         $test->assertCompatible(new ArrayStringParameter());
-        $notCompatible = (new ArrayStringParameter())->withRequired(
-            foo: string()
-        );
+        $notCompatible = (new ArrayStringParameter())
+            ->withRequired(
+                foo: string()
+            );
         $this->expectException(InvalidArgumentException::class);
         $test->assertCompatible($notCompatible);
     }

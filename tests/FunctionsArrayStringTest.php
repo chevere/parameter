@@ -15,13 +15,13 @@ namespace Chevere\Tests;
 
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\arrayp;
-use function Chevere\Parameter\string;
+use function Chevere\Parameter\regex;
 
 final class FunctionsArrayStringTest extends TestCase
 {
     public function testArraypString(): void
     {
-        $string = string();
+        $string = regex();
         $parameter = arrayp(a: $string);
         $this->assertCount(1, $parameter->parameters());
         $this->assertSame($string, $parameter->parameters()->get('a'));

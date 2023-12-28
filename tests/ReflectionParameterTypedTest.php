@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
-use Chevere\Parameter\Interfaces\StringParameterInterface;
+use Chevere\Parameter\Interfaces\RegexParameterInterface;
 use Chevere\Parameter\ReflectionParameterTyped;
 use Chevere\Tests\src\Depends;
 use InvalidArgumentException;
@@ -38,11 +38,11 @@ final class ReflectionParameterTypedTest extends TestCase
 
     public function testParameterDefault(): void
     {
-        $parameter = $this->getReflection('useString');
+        $parameter = $this->getReflection('useRegex');
         $reflection = new ReflectionParameterTyped($parameter);
-        /** @var StringParameterInterface $reflected */
+        /** @var RegexParameterInterface $reflected */
         $reflected = $reflection->parameter();
-        $this->assertInstanceOf(StringParameterInterface::class, $reflected);
+        $this->assertInstanceOf(RegexParameterInterface::class, $reflected);
         $this->assertSame('/^[a-z]+$/', $reflected->regex()->__toString());
         $this->assertSame('default', $reflected->default());
         $this->assertSame('A string', $reflected->description());

@@ -128,8 +128,8 @@ final class IntParameter implements IntParameterInterface
         $this->assertNumericCompatible($parameter);
     }
 
-    private function getType(): TypeInterface
+    private function typeName(): string
     {
-        return new Type(Type::INT);
+        return TypeInterface::INT;
     }
 }

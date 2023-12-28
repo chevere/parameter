@@ -20,7 +20,7 @@ use function Chevere\Parameter\assertGeneric;
 use function Chevere\Parameter\generic;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\parameters;
-use function Chevere\Parameter\string;
+use function Chevere\Parameter\regex;
 
 final class ArgumentsGenericTest extends TestCase
 {
@@ -78,7 +78,7 @@ final class ArgumentsGenericTest extends TestCase
         $parameters = parameters(
             top: generic(
                 K: int(),
-                V: string()
+                V: regex()
             )
         );
         $this->expectNotToPerformAssertions();
@@ -93,7 +93,7 @@ final class ArgumentsGenericTest extends TestCase
         $parameters = parameters(
             top: generic(
                 K: int(),
-                V: string('/^one$/')
+                V: regex('/^one$/')
             )
         );
         $this->expectException(InvalidArgumentException::class);
@@ -111,7 +111,7 @@ final class ArgumentsGenericTest extends TestCase
             nested: generic(
                 K: int(),
                 V: generic(
-                    K: string(),
+                    K: regex(),
                     V: int()
                 )
             )
@@ -129,8 +129,8 @@ final class ArgumentsGenericTest extends TestCase
             nested: generic(
                 K: int(),
                 V: generic(
-                    K: string(),
-                    V: string()
+                    K: regex(),
+                    V: regex()
                 )
             )
         );
@@ -145,8 +145,8 @@ final class ArgumentsGenericTest extends TestCase
     public function testGenericArguments(array $args): void
     {
         $parameter = generic(
-            V: string(),
-            K: string()
+            V: regex(),
+            K: regex()
         );
         $this->expectNotToPerformAssertions();
         assertGeneric($parameter, $args);
@@ -159,7 +159,7 @@ final class ArgumentsGenericTest extends TestCase
     {
         $parameter = generic(
             V: int(),
-            K: string()
+            K: regex()
         );
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/^\[_V \*generic\]\:.*/');

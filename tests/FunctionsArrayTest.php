@@ -22,6 +22,7 @@ use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\assertArrayString;
 use function Chevere\Parameter\file;
 use function Chevere\Parameter\int;
+use function Chevere\Parameter\regex;
 use function Chevere\Parameter\string;
 
 final class FunctionsArrayTest extends TestCase
@@ -31,7 +32,7 @@ final class FunctionsArrayTest extends TestCase
         $parameter = arrayp();
         $this->assertCount(0, $parameter->parameters());
         $int = int();
-        $string = string();
+        $string = regex();
         $parameter = arrayp(a: $int)->withOptional(b: $string);
         $this->assertCount(2, $parameter->parameters());
         $this->assertSame($int, $parameter->parameters()->get('a'));

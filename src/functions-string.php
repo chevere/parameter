@@ -13,17 +13,42 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
+use Chevere\Parameter\Interfaces\RegexParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Regex\Regex;
 
 function string(
-    string $regex = '',
     string $description = '',
+    string $startsWith = '',
+    string $endsWith = '',
+    string $contains = '',
+    string $notStartsWith = '',
+    string $notEndsWith = '',
+    string $notContains = '',
+    int $minLength = 0,
+    int $maxLength = 0,
+    int $length = 0,
     ?string $default = null,
 ): StringParameterInterface {
     $parameter = new StringParameter($description);
-    if ($regex !== '') {
-        $parameter = $parameter->withRegex(new Regex($regex));
+    if ($default !== null) {
+        $parameter = $parameter->withDefault($default);
+    }
+
+    return $parameter;
+}
+
+function regex(
+    string $pattern = '',
+    string $description = '',
+    ?string $default = null,
+): RegexParameterInterface {
+    $parameter = new RegexParameter($description);
+    if ($pattern !== '') {
+        $parameter = $parameter
+            ->withRegex(
+                new Regex($pattern)
+            );
     }
     if ($default !== null) {
         $parameter = $parameter->withDefault($default);
@@ -35,21 +60,21 @@ function string(
 function intString(
     string $description = '',
     ?string $default = null,
-): StringParameterInterface {
-    return string(
-        regex: '/^\d+$/',
+): RegexParameterInterface {
+    return regex(
+        pattern: '/^\d+$/',
         description: $description,
         default: $default
     );
 }
 
-function enum(string $string, string ...$strings): StringParameterInterface
+function enum(string $string, string ...$strings): RegexParameterInterface
 {
     array_unshift($strings, $string);
     $cases = implode('|', $strings);
     $regex = "/\b({$cases})\b/";
 
-    return string($regex);
+    return regex($regex);
 }
 
 /**
@@ -58,10 +83,10 @@ function enum(string $string, string ...$strings): StringParameterInterface
 function date(
     string $description = 'YYYY-MM-DD',
     ?string $default = null
-): StringParameterInterface {
+): RegexParameterInterface {
     $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/';
 
-    return string($regex, $description, $default);
+    return regex($regex, $description, $default);
 }
 
 /**
@@ -70,10 +95,10 @@ function date(
 function time(
     string $description = 'hh:mm:ss',
     ?string $default = null
-): StringParameterInterface {
+): RegexParameterInterface {
     $regex = '/^\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
 
-    return string($regex, $description, $default);
+    return regex($regex, $description, $default);
 }
 
 /**
@@ -82,8 +107,8 @@ function time(
 function datetime(
     string $description = 'YYYY-MM-DD hh:mm:ss',
     ?string $default = null
-): StringParameterInterface {
+): RegexParameterInterface {
     $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\s{1}\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
 
-    return string($regex, $description, $default);
+    return regex($regex, $description, $default);
 }

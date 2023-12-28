@@ -20,15 +20,15 @@ use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\assertGeneric;
 use function Chevere\Parameter\generic;
 use function Chevere\Parameter\int;
-use function Chevere\Parameter\string;
+use function Chevere\Parameter\regex;
 use function Chevere\Parameter\union;
 
 final class GenericParameterTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $value = string();
-        $key = string();
+        $value = regex();
+        $key = regex();
         $description = 'test';
         $parameter = new GenericParameter(
             $value,
@@ -61,9 +61,9 @@ final class GenericParameterTest extends TestCase
     public function testAssertCompatible(): void
     {
         $this->expectNotToPerformAssertions();
-        $key = string();
+        $key = regex();
         $value = int(description: 'compatible');
-        $keyAlt = string(description: 'compatible');
+        $keyAlt = regex(description: 'compatible');
         $valueAlt = int();
         $parameter = new GenericParameter($value, $key);
         $compatible = new GenericParameter($valueAlt, $keyAlt, 'compatible');
@@ -72,7 +72,7 @@ final class GenericParameterTest extends TestCase
 
     public function testAssertCompatibleConflictValue(): void
     {
-        $key = string();
+        $key = regex();
         $value = int();
         $valueAlt = int(min: 1);
         $parameter = new GenericParameter($value, $key);
@@ -83,9 +83,9 @@ final class GenericParameterTest extends TestCase
 
     public function testAssertCompatibleConflictKey(): void
     {
-        $key = string();
+        $key = regex();
         $value = int();
-        $keyAlt = string('/^[a-z]+&/');
+        $keyAlt = regex('/^[a-z]+&/');
         $parameter = new GenericParameter($value, $key);
         $notCompatible = new GenericParameter($value, $keyAlt);
         $this->expectException(InvalidArgumentException::class);
@@ -96,8 +96,8 @@ final class GenericParameterTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
         $parameter = generic(
-            V: string(),
-            K: string()
+            V: regex(),
+            K: regex()
         );
         $argument = [
             'a' => 'A',
@@ -120,7 +120,7 @@ final class GenericParameterTest extends TestCase
     public function testGenericArguments(): void
     {
         $parameter = generic(
-            V: string(),
+            V: regex(),
             K: int()
         );
         $array = [
@@ -132,9 +132,9 @@ final class GenericParameterTest extends TestCase
         $this->assertSame($array['0'], $arguments->required('0')->string());
         $parameter = generic(
             V: generic(
-                string()
+                regex()
             ),
-            K: string()
+            K: regex()
         );
         $array = [
             '0' => ['foo', 'oof'],
@@ -148,7 +148,7 @@ final class GenericParameterTest extends TestCase
     public function testInvoke(): void
     {
         $value = [10, '10'];
-        $parameter = generic(union(int(), string()));
+        $parameter = generic(union(int(), regex()));
         $parameter($value);
         $this->expectException(InvalidArgumentException::class);
         $parameter([null, false]);

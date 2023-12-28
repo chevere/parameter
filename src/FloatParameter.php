@@ -123,8 +123,8 @@ final class FloatParameter implements FloatParameterInterface
         $this->assertNumericCompatible($parameter);
     }
 
-    private function getType(): TypeInterface
+    private function typeName(): string
     {
-        return new Type(Type::FLOAT);
+        return TypeInterface::FLOAT;
     }
 }

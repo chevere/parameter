@@ -50,8 +50,8 @@ final class BoolParameter implements BoolParameterInterface
     {
     }
 
-    private function getType(): TypeInterface
+    private function typeName(): string
     {
-        return new Type(Type::BOOL);
+        return TypeInterface::BOOL;
     }
 }

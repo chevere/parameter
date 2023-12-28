@@ -71,8 +71,8 @@ final class GenericParameter implements GenericParameterInterface
         return $this->type->primitive();
     }
 
-    private function getType(): TypeInterface
+    private function typeName(): string
     {
-        return new Type(Type::GENERIC);
+        return TypeInterface::GENERIC;
     }
 }
