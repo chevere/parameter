@@ -17,20 +17,44 @@ use Chevere\Parameter\Interfaces\RegexParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Regex\Regex;
 
+/**
+ * @param array<string> $contains
+ * @param array<string> $reject
+ */
 function string(
     string $description = '',
-    string $startsWith = '',
-    string $endsWith = '',
-    string $contains = '',
-    string $notStartsWith = '',
-    string $notEndsWith = '',
-    string $notContains = '',
-    int $minLength = 0,
-    int $maxLength = 0,
-    int $length = 0,
+    ?string $startsWith = null,
+    ?string $endsWith = null,
+    array $contains = [],
+    array $reject = [],
+    ?int $length = null,
+    ?int $minLength = null,
+    ?int $maxLength = null,
     ?string $default = null,
 ): StringParameterInterface {
     $parameter = new StringParameter($description);
+    if ($startsWith !== null) {
+        $parameter = $parameter->withStartsWith($startsWith);
+    }
+    if ($endsWith !== null) {
+        $parameter = $parameter->withEndsWith($endsWith);
+    }
+    if ($contains === []) {
+        $parameter = $parameter->withContains(...$contains);
+    }
+    if ($reject !== []) {
+        $parameter = $parameter->withReject(...$reject);
+    }
+    if ($length !== null) {
+        $parameter = $parameter->withLength($length);
+    }
+    if ($minLength !== null) {
+        $parameter = $parameter->withMinLength($minLength);
+    }
+    if ($maxLength !== null) {
+        $parameter = $parameter->withMaxLength($maxLength);
+    }
+
     if ($default !== null) {
         $parameter = $parameter->withDefault($default);
     }

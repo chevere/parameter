@@ -40,17 +40,27 @@ interface StringParameterInterface extends ParameterInterface
 
     public function assertCompatible(self $parameter): void;
 
-    public function withStarts(string $string): self;
+    public function withStartsWith(string $string): self;
 
-    public function starts(): ?string;
+    public function startsWith(): ?string;
 
-    public function withEnds(string $string): self;
+    public function withEndsWith(string $string): self;
 
-    public function ends(): ?string;
+    public function endsWith(): ?string;
 
-    public function withContains(string $string): self;
+    public function withContains(string ...$strings): self;
 
-    public function contains(): ?string;
+    /**
+     * @return array<string>
+     */
+    public function contains(): array;
+
+    public function withReject(string ...$strings): self;
+
+    /**
+     * @return array<string>
+     */
+    public function reject(): array;
 
     public function withMinLength(int $int): self;
 
