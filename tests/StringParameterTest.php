@@ -24,8 +24,8 @@ final class StringParameterTest extends TestCase
         $string = new StringParameter();
         $this->assertSame('', $string->description());
         $this->assertSame(null, $string->default());
-        $this->assertSame(null, $string->startsWith());
-        $this->assertSame(null, $string->endsWith());
+        $this->assertSame(null, $string->starts());
+        $this->assertSame(null, $string->ends());
         $this->assertSame(null, $string->contains());
         $this->assertSame(null, $string->minLength());
         $this->assertSame(null, $string->maxLength());
@@ -105,9 +105,24 @@ final class StringParameterTest extends TestCase
     public function testWithStartsWith(): void
     {
         $string = new StringParameter();
-        $with = $string->withStartsWith('foo');
+        $with = $string->withStarts('foo');
         $this->assertNotSame($string, $with);
-        $this->assertSame('foo', $with->startsWith());
+        $this->assertSame('foo', $with->starts());
+    }
+
+    public function testWithStartsWithLength(): void
+    {
+        $string = new StringParameter();
+        $with = $string
+            ->withStarts('foo')
+            ->withLength(3);
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Argument value provided conflicts with `startsWith` rule
+            PLAIN
+        );
+        $with->withLength(2);
     }
 
     public function testLengthWithStartsWith(): void
@@ -115,14 +130,14 @@ final class StringParameterTest extends TestCase
         $string = new StringParameter();
         $with = $string
             ->withLength(3)
-            ->withStartsWith('foo');
+            ->withStarts('foo');
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument value provided conflicts with `length` rule length `3`
+            Argument value provided conflicts with `length` rule
             PLAIN
         );
-        $with->withStartsWith('foobar');
+        $with->withStarts('foobar');
     }
 
     public function testMaxLengthWithStartsWith(): void
@@ -130,22 +145,37 @@ final class StringParameterTest extends TestCase
         $string = new StringParameter();
         $with = $string
             ->withMaxLength(3)
-            ->withStartsWith('foo');
+            ->withStarts('foo');
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument value provided conflicts with `maxLength` rule length `3`
+            Argument value provided conflicts with `maxLength` rule
             PLAIN
         );
-        $with->withStartsWith('foobar');
+        $with->withStarts('foobar');
     }
 
-    public function testWithEndsWith(): void
+    public function testWithEnds(): void
     {
         $string = new StringParameter();
-        $with = $string->withEndsWith('bar');
+        $with = $string->withEnds('bar');
         $this->assertNotSame($string, $with);
-        $this->assertSame('bar', $with->endsWith());
+        $this->assertSame('bar', $with->ends());
+    }
+
+    public function testWithEndsWithLength(): void
+    {
+        $string = new StringParameter();
+        $with = $string
+            ->withEnds('bar')
+            ->withLength(3);
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Argument value provided conflicts with `endsWith` rule
+            PLAIN
+        );
+        $with->withLength(2);
     }
 
     public function testLengthWithEndsWith(): void
@@ -153,14 +183,14 @@ final class StringParameterTest extends TestCase
         $string = new StringParameter();
         $with = $string
             ->withLength(3)
-            ->withEndsWith('bar');
+            ->withEnds('bar');
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument value provided conflicts with `length` rule length `3`
+            Argument value provided conflicts with `length` rule
             PLAIN
         );
-        $with->withEndsWith('foobar');
+        $with->withEnds('foobar');
     }
 
     public function testMaxLengthWithEndsWith(): void
@@ -168,14 +198,14 @@ final class StringParameterTest extends TestCase
         $string = new StringParameter();
         $with = $string
             ->withMaxLength(3)
-            ->withEndsWith('foo');
+            ->withEnds('foo');
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument value provided conflicts with `maxLength` rule length `3`
+            Argument value provided conflicts with `maxLength` rule
             PLAIN
         );
-        $with->withEndsWith('foobar');
+        $with->withEnds('foobar');
     }
 
     public function testWithContains(): void
@@ -184,6 +214,21 @@ final class StringParameterTest extends TestCase
         $with = $string->withContains('foo');
         $this->assertNotSame($string, $with);
         $this->assertSame('foo', $with->contains());
+    }
+
+    public function testWithContainsWithLength(): void
+    {
+        $string = new StringParameter();
+        $with = $string
+            ->withContains('foo')
+            ->withLength(3);
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Argument value provided conflicts with `contains` rule
+            PLAIN
+        );
+        $with->withLength(2);
     }
 
     public function testLengthWithContains(): void
@@ -195,7 +240,7 @@ final class StringParameterTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument value provided conflicts with `length` rule length `3`
+            Argument value provided conflicts with `length` rule
             PLAIN
         );
         $with->withContains('foobar');
@@ -210,7 +255,7 @@ final class StringParameterTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument value provided conflicts with `maxLength` rule length `3`
+            Argument value provided conflicts with `maxLength` rule
             PLAIN
         );
         $with->withContains('foobar');

@@ -84,7 +84,7 @@ final class StringParameter implements StringParameterInterface
         return $this->default;
     }
 
-    public function withStartsWith(string $string): StringParameterInterface
+    public function withStarts(string $string): StringParameterInterface
     {
         $strlen = mb_strlen($string);
         $this->assertRuleLength('length', $strlen);
@@ -95,12 +95,12 @@ final class StringParameter implements StringParameterInterface
         return $new;
     }
 
-    public function startsWith(): ?string
+    public function starts(): ?string
     {
         return $this->startsWith;
     }
 
-    public function withEndsWith(string $string): StringParameterInterface
+    public function withEnds(string $string): StringParameterInterface
     {
         $strlen = mb_strlen($string);
         $this->assertRuleLength('length', $strlen);
@@ -111,7 +111,7 @@ final class StringParameter implements StringParameterInterface
         return $new;
     }
 
-    public function endsWith(): ?string
+    public function ends(): ?string
     {
         return $this->endsWith;
     }
@@ -194,9 +194,9 @@ final class StringParameter implements StringParameterInterface
                 )
             );
         }
-        $this->assertRuleLength('startsWith', $int);
-        $this->assertRuleLength('endsWith', $int);
-        $this->assertRuleLength('contains', $int);
+        $this->assertRuleLength('startsWith', $int, '<');
+        $this->assertRuleLength('endsWith', $int, '<');
+        $this->assertRuleLength('contains', $int, '<');
         $new = clone $this;
         $new->length = $int;
 
@@ -208,8 +208,11 @@ final class StringParameter implements StringParameterInterface
         return $this->length;
     }
 
-    private function assertRuleLength(string $rule, int $length): void
-    {
+    private function assertRuleLength(
+        string $rule,
+        int $length,
+        string $operand = '>'
+    ): void {
         if ($this->{$rule} === null) {
             return;
         }
@@ -217,12 +220,18 @@ final class StringParameter implements StringParameterInterface
             true => $this->{$rule},
             default => mb_strlen($this->{$rule}),
         };
-        if ($length > $ruleLength) {
+        $result = match (true) {
+            $operand === '>' => $length > $ruleLength,
+            $operand === '>=' => $length >= $ruleLength,
+            $operand === '<' => $length < $ruleLength,
+            $operand === '<=' => $length <= $ruleLength,
+            default => $length > $ruleLength,
+        };
+        if ($result) {
             throw new LogicException(
                 (string) message(
-                    'Argument value provided conflicts with `%rule%` rule length `%value%`',
+                    'Argument value provided conflicts with `%rule%` rule',
                     rule: $rule,
-                    value: $ruleLength,
                 )
             );
         }
