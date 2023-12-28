@@ -13,30 +13,31 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
-use Chevere\Parameter\NullParameter;
+use Chevere\Parameter\MixedParameter;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
-final class NullParameterTest extends TestCase
+final class MixedParameterTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = new NullParameter();
+        $parameter = new MixedParameter();
         $this->assertSame(null, $parameter->default());
-        $compatible = new NullParameter();
+        $compatible = new MixedParameter();
         $parameter->assertCompatible($compatible);
         $this->assertSame([
-            'type' => 'null',
+            'type' => 'mixed',
             'description' => '',
             'default' => null,
         ], $parameter->schema());
         $parameter(null);
-        $this->expectException(TypeError::class);
-        $this->expectExceptionMessage(
-            <<<PLAIN
-            Argument value provided is not of type null
-            PLAIN
-        );
         $parameter(1);
+    }
+
+    public function testWithDefault(): void
+    {
+        $parameter = new MixedParameter();
+        $with = $parameter->withDefault('default');
+        $this->assertNotSame($parameter, $with);
+        $this->assertSame('default', $with->default());
     }
 }

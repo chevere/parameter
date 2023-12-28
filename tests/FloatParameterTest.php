@@ -24,10 +24,16 @@ final class FloatParameterTest extends TestCase
     public function testConstruct(): void
     {
         $parameter = new FloatParameter();
+        $parameter(1.0);
         $this->assertEquals($parameter, float());
         $this->assertSame(null, $parameter->default());
         $this->assertSame(null, $parameter->min());
         $this->assertSame(null, $parameter->max());
+    }
+
+    public function testWithDefault(): void
+    {
+        $parameter = new FloatParameter();
         $default = 12.34;
         $parameterWithDefault = $parameter->withDefault($default);
         (new ParameterHelper())->testWithParameterDefault(
@@ -51,36 +57,83 @@ final class FloatParameterTest extends TestCase
     {
         $values = [1.1, 2.2, 3.3];
         $parameter = new FloatParameter();
-        $withValue = $parameter->withAccept(...$values);
-        $this->assertNotSame($parameter, $withValue);
-        $this->assertSame($values, $withValue->accept());
+        $with = $parameter->withAccept(...$values);
+        $this->assertNotSame($parameter, $with);
+        $this->assertSame($values, $with->accept());
+        foreach ($values as $value) {
+            $with($value);
+        }
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<STRING
+            Argument value provided `4.4` is not an accepted value in `[1.1,2.2,3.3]`
+            STRING
+        );
+        $with(4.4);
+    }
+
+    public function testWithAcceptWithDefault(): void
+    {
+        $values = [1.1, 2.2, 3.3];
+        $parameter = new FloatParameter();
+        $with = $parameter->withAccept(...$values);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<STRING
+            Argument value provided `4.4` is not an accepted value in `[1.1,2.2,3.3]`
+            STRING
+        );
+        $with->withDefault(4.4);
     }
 
     public function testWithReject(): void
     {
         $values = [1.1, 2.2, 3.3];
         $parameter = new FloatParameter();
-        $withValue = $parameter->withReject(...$values);
-        $this->assertNotSame($parameter, $withValue);
-        $this->assertSame($values, $withValue->reject());
+        $with = $parameter->withReject(...$values);
+        $this->assertNotSame($parameter, $with);
+        $this->assertSame($values, $with->reject());
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<STRING
+            Argument value provided `2.2` is on rejected list `[1.1,2.2,3.3]`
+            STRING
+        );
+        $with(2.2);
     }
 
     public function testWithMin(): void
     {
         $parameter = new FloatParameter();
         $value = 1.0;
-        $parameterWith = $parameter->withMin($value);
-        $this->assertNotSame($parameter, $parameterWith);
-        $this->assertSame($value, $parameterWith->min());
+        $with = $parameter->withMin($value);
+        $this->assertNotSame($parameter, $with);
+        $this->assertSame($value, $with->min());
+        $with(1.0);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<STRING
+            Argument value provided `0.9` is less than `1`
+            STRING
+        );
+        $with(0.9);
     }
 
     public function testWithMax(): void
     {
         $parameter = new FloatParameter();
         $value = 1.0;
-        $parameterWith = $parameter->withMax($value);
-        $this->assertNotSame($parameter, $parameterWith);
-        $this->assertSame($value, $parameterWith->max());
+        $with = $parameter->withMax($value);
+        $this->assertNotSame($parameter, $with);
+        $this->assertSame($value, $with->max());
+        $with(1.0);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<STRING
+            Argument value provided `1.1` is greater than `1`
+            STRING
+        );
+        $with(1.1);
     }
 
     public function testAssertCompatible(): void

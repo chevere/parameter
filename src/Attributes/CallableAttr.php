@@ -16,7 +16,8 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use function Chevere\Parameter\object;
+use InvalidArgumentException;
+use function Chevere\Message\message;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION)]
 class CallableAttr implements ParameterAttributeInterface
@@ -26,7 +27,14 @@ class CallableAttr implements ParameterAttributeInterface
     public function __construct(callable $callable)
     {
         $return = $callable();
-        object(ParameterInterface::class)($return);
+        if ($return === null || ! $return instanceof ParameterInterface) {
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Callable must return a `%interface%` instance',
+                    interface: ParameterInterface::class
+                )
+            );
+        }
         $this->parameter = $return;
     }
 

@@ -18,11 +18,19 @@ use stdClass;
 
 final class Depends
 {
+    public function useNone($file = 'default')
+    {
+    }
+
+    // public function useNull(null $file = null)
+    // {
+    // }
+
     public function useObject(stdClass $file)
     {
     }
 
-    public function useRegex(
+    public function useString(
         #[StringAttr('/^[a-z]+$/', description: 'A string')]
         string $string = 'default'
     ) {

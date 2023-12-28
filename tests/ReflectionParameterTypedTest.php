@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
+use Chevere\Parameter\Interfaces\MixedParameterInterface;
+use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\ReflectionParameterTyped;
@@ -25,6 +27,24 @@ use stdClass;
 
 final class ReflectionParameterTypedTest extends TestCase
 {
+    public function testUseNoneGoesMixed(): void
+    {
+        $parameter = $this->getReflection('useNone');
+        $reflection = new ReflectionParameterTyped($parameter);
+        $reflected = $reflection->parameter();
+        $this->assertInstanceOf(MixedParameterInterface::class, $reflected);
+        $this->assertSame('default', $reflected->default());
+    }
+
+    // public function testUseNull(): void
+    // {
+    //     $parameter = $this->getReflection('useNull');
+    //     $reflection = new ReflectionParameterTyped($parameter);
+    //     $reflected = $reflection->parameter();
+    //     $this->assertInstanceOf(NullParameterInterface::class, $reflected);
+    //     $this->assertSame(null, $reflected->default());
+    // }
+
     public function testParameterObject(): void
     {
         $parameter = $this->getReflection('useObject');
@@ -38,7 +58,7 @@ final class ReflectionParameterTypedTest extends TestCase
 
     public function testParameterDefault(): void
     {
-        $parameter = $this->getReflection('useRegex');
+        $parameter = $this->getReflection('useString');
         $reflection = new ReflectionParameterTyped($parameter);
         /** @var StringParameterInterface $reflected */
         $reflected = $reflection->parameter();
