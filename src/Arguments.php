@@ -27,7 +27,7 @@ use function Chevere\Message\message;
 
 final class Arguments implements ArgumentsInterface
 {
-    private ParametersInterface $generic;
+    private ParametersInterface $iterable;
 
     /**
      * @var array<int|string, mixed>
@@ -67,7 +67,7 @@ final class Arguments implements ArgumentsInterface
                 $key = strval($key);
                 $pairs[$key] = $parameters->get('V');
             }
-            $this->generic = new Parameters(...$pairs);
+            $this->iterable = new Parameters(...$pairs);
         }
         $this->assertNoArgumentsOverflow();
         $this->handleDefaults();
@@ -83,7 +83,7 @@ final class Arguments implements ArgumentsInterface
 
     public function parameters(): ParametersInterface
     {
-        return $this->generic ?? $this->parameters;
+        return $this->iterable ?? $this->parameters;
     }
 
     // @phpstan-ignore-next-line

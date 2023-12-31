@@ -17,13 +17,9 @@ use ArrayAccess;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\ArrayStringParameterInterface;
 use Chevere\Parameter\Interfaces\ArrayTypeParameterInterface;
-use Chevere\Parameter\Interfaces\GenericParameterInterface;
 use Chevere\Parameter\Interfaces\IntParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
-use InvalidArgumentException;
-use Throwable;
-use function Chevere\Message\message;
 
 function arrayp(
     ParameterInterface ...$required
@@ -70,20 +66,6 @@ function file(
 }
 
 /**
- * @param ParameterInterface $V Generic value parameter
- * @param ParameterInterface|null $K Generic key parameter
- */
-function generic(
-    ParameterInterface $V,
-    ?ParameterInterface $K = null,
-    string $description = '',
-): GenericParameterInterface {
-    $K ??= int();
-
-    return new GenericParameter($V, $K, $description);
-}
-
-/**
  * @param array<int|string, mixed>|ArrayAccess<int|string, mixed> $argument
  * @return array<int|string, mixed> Asserted array, with fixed optional values.
  */
@@ -104,47 +86,4 @@ function assertArrayString(
 ): array {
     /** @var array<int|string, string> */
     return assertArray($parameter, $argument);
-}
-
-// @phpstan-ignore-next-line
-function assertGeneric(
-    GenericParameterInterface $parameter,
-    iterable $argument,
-): iterable {
-    if (empty($argument)) {
-        throw new InvalidArgumentException(
-            (string) message('Argument value provided is empty')
-        );
-    }
-    $generic = ' *generic';
-    $genericKey = '_K' . $generic;
-    $genericValue = '_V' . $generic;
-
-    try {
-        foreach ($argument as $key => $value) {
-            assertNamedArgument($genericKey, $parameter->key(), $key);
-            assertNamedArgument($genericValue, $parameter->value(), $value);
-        }
-    } catch (Throwable $e) {
-        throw new InvalidArgumentException(
-            getThrowableGenericErrorMessage($e->getMessage())
-        );
-    }
-
-    return $argument;
-}
-
-function getThrowableGenericErrorMessage(string $message): string
-{
-    $strstr = strstr($message, ':', false);
-    if (! is_string($strstr)) {
-        $strstr = $message; // @codeCoverageIgnore
-    } else {
-        $strstr = substr($strstr, 2);
-    }
-    $calledIn = strpos($strstr, ', called in');
-
-    return $calledIn
-        ? substr($strstr, 0, $calledIn)
-        : $strstr;
 }

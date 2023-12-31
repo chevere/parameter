@@ -14,22 +14,22 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\GenericParameterInterface;
+use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use function Chevere\Parameter\generic;
+use function Chevere\Parameter\iterable;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class GenericAttr implements ParameterAttributeInterface
+class IterableAttr implements ParameterAttributeInterface
 {
-    public readonly GenericParameterInterface $parameter;
+    public readonly IterableParameterInterface $parameter;
 
     public function __construct(
         ParameterAttributeInterface $V,
         ?ParameterAttributeInterface $K = null,
         string $description = '',
     ) {
-        $this->parameter = generic(
+        $this->parameter = iterable(
             V: $V->parameter(),
             K: $K?->parameter(),
             description: $description,

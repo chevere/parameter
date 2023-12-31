@@ -32,7 +32,7 @@ interface ParameterCastInterface
 
     public function union(): UnionParameterInterface;
 
-    public function generic(): GenericParameterInterface;
+    public function iterable(): IterableParameterInterface;
 
     public function string(): StringParameterInterface;
 }

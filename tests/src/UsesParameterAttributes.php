@@ -15,15 +15,15 @@ namespace Chevere\Tests\src;
 
 use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\CallableAttr;
-use Chevere\Parameter\Attributes\GenericAttr;
 use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\IterableAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
-use function Chevere\Parameter\Attributes\genericAttr;
 use function Chevere\Parameter\Attributes\intAttr;
+use function Chevere\Parameter\Attributes\iteratorAttr;
 use function Chevere\Parameter\Attributes\stringAttr;
 use function Chevere\Parameter\Attributes\valid;
 use function Chevere\Parameter\Attributes\validReturn;
@@ -43,7 +43,7 @@ final class UsesParameterAttributes
             id: new CallableAttr(__CLASS__ . '::callable'),
         )]
         array $cols = [],
-        #[GenericAttr(
+        #[IterableAttr(
             new StringAttr('/^[A-Za-z]+$/'),
         )]
         iterable $tags = [],
@@ -57,7 +57,7 @@ final class UsesParameterAttributes
         $age = intAttr('age')($age);
         $cols = arrayAttr('cols')($cols);
         $id = arrayArguments('cols')->required('id')->int();
-        $tags = genericAttr('tags')($tags);
+        $tags = iteratorAttr('tags')($tags);
         validReturn($id);
     }
 

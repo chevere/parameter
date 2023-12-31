@@ -63,7 +63,7 @@ function arrayAttr(string $name): ArrayAttr
     return parameterAttr($name, $caller);
 }
 
-function genericAttr(string $name): GenericAttr
+function iteratorAttr(string $name): IterableAttr
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 

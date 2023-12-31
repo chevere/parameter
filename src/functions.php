@@ -18,6 +18,7 @@ use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
+use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\MixedParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
@@ -61,6 +62,20 @@ function object(
     $parameter = new ObjectParameter($description);
 
     return $parameter->withClassName($className);
+}
+
+/**
+ * @param ParameterInterface $V Iterable value parameter
+ * @param ParameterInterface|null $K Iterable key parameter
+ */
+function iterable(
+    ParameterInterface $V,
+    ?ParameterInterface $K = null,
+    string $description = '',
+): IterableParameterInterface {
+    $K ??= int();
+
+    return new IterableParameter($V, $K, $description);
 }
 
 function union(
@@ -116,6 +131,45 @@ function assertNamedArgument(
             )
         );
     }
+}
+
+// @phpstan-ignore-next-line
+function assertIterable(
+    IterableParameterInterface $parameter,
+    iterable $argument,
+): iterable {
+    if (empty($argument)) {
+        throw new InvalidArgumentException(
+            (string) message('Argument value provided is empty')
+        );
+    }
+    $iterable = ' *iterable';
+    $iterableKey = '_K' . $iterable;
+    $iterableValue = '_V' . $iterable;
+
+    try {
+        foreach ($argument as $key => $value) {
+            assertNamedArgument($iterableKey, $parameter->key(), $key);
+            assertNamedArgument($iterableValue, $parameter->value(), $value);
+        }
+    } catch (Throwable $e) {
+        $message = $e->getMessage();
+        $strstr = strstr($message, ':', false);
+        if (! is_string($strstr)) {
+            $strstr = $message; // @codeCoverageIgnore
+        } else {
+            $strstr = substr($strstr, 2);
+        }
+        $calledIn = strpos($strstr, ', called in');
+
+        $message = $calledIn
+            ? substr($strstr, 0, $calledIn)
+            : $strstr;
+
+        throw new InvalidArgumentException($message);
+    }
+
+    return $argument;
 }
 
 function toParameter(string $type): ParameterInterface

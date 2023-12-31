@@ -46,7 +46,7 @@ final class TypeFunctionsTest extends TestCase
             ],
         ];
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('[role]: [tenants]: [_V *generic]: Argument value provided `6` is greater than `5`');
+        $this->expectExceptionMessage('[role]: [tenants]: [_V *iterable]: Argument value provided `6` is greater than `5`');
         myArray($value);
     }
 

@@ -51,8 +51,6 @@ interface TypeInterface
 
     public const UNION = 'union';
 
-    public const GENERIC = 'generic';
-
     public const PRIMITIVE_CLASS_NAME = 'className';
 
     public const PRIMITIVE_INTERFACE_NAME = 'interfaceName';
@@ -76,7 +74,6 @@ interface TypeInterface
         self::PRIMITIVE_CLASS_NAME => 'is_object',
         self::PRIMITIVE_INTERFACE_NAME => 'is_object',
         self::UNION => 'is_array',
-        self::GENERIC => 'is_array',
     ];
 
     /**
@@ -95,7 +92,6 @@ interface TypeInterface
         self::RESOURCE,
         self::STRING,
         self::UNION,
-        self::GENERIC,
     ];
 
     /**

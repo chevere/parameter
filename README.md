@@ -130,26 +130,26 @@ $result = validated($reflection, $var);
 
 Following functions are available to create types and pseudo-types.
 
-| Type   | Function        | Arguments                                                                  |
-| ------ | --------------- | -------------------------------------------------------------------------- |
-| string | `string()`      | description, regex, default                                                |
-| string | `intString()`   | description, default                                                       |
-| string | `boolString()`  | description, default                                                       |
-| string | `enum()`        | `string,`                                                                  |
-| string | `date()`        | description, default                                                       |
-| string | `time()`        | description, default                                                       |
-| string | `datetime()`    | description, default                                                       |
-| int    | `int()`         | description, default, min, max, accept, reject                             |
-| int    | `boolInt()`     | description, default                                                       |
-| float  | `float()`       | description, default, min, max, accept, reject                             |
-| bool   | `bool()`        | description, default                                                       |
-| array  | `arrayp()`      | Named `ParameterInterface,`                                                |
-| array  | `arrayString()` | Named `StringParameterInterface,`                                          |
-| array  | `file()`        | error, name, type, tmp_name, size, contents                                |
-| array  | `generic()`     | `V: ParameterInterface` (value), `K: ParameterInterface`(key), description |
-| null   | `null()`        | description                                                                |
-| mixed  | `mixed()`       | description                                                                |
-| *many* | `union()`       | `ParameterInterface,`                                                      |
+| Type     | Function        | Arguments                                                                  |
+| -------- | --------------- | -------------------------------------------------------------------------- |
+| string   | `string()`      | description, regex, default                                                |
+| string   | `intString()`   | description, default                                                       |
+| string   | `boolString()`  | description, default                                                       |
+| string   | `enum()`        | `string,`                                                                  |
+| string   | `date()`        | description, default                                                       |
+| string   | `time()`        | description, default                                                       |
+| string   | `datetime()`    | description, default                                                       |
+| int      | `int()`         | description, default, min, max, accept, reject                             |
+| int      | `boolInt()`     | description, default                                                       |
+| float    | `float()`       | description, default, min, max, accept, reject                             |
+| bool     | `bool()`        | description, default                                                       |
+| array    | `arrayp()`      | Named `ParameterInterface,`                                                |
+| array    | `arrayString()` | Named `StringParameterInterface,`                                          |
+| array    | `file()`        | error, name, type, tmp_name, size, contents                                |
+| iterable | `iterable()`    | `V: ParameterInterface` (value), `K: ParameterInterface`(key), description |
+| null     | `null()`        | description                                                                |
+| mixed    | `mixed()`       | description                                                                |
+| *many*   | `union()`       | `ParameterInterface,`                                                      |
 
 #### Function example usage
 
@@ -185,17 +185,17 @@ Following attributes enables to define validation rules for **parameters**.
 
 `namespace Chevere\Parameter\Attributes`
 
-| Type   | Attribute      | Arguments                                                                  |
-| ------ | -------------- | -------------------------------------------------------------------------- |
-| string | `StringAttr`   | description, regex                                                         |
-| string | `EnumAttr`     | `string,`                                                                  |
-| int    | `IntAttr`      | description, min, max, accept, reject                                      |
-| float  | `FloatAttr`    | description, min, max, accept, reject                                      |
-| bool   | `BoolAttr`     | description                                                                |
-| array  | `ArrayAttr`    | `ParameterAttributeInterface,`                                             |
-| array  | `GenericAttr`  | `V: ParameterInterface` (value), `K: ParameterInterface`(key), description |
-| null   | `NullAttr`     | description                                                                |
-| *      | `CallableAttr` | callable                                                                   |
+| Type     | Attribute      | Arguments                                                                  |
+| -------- | -------------- | -------------------------------------------------------------------------- |
+| string   | `StringAttr`   | description, regex                                                         |
+| string   | `EnumAttr`     | `string,`                                                                  |
+| int      | `IntAttr`      | description, min, max, accept, reject                                      |
+| float    | `FloatAttr`    | description, min, max, accept, reject                                      |
+| bool     | `BoolAttr`     | description                                                                |
+| array    | `ArrayAttr`    | `ParameterAttributeInterface,`                                             |
+| iterable | `IterableAttr` | `V: ParameterInterface` (value), `K: ParameterInterface`(key), description |
+| null     | `NullAttr`     | description                                                                |
+| *        | `CallableAttr` | callable                                                                   |
 
 💡 `CallableAttr` enables to forward parameter assignment to a callable returning `ParameterInterface` (bypass attribute limitation).
 
@@ -286,28 +286,28 @@ arrayp(
 )($value);
 ```
 
-* Validate a generic `int` list:
+* Validate an iterable `int` list:
 
 ```php
 use function Chevere\Parameter\int;
-use function Chevere\Parameter\generic;
+use function Chevere\Parameter\iterable;
 
 $value = [1, 2, 3];
-generic(int())($value);
+iterable(int())($value);
 ```
 
-* Validate a generic int list with string key type rules:
+* Validate an iterable int list with string key type rules:
 
 ```php
 use function Chevere\Parameter\int;
-use function Chevere\Parameter\generic;
+use function Chevere\Parameter\iterable;
 
 $value = [
     'unila' => 1,
     'dorila' => 2,
     'tirifila' => 3,
 ];
-generic(
+iterable(
     K: string('/ila$/'),
     V: int(min: 1)
 )($value);
@@ -376,7 +376,7 @@ myInt($value);
 use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\StringAttr;
-use Chevere\Parameter\Attributes\GenericAttr;
+use Chevere\Parameter\Attributes\IterableAttr;
 use function Chevere\Parameter\validate;
 
 function myArray(
@@ -385,7 +385,7 @@ function myArray(
         role: new ArrayAttr(
             mask: new IntAttr(accept: [64, 128, 256]),
             name: new StringAttr('/[a-z]+/'),
-            tenants: new GenericAttr(
+            tenants: new IterableAttr(
                 new IntAttr(min: 1)
             )
         ),
@@ -406,15 +406,15 @@ $value = [
 myArray($value);
 ```
 
-* Validate a generic int list:
+* Validate an iterable int list:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\GenericAttr;
+use Chevere\Parameter\Attributes\IterableAttr;
 use function Chevere\Parameter\validate;
 
-function myGeneric(
-    #[GenericAttr(
+function myIterable(
+    #[IterableAttr(
         new IntAttr(),
     )]
     array $list

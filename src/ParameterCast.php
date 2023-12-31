@@ -16,8 +16,8 @@ namespace Chevere\Parameter;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\BoolParameterInterface;
 use Chevere\Parameter\Interfaces\FloatParameterInterface;
-use Chevere\Parameter\Interfaces\GenericParameterInterface;
 use Chevere\Parameter\Interfaces\IntParameterInterface;
+use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterCastInterface;
@@ -74,9 +74,9 @@ final class ParameterCast implements ParameterCastInterface
         return $this->argument;
     }
 
-    public function generic(): GenericParameterInterface
+    public function iterable(): IterableParameterInterface
     {
-        /** @var GenericParameterInterface */
+        /** @var IterableParameterInterface */
         return $this->argument;
     }
 

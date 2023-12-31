@@ -13,21 +13,21 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
-use Chevere\Parameter\Interfaces\GenericParameterInterface;
+use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Traits\ArrayParameterTrait;
 use Chevere\Parameter\Traits\ParameterTrait;
 
-final class GenericParameter implements GenericParameterInterface
+final class IterableParameter implements IterableParameterInterface
 {
     use ParameterTrait;
     use ArrayParameterTrait;
 
     /**
-     * @var array<mixed, mixed>
+     * @var iterable<mixed, mixed>
      */
-    private ?array $default = null;
+    private ?iterable $default = null;
 
     final public function __construct(
         private ParameterInterface $value,
@@ -47,7 +47,21 @@ final class GenericParameter implements GenericParameterInterface
      */
     public function __invoke(iterable $value): iterable
     {
-        return assertGeneric($this, $value);
+        return assertIterable($this, $value);
+    }
+
+    public function default(): ?iterable
+    {
+        return $this->default;
+    }
+
+    public function withDefault(iterable $default): IterableParameterInterface
+    {
+        $this($default);
+        $new = clone $this;
+        $new->default = $default;
+
+        return $new;
     }
 
     public function key(): ParameterInterface
@@ -60,7 +74,7 @@ final class GenericParameter implements GenericParameterInterface
         return $this->value;
     }
 
-    public function assertCompatible(GenericParameterInterface $parameter): void
+    public function assertCompatible(IterableParameterInterface $parameter): void
     {
         $this->key->assertCompatible($parameter->key());
         $this->value->assertCompatible($parameter->value());
@@ -73,6 +87,6 @@ final class GenericParameter implements GenericParameterInterface
 
     private function typeName(): string
     {
-        return TypeInterface::GENERIC;
+        return TypeInterface::ITERABLE;
     }
 }

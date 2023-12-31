@@ -26,9 +26,9 @@ use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\assertNamedArgument;
 use function Chevere\Parameter\bool;
 use function Chevere\Parameter\float;
-use function Chevere\Parameter\generic;
 use function Chevere\Parameter\getType;
 use function Chevere\Parameter\int;
+use function Chevere\Parameter\iterable;
 use function Chevere\Parameter\null;
 use function Chevere\Parameter\object;
 use function Chevere\Parameter\parameters;
@@ -195,13 +195,13 @@ final class FunctionsTest extends TestCase
         assertNamedArgument('fail', string(), 13.13);
     }
 
-    public function testFunctionGenericParameter(): void
+    public function testFunctionIterableParameter(): void
     {
-        $parameter = generic(
+        $parameter = iterable(
             V: string()
         );
         $this->assertSame('', $parameter->description());
-        $parameter = generic(
+        $parameter = iterable(
             K: string(),
             V: string(),
             description: 'foo'

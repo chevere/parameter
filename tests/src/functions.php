@@ -15,8 +15,8 @@ namespace Chevere\Tests\src;
 
 use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\BoolAttr;
-use Chevere\Parameter\Attributes\GenericAttr;
 use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\IterableAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
 use function Chevere\Parameter\Attributes\valid;
@@ -30,7 +30,7 @@ function myArray(
         role: new ArrayAttr(
             mask: new IntAttr(min: 64),
             name: new StringAttr(),
-            tenants: new GenericAttr(
+            tenants: new IterableAttr(
                 new IntAttr(min: 1, max: 5)
             )
         ),

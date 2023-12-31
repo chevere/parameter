@@ -17,9 +17,9 @@ use BadMethodCallException;
 use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\BoolParameter;
 use Chevere\Parameter\FloatParameter;
-use Chevere\Parameter\GenericParameter;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\IntParameter;
+use Chevere\Parameter\IterableParameter;
 use Chevere\Parameter\NullParameter;
 use Chevere\Parameter\ObjectParameter;
 use Chevere\Parameter\Parameters;
@@ -216,10 +216,10 @@ final class ParametersTest extends TestCase
         $parameters->required($name)->null();
     }
 
-    public function testGetGeneric(): void
+    public function testGetIterable(): void
     {
         $name = 'test';
-        $parameter = new GenericParameter(
+        $parameter = new IterableParameter(
             value: string(),
             key: int(),
         );
@@ -228,7 +228,7 @@ final class ParametersTest extends TestCase
         ]);
         $this->assertSame(
             $parameter,
-            $parameters->required($name)->generic()
+            $parameters->required($name)->iterable()
         );
         $this->expectException(\TypeError::class);
         $parameters->required($name)->null();

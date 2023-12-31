@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Interfaces;
 
 /**
- * Describes the component in charge of defining a parameter of type generic.
+ * Describes the component in charge of defining a parameter of type iterable.
  */
-interface GenericParameterInterface extends ArrayTypeParameterInterface
+interface IterableParameterInterface extends ParameterInterface, ParametersAccessInterface
 {
     /**
      * Asserts the given `$value` is valid.
@@ -29,4 +29,20 @@ interface GenericParameterInterface extends ArrayTypeParameterInterface
     public function value(): ParameterInterface;
 
     public function assertCompatible(self $parameter): void;
+
+    /**
+     * @param iterable<mixed, mixed> $default
+     */
+    public function withDefault(iterable $default): self;
+
+    /**
+     * @return iterable<mixed, mixed>
+     */
+    public function default(): ?iterable;
+
+    public function typeSchema(): string;
+
+    public function isList(): bool;
+
+    public function isMap(): bool;
 }

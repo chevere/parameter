@@ -13,24 +13,24 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
-use Chevere\Parameter\GenericParameter;
+use Chevere\Parameter\IterableParameter;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\arguments;
-use function Chevere\Parameter\assertGeneric;
-use function Chevere\Parameter\generic;
+use function Chevere\Parameter\assertIterable;
 use function Chevere\Parameter\int;
+use function Chevere\Parameter\iterable;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\union;
 
-final class GenericParameterTest extends TestCase
+final class IterableParameterTest extends TestCase
 {
     public function testConstruct(): void
     {
         $value = string();
         $key = string();
         $description = 'test';
-        $parameter = new GenericParameter(
+        $parameter = new IterableParameter(
             $value,
             $key,
             $description
@@ -40,7 +40,7 @@ final class GenericParameterTest extends TestCase
         $this->assertSame(null, $parameter->default());
         $this->assertSame($description, $parameter->description());
         $this->assertSame([
-            'type' => 'generic',
+            'type' => 'iterable',
             'description' => $description,
             'default' => null,
             'parameters' => [
@@ -65,8 +65,8 @@ final class GenericParameterTest extends TestCase
         $value = int(description: 'compatible');
         $keyAlt = string(description: 'compatible');
         $valueAlt = int();
-        $parameter = new GenericParameter($value, $key);
-        $compatible = new GenericParameter($valueAlt, $keyAlt, 'compatible');
+        $parameter = new IterableParameter($value, $key);
+        $compatible = new IterableParameter($valueAlt, $keyAlt, 'compatible');
         $parameter->assertCompatible($compatible);
     }
 
@@ -75,8 +75,8 @@ final class GenericParameterTest extends TestCase
         $key = string();
         $value = int();
         $valueAlt = int(min: 1);
-        $parameter = new GenericParameter($value, $key);
-        $notCompatible = new GenericParameter($valueAlt, $key);
+        $parameter = new IterableParameter($value, $key);
+        $notCompatible = new IterableParameter($valueAlt, $key);
         $this->expectException(InvalidArgumentException::class);
         $parameter->assertCompatible($notCompatible);
     }
@@ -86,24 +86,24 @@ final class GenericParameterTest extends TestCase
         $key = string();
         $value = int();
         $keyAlt = string('/^[a-z]+&/');
-        $parameter = new GenericParameter($value, $key);
-        $notCompatible = new GenericParameter($value, $keyAlt);
+        $parameter = new IterableParameter($value, $key);
+        $notCompatible = new IterableParameter($value, $keyAlt);
         $this->expectException(InvalidArgumentException::class);
         $parameter->assertCompatible($notCompatible);
     }
 
-    public function testNestedGeneric(): void
+    public function testNestedIterable(): void
     {
         $this->expectNotToPerformAssertions();
-        $parameter = generic(
+        $parameter = iterable(
             V: string(),
             K: string()
         );
         $argument = [
             'a' => 'A',
         ];
-        assertGeneric($parameter, $argument);
-        $parameter = generic(
+        assertIterable($parameter, $argument);
+        $parameter = iterable(
             V: $parameter,
         );
         $argument = [
@@ -114,12 +114,12 @@ final class GenericParameterTest extends TestCase
                 'c' => 'C',
             ],
         ];
-        assertGeneric($parameter, $argument);
+        assertIterable($parameter, $argument);
     }
 
-    public function testGenericArguments(): void
+    public function testIterableArguments(): void
     {
-        $parameter = generic(
+        $parameter = iterable(
             V: string(),
             K: int()
         );
@@ -130,8 +130,8 @@ final class GenericParameterTest extends TestCase
         ];
         $arguments = arguments($parameter, $array);
         $this->assertSame($array['0'], $arguments->required('0')->string());
-        $parameter = generic(
-            V: generic(
+        $parameter = iterable(
+            V: iterable(
                 string()
             ),
             K: string()
@@ -148,7 +148,7 @@ final class GenericParameterTest extends TestCase
     public function testInvoke(): void
     {
         $value = [10, '10'];
-        $parameter = generic(union(int(), string()));
+        $parameter = iterable(union(int(), string()));
         $parameter($value);
         $this->expectException(InvalidArgumentException::class);
         $parameter([null, false]);

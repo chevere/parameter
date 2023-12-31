@@ -33,9 +33,7 @@ trait ArrayParameterTrait
         return assertArray($this, $array);
     }
 
-    /**
-     * @return array<mixed, mixed>
-     */
+    // @phpstan-ignore-next-line
     public function default(): ?array
     {
         return $this->default;
