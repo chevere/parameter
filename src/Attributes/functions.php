@@ -47,7 +47,7 @@ function intAttr(string $name): IntAttr
     return parameterAttr($name, $caller);
 }
 
-function floatAttr(string $name): FloatAttribute
+function floatAttr(string $name): FloatAttr
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
@@ -93,10 +93,12 @@ function arrayArguments(string $name): ArgumentsInterface
     $arguments = [];
     foreach ($parameters->keys() as $named) {
         $pos++;
-        $arguments[$named] = $args[$pos];
+        $arguments[$named] = match (true) {
+            array_key_exists($pos, $args) => $args[$pos],
+            default => $parameters->get($named)->default(),
+        };
     }
 
-    // @phpstan-ignore-next-line
     return $array->parameters()->__invoke(...$arguments[$name]);
 }
 
@@ -120,6 +122,9 @@ function valid(?string $name = null): void
     $arguments = [];
     foreach ($parameters->keys() as $named) {
         $pos++;
+        if (! isset($args[$pos])) {
+            continue;
+        }
         $arguments[$named] = $args[$pos];
     }
     if ($name === null) {
@@ -129,7 +134,11 @@ function valid(?string $name = null): void
     }
 
     try {
-        $parameters->get($name)->__invoke($arguments[$name]);
+        $parameter = $parameters->get($name);
+        if ($parameters->optionalKeys()->contains($name) && ! array_key_exists($name, $arguments)) {
+            return;
+        }
+        $parameter->__invoke($arguments[$name]);
     } catch (Throwable $e) {
         $invoker = $trace[0];
 

@@ -18,6 +18,9 @@ use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Traits\ArrayParameterTrait;
 use Chevere\Parameter\Traits\ParameterTrait;
+use InvalidArgumentException;
+use Throwable;
+use function Chevere\Message\message;
 
 final class IterableParameter implements IterableParameterInterface
 {
@@ -47,7 +50,38 @@ final class IterableParameter implements IterableParameterInterface
      */
     public function __invoke(iterable $value): iterable
     {
-        return assertIterable($this, $value);
+        if (empty($value)) {
+            throw new InvalidArgumentException(
+                (string) message('Argument value provided is empty')
+            );
+        }
+        $iterable = ' *iterable';
+        $iterableKey = '_K' . $iterable;
+        $iterableValue = '_V' . $iterable;
+
+        try {
+            foreach ($value as $k => $v) {
+                assertNamedArgument($iterableKey, $this->key, $k);
+                assertNamedArgument($iterableValue, $this->value, $v);
+            }
+        } catch (Throwable $e) {
+            $message = $e->getMessage();
+            $strstr = strstr($message, ':', false);
+            if (! is_string($strstr)) {
+                $strstr = $message; // @codeCoverageIgnore
+            } else {
+                $strstr = substr($strstr, 2);
+            }
+            $calledIn = strpos($strstr, ', called in');
+
+            $message = $calledIn
+                ? substr($strstr, 0, $calledIn)
+                : $strstr;
+
+            throw new InvalidArgumentException($message);
+        }
+
+        return $value;
     }
 
     public function default(): ?iterable

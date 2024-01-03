@@ -17,7 +17,6 @@ use Chevere\Parameter\IterableParameter;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\arguments;
-use function Chevere\Parameter\assertIterable;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\iterable;
 use function Chevere\Parameter\string;
@@ -102,7 +101,7 @@ final class IterableParameterTest extends TestCase
         $argument = [
             'a' => 'A',
         ];
-        assertIterable($parameter, $argument);
+        $parameter($argument);
         $parameter = iterable(
             V: $parameter,
         );
@@ -114,7 +113,7 @@ final class IterableParameterTest extends TestCase
                 'c' => 'C',
             ],
         ];
-        assertIterable($parameter, $argument);
+        $parameter($argument);
     }
 
     public function testIterableArguments(): void
@@ -151,6 +150,17 @@ final class IterableParameterTest extends TestCase
         $parameter = iterable(union(int(), string()));
         $parameter($value);
         $this->expectException(InvalidArgumentException::class);
-        $parameter([null, false]);
+        $parameter([]);
+    }
+
+    public function testWithDefault(): void
+    {
+        $value = [10, '10'];
+        $parameter = iterable(union(int(), string()));
+        $with = $parameter->withDefault($value);
+        $this->assertNotSame($parameter, $with);
+        $this->assertSame($value, $with->default());
+        $this->expectException(InvalidArgumentException::class);
+        $parameter->withDefault([null, false]);
     }
 }

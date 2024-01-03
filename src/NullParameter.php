@@ -15,7 +15,6 @@ namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
-use Chevere\Parameter\Traits\ParameterDefaultNullTrait;
 use Chevere\Parameter\Traits\ParameterTrait;
 use Chevere\Parameter\Traits\SchemaTrait;
 use TypeError;
@@ -24,8 +23,10 @@ use function Chevere\Message\message;
 final class NullParameter implements NullParameterInterface
 {
     use ParameterTrait;
-    use ParameterDefaultNullTrait;
     use SchemaTrait;
+
+    // @phpstan-ignore-next-line
+    private mixed $default;
 
     public function __invoke(mixed $value): mixed
     {
@@ -36,6 +37,19 @@ final class NullParameter implements NullParameterInterface
         throw new TypeError(
             (string) message('Argument value provided is not of type null')
         );
+    }
+
+    public function default(): mixed
+    {
+        return null;
+    }
+
+    public function withDefault(mixed $null): NullParameterInterface
+    {
+        $new = clone $this;
+        $new->default = $null;
+
+        return $new;
     }
 
     /**

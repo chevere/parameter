@@ -133,45 +133,6 @@ function assertNamedArgument(
     }
 }
 
-// @phpstan-ignore-next-line
-function assertIterable(
-    IterableParameterInterface $parameter,
-    iterable $argument,
-): iterable {
-    if (empty($argument)) {
-        throw new InvalidArgumentException(
-            (string) message('Argument value provided is empty')
-        );
-    }
-    $iterable = ' *iterable';
-    $iterableKey = '_K' . $iterable;
-    $iterableValue = '_V' . $iterable;
-
-    try {
-        foreach ($argument as $key => $value) {
-            assertNamedArgument($iterableKey, $parameter->key(), $key);
-            assertNamedArgument($iterableValue, $parameter->value(), $value);
-        }
-    } catch (Throwable $e) {
-        $message = $e->getMessage();
-        $strstr = strstr($message, ':', false);
-        if (! is_string($strstr)) {
-            $strstr = $message; // @codeCoverageIgnore
-        } else {
-            $strstr = substr($strstr, 2);
-        }
-        $calledIn = strpos($strstr, ', called in');
-
-        $message = $calledIn
-            ? substr($strstr, 0, $calledIn)
-            : $strstr;
-
-        throw new InvalidArgumentException($message);
-    }
-
-    return $argument;
-}
-
 function toParameter(string $type): ParameterInterface
 {
     $class = TypeInterface::TYPE_TO_PARAMETER[$type]
@@ -287,14 +248,37 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
         } catch (LogicException) {
             $push = new ReflectionParameterTyped($parameter);
         }
-        $callable = match ($parameter->isOptional()) {
+        $push = $push->parameter();
+        if ($parameter->isDefaultValueAvailable()) {
+            try {
+                $push = $push->withDefault($parameter->getDefaultValue());
+            } catch (Throwable $e) {
+                $name = $parameter->getName();
+                $class = $parameter->getDeclaringClass()?->getName() ?? null;
+                $function = $parameter->getDeclaringFunction()->getName();
+                $caller = match (true) {
+                    $class === null => $function,
+                    default => $class . '::' . $function,
+                };
+
+                throw new InvalidArgumentException(
+                    (string) message(
+                        'Unable to use default value for parameter `%name%` in `%caller%`: %message%',
+                        name: $name,
+                        caller: $caller,
+                        message: $e->getMessage(),
+                    )
+                );
+            }
+        }
+        $withMethod = match ($parameter->isOptional()) {
             true => 'withOptional',
             default => 'withRequired',
         };
 
-        $parameters = $parameters->{$callable}(
+        $parameters = $parameters->{$withMethod}(
             $parameter->getName(),
-            $push->parameter()
+            $push
         );
     }
 

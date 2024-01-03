@@ -17,7 +17,6 @@ use Chevere\Parameter\Arguments;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\arrayp;
-use function Chevere\Parameter\assertIterable;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\iterable;
 use function Chevere\Parameter\parameters;
@@ -194,7 +193,7 @@ final class ArgumentsIterableTest extends TestCase
             K: string()
         );
         $this->expectNotToPerformAssertions();
-        assertIterable($parameter, $args);
+        $parameter($args);
     }
 
     /**
@@ -208,6 +207,6 @@ final class ArgumentsIterableTest extends TestCase
         );
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/^\[_V \*iterable\]\:.*/');
-        assertIterable($parameter, $args);
+        $parameter($args);
     }
 }

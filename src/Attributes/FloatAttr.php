@@ -20,7 +20,7 @@ use Chevere\Parameter\Interfaces\ParameterInterface;
 use function Chevere\Parameter\float;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class FloatAttribute implements ParameterAttributeInterface
+class FloatAttr implements ParameterAttributeInterface
 {
     public readonly FloatParameterInterface $parameter;
 

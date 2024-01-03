@@ -14,9 +14,13 @@ declare(strict_types=1);
 namespace Chevere\Tests\src;
 
 use Chevere\Parameter\Attributes\ArrayAttr;
+use Chevere\Parameter\Attributes\BoolAttr;
 use Chevere\Parameter\Attributes\CallableAttr;
+use Chevere\Parameter\Attributes\EnumAttr;
+use Chevere\Parameter\Attributes\FloatAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\IterableAttr;
+use Chevere\Parameter\Attributes\NullAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
 use Chevere\Parameter\Interfaces\ParameterInterface;
@@ -42,16 +46,28 @@ final class UsesParameterAttributes
         #[ArrayAttr(
             id: new CallableAttr(__CLASS__ . '::callable'),
         )]
-        array $cols = [],
+        array $cols = [
+            'id' => 1,
+        ],
         #[IterableAttr(
             new StringAttr('/^[A-Za-z]+$/'),
         )]
-        iterable $tags = [],
+        iterable $tags = ['Chevere', 'Chevere', 'Chevere', 'Uh'],
+        #[BoolAttr()]
+        bool $flag = false,
+        #[FloatAttr(min: 0)]
+        float $amount = 0,
+        #[NullAttr()]
+        mixed $null = null,
+        #[EnumAttr('test', 'value')]
+        string $enum = 'value',
     ) {
         valid('name');
         valid('age');
         valid('cols');
         valid('tags');
+        valid('flag');
+        valid('amount');
         valid();
         $name = stringAttr('name')($name);
         $age = intAttr('age')($age);
