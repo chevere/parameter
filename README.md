@@ -18,6 +18,8 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=chevere_parameter&metric=sqale_index)](https://sonarcloud.io/dashboard?id=chevere_parameter)
 [![CodeFactor](https://www.codefactor.io/repository/github/chevere/parameter/badge)](https://www.codefactor.io/repository/github/chevere/parameter)
 
+![Parameter](.github/banner/parameter-logo.svg)
+
 ## Summary
 
 Parameter is an abstraction around parameter-argument. It can be used to provide parameter validation rules via attributes backed on its own type system.
