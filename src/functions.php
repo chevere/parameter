@@ -327,10 +327,11 @@ function reflectedParameterAttribute(
     return $attribute->newInstance();
 }
 
-function validated(
-    ReflectionFunction|ReflectionMethod $reflection,
-    mixed ...$args
-): mixed {
+function validated(callable $callable, mixed ...$args): mixed
+{
+    // @phpstan-ignore-next-line
+    $reflection = new ReflectionFunction($callable);
+
     try {
         $parameters = reflectionToParameters($reflection);
         $return = reflectionToReturnParameter($reflection);
@@ -341,11 +342,7 @@ function validated(
             ...getExceptionArguments($e, $reflection),
         );
     }
-    if ($reflection instanceof ReflectionMethod) {
-        $result = $reflection->invoke(null, ...$args);
-    } else {
-        $result = $reflection->invoke(...$args);
-    }
+    $result = $callable(...$args);
 
     try {
         $return->__invoke($result);
@@ -362,23 +359,15 @@ function validated(
 /**
  * @return array{0: string, 1: Throwable, 2: string, 3: int}
  */
-function getExceptionArguments(Throwable $e, ReflectionFunction|ReflectionMethod $reflection): array
+function getExceptionArguments(Throwable $e, ReflectionFunction $reflection): array
 {
     // @infection-ignore-all
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-    $class = $reflection instanceof ReflectionMethod
-        ? $reflection->getDeclaringClass()->getName()
-        : null;
     $function = $reflection->getName();
-    $actor = match (true) {
-        $class === null => $function,
-        default => $class . '::' . $function,
-    };
-
     $message = (string) message(
         '`%actor%` %exception% → %message%',
         exception: $e::class,
-        actor: $actor,
+        actor: $function,
         message: $e->getMessage(),
     );
 

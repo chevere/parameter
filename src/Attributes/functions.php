@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Attributes;
 
+use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use LogicException;
@@ -185,23 +186,28 @@ function valid(?string $name = null): void
 
         return;
     }
+    if ($parameters->optionalKeys()->contains($name)
+        && ! array_key_exists($name, $arguments)
+    ) {
+        return;
+    }
 
     try {
-        $parameter = $parameters->get($name);
-        if ($parameters->optionalKeys()->contains($name) && ! array_key_exists($name, $arguments)) {
-            return;
+        if (! $parameters->has($name)) {
+            throw new LogicException(
+                (string) message(
+                    'Parameter `%name%` not found',
+                    name: $name,
+                )
+            );
         }
+        $parameter = $parameters->get($name);
         $parameter->__invoke($arguments[$name]);
     } catch (Throwable $e) {
         $invoker = $trace[0];
+        $file = $invoker['file'] ?? 'na';
+        $line = $invoker['line'] ?? 0;
 
-        throw new $e(
-            (string) message(
-                '%message% → %invokedAt%',
-                message: $e->getMessage(),
-                // @phpstan-ignore-next-line
-                invokedAt: $invoker['file'] . ':' . $invoker['line'],
-            )
-        );
+        throw new ParameterException($e->getMessage(), $e, $file, $line);
     }
 }

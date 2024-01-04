@@ -20,7 +20,6 @@ use InvalidArgumentException;
 use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
-use ReflectionFunction;
 use stdClass;
 use TypeError;
 use function Chevere\Parameter\arguments;
@@ -379,35 +378,32 @@ final class FunctionsTest extends TestCase
     public function testValidatedParameterError(): void
     {
         $function = 'Chevere\Tests\src\validates';
-        $reflection = new ReflectionFunction($function);
         $base = 0;
         $times = 1;
         $name = 'Test';
         $this->expectException(ParameterException::class);
         $this->expectExceptionMessage("`{$function}` InvalidArgumentException → [base]: Argument value provided `0` is less than `1`");
-        validated($reflection, $base, $times, $name);
+        validated($function, $base, $times, $name);
     }
 
     public function testValidatedReturnError(): void
     {
         $function = 'Chevere\Tests\src\validates';
-        $reflection = new ReflectionFunction($function);
         $base = 99;
         $times = 1;
         $name = 'Test';
         $this->expectException(ReturnException::class);
         $this->expectExceptionMessage("`{$function}` InvalidArgumentException → Argument value provided `99` is less than `100`");
-        validated($reflection, $base, $times, $name);
+        validated($function, $base, $times, $name);
     }
 
-    public function testValidated(): void
+    public function testValidatedFunction(): void
     {
         $function = 'Chevere\Tests\src\validates';
-        $reflection = new ReflectionFunction($function);
         $base = 100;
         $times = 1;
         $name = 'Test';
         $this->expectNotToPerformAssertions();
-        validated($reflection, $base, $times, $name);
+        validated($function, $base, $times, $name);
     }
 }

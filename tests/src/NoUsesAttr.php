@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\src;
 
+use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Throwable;
 use function Chevere\Parameter\Attributes\arrayArguments;
@@ -51,6 +52,15 @@ final class NoUsesAttr
         valid('tags');
         valid('flag');
         valid('amount');
+
+        try {
+            valid('404');
+        } catch (ParameterException $e) {
+            assertSame(
+                'Parameter `404` not found',
+                $e->getMessage()
+            );
+        }
         // Get attribute, validate and return
         try {
             $name = stringAttr('name')($name);

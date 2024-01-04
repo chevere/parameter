@@ -23,14 +23,34 @@ final class NullParameterTest extends TestCase
     {
         $parameter = new NullParameter();
         $this->assertSame(null, $parameter->default());
-        $compatible = new NullParameter();
-        $parameter->assertCompatible($compatible);
         $this->assertSame([
             'type' => 'null',
             'description' => '',
             'default' => null,
         ], $parameter->schema());
         $parameter(null);
+    }
+
+    public function testWithDefault(): void
+    {
+        $parameter = new NullParameter();
+        $with = $parameter->withDefault(null);
+        $this->assertNotSame($parameter, $with);
+        $parameter->assertCompatible($with);
+        $with(null);
+    }
+
+    public function testCompatible(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $parameter = new NullParameter();
+        $compatible = new NullParameter();
+        $parameter->assertCompatible($compatible);
+    }
+
+    public function testError(): void
+    {
+        $parameter = new NullParameter();
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage(
             <<<PLAIN
