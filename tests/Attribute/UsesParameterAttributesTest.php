@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attribute;
 
-use Chevere\Tests\src\UsesParameterAttributes;
+use Chevere\Tests\src\NoUsesAttr;
+use Chevere\Tests\src\UsesAttr;
 use InvalidArgumentException;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 
 final class UsesParameterAttributesTest extends TestCase
@@ -152,7 +154,7 @@ final class UsesParameterAttributesTest extends TestCase
         $this->expectExceptionMessage($error);
         $args = func_get_args();
         array_pop($args);
-        new UsesParameterAttributes(...$args);
+        new UsesAttr(...$args);
     }
 
     /**
@@ -170,16 +172,24 @@ final class UsesParameterAttributesTest extends TestCase
     ): void {
         $this->expectNotToPerformAssertions();
 
-        new UsesParameterAttributes(...func_get_args());
+        new UsesAttr(...func_get_args());
     }
 
     public function testReturnAttr(): void
     {
         $arguments = $this->dataProviderWillSuccess()[0];
-        $object = new UsesParameterAttributes(...$arguments);
+        $object = new UsesAttr(...$arguments);
         $object->run(5);
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument value provided `6` is greater than `5`');
         $object->run(6);
+    }
+
+    public function testNoReturnRule(): void
+    {
+        $object = new NoUsesAttr();
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Callable `Chevere\Tests\src\NoUsesAttr::return` must return a `Chevere\Parameter\Interfaces\ParameterInterface` instance');
+        $object->run();
     }
 }

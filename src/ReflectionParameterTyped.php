@@ -36,7 +36,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         $parameter = toParameter($this->type?->getName() ?? 'mixed');
 
         try {
-            $attribute = reflectedParameterAttribute('parameter', $reflection);
+            $attribute = reflectedParameterAttribute($reflection);
             $parameter = $attribute->parameter();
         } catch (Throwable) {
         }

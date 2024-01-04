@@ -19,12 +19,16 @@ use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\IterableAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
+use function Chevere\Parameter\Attributes\arrayArguments;
+use function Chevere\Parameter\Attributes\arrayAttr;
+use function Chevere\Parameter\Attributes\returnAttr;
 use function Chevere\Parameter\Attributes\valid;
+use function PHPUnit\Framework\assertSame;
 
 #[ReturnAttr(
     new BoolAttr()
 )]
-function myArray(
+function usesAttr(
     #[ArrayAttr(
         id: new IntAttr(min: 1),
         role: new ArrayAttr(
@@ -38,6 +42,18 @@ function myArray(
     array $spooky
 ): bool {
     valid('spooky');
+    assertSame(
+        $spooky['id'],
+        arrayArguments('spooky')->required('id')->int()
+    );
 
-    return true;
+    return returnAttr()(true);
+}
+
+function noUsesAttr(
+    array $spooky
+): bool {
+    valid('spooky');
+
+    return returnAttr()(true);
 }

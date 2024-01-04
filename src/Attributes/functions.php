@@ -93,24 +93,25 @@ function returnAttr(): ReturnAttr
     $caller = $trace[1];
     $class = $caller['class'] ?? null;
     $method = $caller['function'];
-    $magicReturn = "{$class}::return";
+    $convention = "{$class}::return";
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
     $attribute = $reflection->getAttributes(ReturnAttr::class)[0] ?? null;
     if ($attribute === null) {
-        if (! is_callable($magicReturn)) {
+        if (! is_callable($convention)) {
             throw new LogicException(
                 (string) message(
                     'No applicable return rules to validate',
                 )
             );
         }
-        $parameter = $magicReturn();
+        $parameter = $convention();
         if (! $parameter instanceof ParameterInterface) {
             throw new LogicException(
                 (string) message(
-                    'Callable return must return a %type% instance',
+                    'Callable `%callable%` must return a `%type%` instance',
+                    callable: $convention,
                     type: ParameterInterface::class
                 )
             );

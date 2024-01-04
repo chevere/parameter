@@ -22,34 +22,9 @@ use ReflectionMethod;
 use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\reflectionToParameters;
 use function Chevere\Parameter\reflectionToReturnParameter;
-use function Chevere\Tests\src\myArray;
 
-final class TypeFunctionsTest extends TestCase
+final class ReflectionFunctionsTest extends TestCase
 {
-    public function testBodyValidate(): void
-    {
-        $value = [
-            'id' => 1,
-            'role' => [
-                'mask' => 64,
-                'name' => 'admin',
-                'tenants' => [1, 2, 3, 4, 5],
-            ],
-        ];
-        myArray($value);
-        $value = [
-            'id' => 1,
-            'role' => [
-                'mask' => 64,
-                'name' => 'admin',
-                'tenants' => [6, 7, 8],
-            ],
-        ];
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('[role]: [tenants]: [_V *iterable]: Argument value provided `6` is greater than `5`');
-        myArray($value);
-    }
-
     public function testAnonClassReturn(): void
     {
         $class = new class() {

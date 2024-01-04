@@ -37,7 +37,7 @@ use function Chevere\Parameter\Attributes\stringAttr;
 use function Chevere\Parameter\Attributes\valid;
 use function Chevere\Parameter\int;
 
-final class UsesParameterAttributes
+final class UsesAttr
 {
     #[ReturnAttr(
         new CallableAttr(__CLASS__ . '::return')

@@ -227,7 +227,7 @@ function parameterAttr(string $parameter, array $caller): ParameterAttributeInte
     $parameters = $reflection->getParameters();
     foreach ($parameters as $parameterReflection) {
         if ($parameterReflection->getName() === $parameter) {
-            return reflectedParameterAttribute($parameter, $parameterReflection);
+            return reflectedParameterAttribute($parameterReflection);
         }
     }
 
@@ -242,20 +242,20 @@ function parameterAttr(string $parameter, array $caller): ParameterAttributeInte
 function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection): ParametersInterface
 {
     $parameters = parameters();
-    foreach ($reflection->getParameters() as $parameter) {
+    foreach ($reflection->getParameters() as $reflectionParameter) {
         try {
-            $push = reflectedParameterAttribute($parameter->getName(), $parameter);
+            $push = reflectedParameterAttribute($reflectionParameter);
+            $push = $push->parameter();
         } catch (LogicException) {
-            $push = new ReflectionParameterTyped($parameter);
+            $push = mixed();
         }
-        $push = $push->parameter();
-        if ($parameter->isDefaultValueAvailable()) {
+        if ($reflectionParameter->isDefaultValueAvailable()) {
             try {
-                $push = $push->withDefault($parameter->getDefaultValue());
+                $push = $push->withDefault($reflectionParameter->getDefaultValue());
             } catch (Throwable $e) {
-                $name = $parameter->getName();
-                $class = $parameter->getDeclaringClass()?->getName() ?? null;
-                $function = $parameter->getDeclaringFunction()->getName();
+                $name = $reflectionParameter->getName();
+                $class = $reflectionParameter->getDeclaringClass()?->getName() ?? null;
+                $function = $reflectionParameter->getDeclaringFunction()->getName();
                 $caller = match (true) {
                     $class === null => $function,
                     default => $class . '::' . $function,
@@ -271,13 +271,13 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
                 );
             }
         }
-        $withMethod = match ($parameter->isOptional()) {
+        $withMethod = match ($reflectionParameter->isOptional()) {
             true => 'withOptional',
             default => 'withRequired',
         };
 
         $parameters = $parameters->{$withMethod}(
-            $parameter->getName(),
+            $reflectionParameter->getName(),
             $push
         );
     }
@@ -304,13 +304,12 @@ function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $reflec
 }
 
 function reflectedParameterAttribute(
-    string $parameter,
     ReflectionParameter $reflection,
 ): ParameterAttributeInterface {
     $attributes = $reflection->getAttributes(ParameterAttributeInterface::class, ReflectionAttribute::IS_INSTANCEOF);
     if ($attributes === []) {
         throw new LogicException(
-            (string) message('No parameter attribute for `%name%`', name: $parameter)
+            (string) message('No attribute for parameter `%name%`', name: $reflection->getName())
         );
     }
     /** @var ReflectionAttribute<ParameterAttributeInterface> $attribute */
