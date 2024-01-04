@@ -73,7 +73,6 @@ final class IterableParameter implements IterableParameterInterface
                 $strstr = substr($strstr, 2);
             }
             $calledIn = strpos($strstr, ', called in');
-
             $message = $calledIn
                 ? substr($strstr, 0, $calledIn)
                 : $strstr;
