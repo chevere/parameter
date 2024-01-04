@@ -50,23 +50,20 @@ use function Chevere\Parameter\int;
 int(min: 1, max: 10)($var);
 ```
 
-Use [attribute-based inline validation](#attribute-based-inline-validation) to go from this:
+Use [attribute-based delegated validation](#attribute-based-delegated-validation) to go from this:
 
 ```php
-function myFunction(
-    int $var
-): string
+function myFunction(int $var): string
 {
     if($var > 10 || $var < 1) {
         throw new InvalidArgumentException();
     }
-    $return = 'ok';
-    if(!str_ends_with($return, 'ok')) {
-        throw new InvalidArgumentException();
-    }
-
-    return $return;
+    $return = 'done ok';
+    return str_ends_with($return, 'ok')
+        ? $return
+        : throw new InvalidArgumentException();
 }
+$result = myFunction($var);
 ```
 
 To this:
@@ -75,8 +72,7 @@ To this:
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
-use function Chevere\Parameter\valid;
-use function Chevere\Parameter\validAttr;
+use function Chevere\Parameter\validated;
 
 #[ReturnAttr(
     new StringAttr('/ok$/')
@@ -86,19 +82,33 @@ function myFunction(
     int $var
 ): string
 {
-    valid();
-    $return = 'ok';
-
-    return validAttr($return);
+    return 'done ok';
 }
+$result = validated('myFunction', $var);
 ```
 
-Use [attribute-based delegated validation](#attribute-based-delegated-validation) to omit validation calls:
+Use reflection functions for custom delegation:
+
+```php
+use ReflectionFunction;
+use function Chevere\Parameter\reflectionToParameters;
+use function Chevere\Parameter\reflectionToReturnParameter;
+
+$reflection = new ReflectionFunction('myFunction');
+$parameters = reflectionToParameters($reflection);
+$return = reflectionToReturnParameter($reflection);
+$result = myFunction(...$args);
+$result = $return->__invoke($result);
+```
+
+Use [attribute-based inline validation](#attribute-based-inline-validation) for manual validation:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
+use function Chevere\Parameter\valid;
+use function Chevere\Parameter\returnAttr;
 
 #[ReturnAttr(
     new StringAttr('/ok$/')
@@ -108,20 +118,11 @@ function myFunction(
     int $var
 ): string
 {
+    valid(); // validation
     $return = 'ok';
 
-    return $return;
+    return returnAttr()($return); // validation
 }
-```
-
-When doing delegated validation use function `validated()` to get a result validated against parameters and return rules:
-
-```php
-use function Chevere\Parameter\validated;
-use ReflectionFunction;
-
-$reflection = new ReflectionFunction('myFunction');
-$result = validated($reflection, $var);
 ```
 
 ## Reference
@@ -325,6 +326,59 @@ $value = 1;
 union(int(), null())($value);
 ```
 
+### Attribute-based delegated validation
+
+This enables to delegate validation on the *caller*, not in the function body.
+
+* Use function `validated()` to get a return validated against all rules.
+
+```php
+use function Chevere\Parameter\validated;
+
+$result = validated('myFunction', $var);
+```
+
+* Use function `reflectionToParameters()` to get rules for validating arguments.
+
+```php
+use ReflectionMethod;
+use Chevere\Parameter\Attributes\IntAttr;
+use function Chevere\Parameter\arguments;
+use function Chevere\Parameter\reflectionToParameters;
+
+$class = new class() {
+    public function wea(
+        #[IntAttr(accept: [1, 10, 100])]
+        int $base
+    ): void {
+    }
+};
+$reflection = new ReflectionMethod($class, 'wea');
+$parameters = reflectionToParameters($reflection);
+$object = new $class();
+$result = $parameters(base: 0);
+```
+
+* Use function `reflectionToReturnParameter()` to get rules for validating return value:
+
+```php
+use ReflectionFunction;
+use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\ReturnAttr;
+use function Chevere\Parameter\reflectionToReturnParameter;
+
+$function =
+    #[ReturnAttr(
+        new IntAttr(min: 1000)
+    )]
+    function (int $base): int {
+        return 10 * $base;
+    };
+$reflection = new ReflectionFunction($function);
+$return = reflectionToReturnParameter($reflection);
+$result = $return($function(10)); // Validates!
+```
+
 ### Attribute-based inline validation
 
 #### Parameters
@@ -474,60 +528,7 @@ public function myReturnArray(): array
 }
 ```
 
-### Attribute-based delegated validation
 
-This enables to delegate validation on the *caller*, not in the function body.
-
-* Use function `validated()` to get a return validated against all rules.
-
-```php
-use function Chevere\Parameter\validated;
-use ReflectionFunction;
-
-$reflection = new ReflectionFunction('myFunction');
-$result = validated($reflection, $var);
-```
-
-* Use function `reflectionToParameters()` to get rules for validating arguments.
-
-```php
-use ReflectionMethod;
-use Chevere\Parameter\Attributes\IntAttr;
-use function Chevere\Parameter\arguments;
-use function Chevere\Parameter\reflectionToParameters;
-
-$class = new class() {
-    public function wea(
-        #[IntAttr(accept: [1, 10, 100])]
-        int $base
-    ): void {
-    }
-};
-$reflection = new ReflectionMethod($class, 'wea');
-$parameters = reflectionToParameters($reflection);
-$object = new $class();
-$result = $parameters(base: 0);
-```
-
-* Use function `reflectionToReturnParameter()` to get rules for validating return value:
-
-```php
-use ReflectionFunction;
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\ReturnAttr;
-use function Chevere\Parameter\reflectionToReturnParameter;
-
-$function =
-    #[ReturnAttr(
-        new IntAttr(min: 1000)
-    )]
-    function (int $base): int {
-        return 10 * $base;
-    };
-$reflection = new ReflectionFunction($function);
-$return = reflectionToReturnParameter($reflection);
-$result = $return($function(10)); // Validates!
-```
 
 ## Documentation
 
