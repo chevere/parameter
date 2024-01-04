@@ -153,6 +153,34 @@ final class IterableParameterTest extends TestCase
         $parameter([]);
     }
 
+    public function testKeyError(): void
+    {
+        $parameter = iterable(K: int(), V: string());
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [K *iterable]: Argument #1 (\$value) must be of type int, string given
+            PLAIN
+        );
+        $parameter([
+            'key' => 'foo',
+        ]);
+    }
+
+    public function testValueError(): void
+    {
+        $parameter = iterable(K: int(), V: string());
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [V *iterable]: Argument #1 (\$value) must be of type Stringable|string, int given
+            PLAIN
+        );
+        $parameter([
+            100 => 100,
+        ]);
+    }
+
     public function testWithDefault(): void
     {
         $value = [10, '10'];

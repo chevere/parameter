@@ -17,6 +17,7 @@ use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Traits\ArrayParameterTrait;
+use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use Chevere\Parameter\Traits\ParameterTrait;
 use InvalidArgumentException;
 use Throwable;
@@ -26,6 +27,7 @@ final class IterableParameter implements IterableParameterInterface
 {
     use ParameterTrait;
     use ArrayParameterTrait;
+    use ExceptionErrorMessageTrait;
 
     /**
      * @var iterable<mixed, mixed>
@@ -56,8 +58,8 @@ final class IterableParameter implements IterableParameterInterface
             );
         }
         $iterable = ' *iterable';
-        $iterableKey = '_K' . $iterable;
-        $iterableValue = '_V' . $iterable;
+        $iterableKey = 'K' . $iterable;
+        $iterableValue = 'V' . $iterable;
 
         try {
             foreach ($value as $k => $v) {
@@ -65,17 +67,7 @@ final class IterableParameter implements IterableParameterInterface
                 assertNamedArgument($iterableValue, $this->value, $v);
             }
         } catch (Throwable $e) {
-            $message = $e->getMessage();
-            $strstr = strstr($message, ':', false);
-            if (! is_string($strstr)) {
-                $strstr = $message; // @codeCoverageIgnore
-            } else {
-                $strstr = substr($strstr, 2);
-            }
-            $calledIn = strpos($strstr, ', called in');
-            $message = $calledIn
-                ? substr($strstr, 0, $calledIn)
-                : $strstr;
+            $message = $this->getExceptionMessage($e, ': ');
 
             throw new InvalidArgumentException($message);
         }

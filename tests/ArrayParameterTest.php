@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
+use ArgumentCountError;
 use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\Interfaces\IntParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
@@ -52,12 +53,14 @@ final class ArrayParameterTest extends TestCase
         $default = [
             'test' => 1,
         ];
-        $withDefault = $parameter->withDefault($default);
+        $with = $parameter->withDefault($default);
+        $this->assertNotSame($parameter, $with);
+        $this->assertSame($default, $with->default());
         (new ParameterHelper())->testWithParameterDefault(
             primitive: 'array',
             parameter: $parameter,
             default: $default,
-            parameterWithDefault: $withDefault
+            parameterWithDefault: $with
         );
         $this->assertSame([
             'type' => 'array#map',
@@ -68,7 +71,10 @@ final class ArrayParameterTest extends TestCase
                     'required' => true,
                 ] + $int->schema(),
             ],
-        ], $withDefault->schema());
+        ], $with->schema());
+        $this->expectException(ArgumentCountError::class);
+        $this->expectExceptionMessage('Missing required argument(s): `test`');
+        $parameter->withDefault([]);
     }
 
     public function testWithRequired(): void

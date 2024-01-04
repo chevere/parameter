@@ -18,6 +18,7 @@ use ArrayAccess;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
+use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use ReflectionClass;
@@ -27,6 +28,8 @@ use function Chevere\Message\message;
 
 final class Arguments implements ArgumentsInterface
 {
+    use ExceptionErrorMessageTrait;
+
     private ParametersInterface $iterable;
 
     /**
@@ -244,18 +247,20 @@ final class Arguments implements ArgumentsInterface
             $this->arguments[$name] = $parameter->__invoke($argument);
         } catch (TypeError $e) {
             throw new TypeError(
-                $this->getExceptionMessage($name, $e)
+                $this->getExceptionPropertyMessage($name, $e)
             );
         } catch (Throwable $e) {
             throw new InvalidArgumentException(
-                $this->getExceptionMessage($name, $e)
+                $this->getExceptionPropertyMessage($name, $e)
             );
         }
     }
 
-    private function getExceptionMessage(string $property, Throwable $e): string
+    private function getExceptionPropertyMessage(string $property, Throwable $e): string
     {
-        return "[{$property}]: {$e->getMessage()}";
+        $message = $this->getExceptionMessage($e);
+
+        return "[{$property}]: {$message}";
     }
 
     private function handleParameters(): void

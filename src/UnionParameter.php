@@ -18,8 +18,8 @@ use Chevere\Parameter\Interfaces\ParametersInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use Chevere\Parameter\Traits\ArrayParameterTrait;
+use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use Chevere\Parameter\Traits\ParameterAssertArrayTypeTrait;
-use Chevere\Parameter\Traits\ParameterErrorMessageTrait;
 use Chevere\Parameter\Traits\ParameterTrait;
 use InvalidArgumentException;
 use LogicException;
@@ -31,7 +31,7 @@ final class UnionParameter implements UnionParameterInterface
     use ParameterTrait;
     use ArrayParameterTrait;
     use ParameterAssertArrayTypeTrait;
-    use ParameterErrorMessageTrait;
+    use ExceptionErrorMessageTrait;
 
     private mixed $default = null;
 
@@ -113,17 +113,7 @@ final class UnionParameter implements UnionParameterInterface
         Throwable $e
     ): string {
         $type = $parameter::class;
-        $message = $e->getMessage();
-        $strstr = strstr($message, '::__invoke():', false);
-        if (! is_string($strstr)) {
-            $message = $message; // @codeCoverageIgnore
-        } else {
-            $message = substr($strstr, 14);
-        }
-        $calledIn = strpos($message, ', called in');
-        $message = $calledIn
-            ? substr($message, 0, $calledIn)
-            : $message;
+        $message = $this->getExceptionMessage($e);
 
         return <<<PLAIN
         Parameter `{$name}` <{$type}>: {$message}
