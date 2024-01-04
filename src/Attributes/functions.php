@@ -55,6 +55,22 @@ function floatAttr(string $name): FloatAttr
     return parameterAttr($name, $caller);
 }
 
+function boolAttr(string $name): BoolAttr
+{
+    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
+
+    // @phpstan-ignore-next-line
+    return parameterAttr($name, $caller);
+}
+
+function nullAttr(string $name): NullAttr
+{
+    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
+
+    // @phpstan-ignore-next-line
+    return parameterAttr($name, $caller);
+}
+
 function arrayAttr(string $name): ArrayAttr
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
@@ -69,6 +85,42 @@ function iteratorAttr(string $name): IterableAttr
 
     // @phpstan-ignore-next-line
     return parameterAttr($name, $caller);
+}
+
+function returnAttr(): ReturnAttr
+{
+    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+    $caller = $trace[1];
+    $class = $caller['class'] ?? null;
+    $method = $caller['function'];
+    $magicReturn = "{$class}::return";
+    $reflection = $class
+        ? new ReflectionMethod($class, $method)
+        : new ReflectionFunction($method);
+    $attribute = $reflection->getAttributes(ReturnAttr::class)[0] ?? null;
+    if ($attribute === null) {
+        if (! is_callable($magicReturn)) {
+            throw new LogicException(
+                (string) message(
+                    'No applicable return rules to validate',
+                )
+            );
+        }
+        $parameter = $magicReturn();
+        if (! $parameter instanceof ParameterInterface) {
+            throw new LogicException(
+                (string) message(
+                    'Callable return must return a %type% instance',
+                    type: ParameterInterface::class
+                )
+            );
+        }
+    } else {
+        $attribute = $attribute->newInstance();
+    }
+
+    /** @var ReturnAttr $attribute */
+    return $attribute;
 }
 
 /**
@@ -139,61 +191,6 @@ function valid(?string $name = null): void
             return;
         }
         $parameter->__invoke($arguments[$name]);
-    } catch (Throwable $e) {
-        $invoker = $trace[0];
-
-        throw new $e(
-            (string) message(
-                '%message% → %invokedAt%',
-                message: $e->getMessage(),
-                // @phpstan-ignore-next-line
-                invokedAt: $invoker['file'] . ':' . $invoker['line'],
-            )
-        );
-    }
-}
-
-/**
- * Validates `$var` against the return attribute.
- *
- * @return mixed The validated `$var`.
- */
-function validReturn(mixed $var): mixed
-{
-    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-    $caller = $trace[1];
-    $class = $caller['class'] ?? null;
-    $method = $caller['function'];
-    $magicReturn = "{$class}::return";
-    $reflection = $class
-        ? new ReflectionMethod($class, $method)
-        : new ReflectionFunction($method);
-    $attribute = $reflection->getAttributes(ReturnAttr::class)[0] ?? null;
-    if ($attribute === null) {
-        if (! is_callable($magicReturn)) {
-            throw new LogicException(
-                (string) message(
-                    'No applicable return rules to validate',
-                )
-            );
-        }
-        $parameter = $magicReturn();
-        if (! $parameter instanceof ParameterInterface) {
-            throw new LogicException(
-                (string) message(
-                    'Callable return must return a %type% instance',
-                    type: ParameterInterface::class
-                )
-            );
-        }
-    } else {
-        $attribute = $attribute->newInstance();
-        /** @var ReturnAttr $attribute */
-        $parameter = $attribute->parameter();
-    }
-
-    try {
-        return $parameter->__invoke($var);
     } catch (Throwable $e) {
         $invoker = $trace[0];
 

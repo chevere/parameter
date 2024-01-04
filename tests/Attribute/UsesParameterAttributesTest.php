@@ -17,7 +17,7 @@ use Chevere\Tests\src\UsesParameterAttributes;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
-final class ParameterAttributesTest extends TestCase
+final class UsesParameterAttributesTest extends TestCase
 {
     public function dataProviderWillSuccess(): array
     {
@@ -29,6 +29,10 @@ final class ParameterAttributesTest extends TestCase
                     'id' => 1,
                 ],
                 'tags' => ['Chevere', 'Chevere', 'Chevere', 'Uh'],
+                'flag' => false,
+                'amount' => 0,
+                'null' => null,
+                'enum' => 'test',
             ],
         ];
     }
@@ -43,6 +47,10 @@ final class ParameterAttributesTest extends TestCase
                     'id' => 1,
                 ],
                 'tags' => ['people'],
+                'flag' => false,
+                'amount' => 0,
+                'null' => null,
+                'enum' => 'test',
                 'error' => "Argument value provided `Peoples Hernandez` doesn't match the regex `/^[A-Za-z]+$/`",
             ],
             [
@@ -52,6 +60,10 @@ final class ParameterAttributesTest extends TestCase
                     'id' => 1,
                 ],
                 'tags' => ['zero'],
+                'flag' => false,
+                'amount' => 0,
+                'null' => null,
+                'enum' => 'test',
                 'error' => 'Argument value provided `0` is less than `1`',
             ],
             [
@@ -61,6 +73,10 @@ final class ParameterAttributesTest extends TestCase
                     'id' => 1,
                 ],
                 'tags' => ['dalmata'],
+                'flag' => false,
+                'amount' => 0,
+                'null' => null,
+                'enum' => 'test',
                 'error' => 'Argument value provided `101` is greater than `100`',
             ],
             [
@@ -70,6 +86,10 @@ final class ParameterAttributesTest extends TestCase
                     'id' => 0,
                 ],
                 'tags' => ['zeroid'],
+                'flag' => false,
+                'amount' => 0,
+                'null' => null,
+                'enum' => 'test',
                 'error' => '[id]: Argument value provided `0` is less than `1`',
             ],
             [
@@ -79,7 +99,37 @@ final class ParameterAttributesTest extends TestCase
                     'id' => 42,
                 ],
                 'tags' => [123],
+                'flag' => false,
+                'amount' => 0,
+                'null' => null,
+                'enum' => 'test',
                 'error' => 'Argument #1 ($value) must be of type Stringable|string, int given',
+            ],
+            [
+                'name' => 'negativeAmount',
+                'age' => 24,
+                'cols' => [
+                    'id' => 42,
+                ],
+                'tags' => ['test'],
+                'flag' => false,
+                'amount' => -10.5,
+                'null' => null,
+                'enum' => 'test',
+                'error' => 'Argument value provided `-10.5` is less than `0`',
+            ],
+            [
+                'name' => 'wrongEnum',
+                'age' => 24,
+                'cols' => [
+                    'id' => 42,
+                ],
+                'tags' => ['test'],
+                'flag' => false,
+                'amount' => 100.5,
+                'null' => null,
+                'enum' => 'try',
+                'error' => "Argument value provided `try` doesn't match the regex `/\b(test|value)\b/`",
             ],
         ];
     }
@@ -90,14 +140,19 @@ final class ParameterAttributesTest extends TestCase
     public function testWillFail(
         string $name,
         int $age,
-        array $array,
-        iterable $iterable,
+        array $cols,
+        iterable $tags,
+        bool $flag,
+        float $amount,
+        mixed $null,
+        string $enum,
         string $error
     ): void {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($error);
-
-        new UsesParameterAttributes($name, $age, $array, $iterable);
+        $args = func_get_args();
+        array_pop($args);
+        new UsesParameterAttributes(...$args);
     }
 
     /**
@@ -106,15 +161,19 @@ final class ParameterAttributesTest extends TestCase
     public function testWillSuccess(
         string $name,
         int $age,
-        array $array,
-        iterable $iterable
+        array $cols,
+        iterable $tags,
+        bool $flag,
+        float $amount,
+        mixed $null,
+        string $enum,
     ): void {
         $this->expectNotToPerformAssertions();
 
-        new UsesParameterAttributes($name, $age, $array, $iterable);
+        new UsesParameterAttributes(...func_get_args());
     }
 
-    public function testThisWea(): void
+    public function testReturnAttr(): void
     {
         $arguments = $this->dataProviderWillSuccess()[0];
         $object = new UsesParameterAttributes(...$arguments);
