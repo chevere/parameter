@@ -14,9 +14,13 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use ArgumentCountError;
+use Chevere\Parameter\Exceptions\ParameterException;
+use Chevere\Parameter\Exceptions\ReturnException;
 use InvalidArgumentException;
+use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\TestCase;
+use ReflectionFunction;
 use stdClass;
 use TypeError;
 use function Chevere\Parameter\arguments;
@@ -25,17 +29,20 @@ use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\assertNamedArgument;
 use function Chevere\Parameter\bool;
+use function Chevere\Parameter\cast;
 use function Chevere\Parameter\float;
 use function Chevere\Parameter\getType;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\iterable;
 use function Chevere\Parameter\null;
 use function Chevere\Parameter\object;
+use function Chevere\Parameter\parameterAttr;
 use function Chevere\Parameter\parameters;
 use function Chevere\Parameter\parametersFrom;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
+use function Chevere\Parameter\validated;
 
 final class FunctionsTest extends TestCase
 {
@@ -221,7 +228,7 @@ final class FunctionsTest extends TestCase
         ]);
     }
 
-    public function testAssertArrayConflictType(): void
+    public function testAssertArrayErrorType(): void
     {
         $parameter = arrayp(
             OK: string(),
@@ -232,7 +239,7 @@ final class FunctionsTest extends TestCase
         ]);
     }
 
-    public function testAssertArrayConflictNull(): void
+    public function testAssertArrayErrorNull(): void
     {
         $parameter = arrayp(
             OK: string(),
@@ -342,15 +349,65 @@ final class FunctionsTest extends TestCase
         );
     }
 
-    public function testVariableType(): void
+    public function testGetType(): void
     {
         $table = [
             'object' => $this,
             'float' => 10.10,
             'null' => null,
         ];
-        foreach ($table as $type => $variable) {
-            $this->assertSame($type, getType($variable));
+        foreach ($table as $type => $value) {
+            $this->assertSame($type, getType($value));
         }
+    }
+
+    public function testCast(): void
+    {
+        $value = 'string';
+        $cast = cast($value);
+        $this->assertSame($value, $cast->string());
+    }
+
+    public function testParameterAttr(): void
+    {
+        $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("Parameter `foo` doesn't exists");
+        parameterAttr('foo', $caller);
+    }
+
+    public function testValidatedParameterError(): void
+    {
+        $function = 'Chevere\Tests\src\validates';
+        $reflection = new ReflectionFunction($function);
+        $base = 0;
+        $times = 1;
+        $name = 'Test';
+        $this->expectException(ParameterException::class);
+        $this->expectExceptionMessage("`{$function}` InvalidArgumentException → [base]: Argument value provided `0` is less than `1`");
+        validated($reflection, $base, $times, $name);
+    }
+
+    public function testValidatedReturnError(): void
+    {
+        $function = 'Chevere\Tests\src\validates';
+        $reflection = new ReflectionFunction($function);
+        $base = 99;
+        $times = 1;
+        $name = 'Test';
+        $this->expectException(ReturnException::class);
+        $this->expectExceptionMessage("`{$function}` InvalidArgumentException → Argument value provided `99` is less than `100`");
+        validated($reflection, $base, $times, $name);
+    }
+
+    public function testValidated(): void
+    {
+        $function = 'Chevere\Tests\src\validates';
+        $reflection = new ReflectionFunction($function);
+        $base = 100;
+        $times = 1;
+        $name = 'Test';
+        $this->expectNotToPerformAssertions();
+        validated($reflection, $base, $times, $name);
     }
 }

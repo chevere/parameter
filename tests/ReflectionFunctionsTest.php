@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionMethod;
 use function Chevere\Parameter\arguments;
+use function Chevere\Parameter\bool;
 use function Chevere\Parameter\reflectionToParameters;
 use function Chevere\Parameter\reflectionToReturnParameter;
 
@@ -50,7 +51,7 @@ final class ReflectionFunctionsTest extends TestCase
         $class = new class() {
             public function wea(
                 #[IntAttr(accept: [1, 10, 100])]
-                int $base
+                int $base = 1
             ): void {
             }
         };
@@ -80,5 +81,37 @@ final class ReflectionFunctionsTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument value provided `100` is less than `1000`');
         $return($function(10));
+    }
+
+    public function dataProviderFunctionToReturnUses(): array
+    {
+        return [
+            ['Chevere\Tests\src\usesAttr'],
+            ['Chevere\Tests\src\noUsesAttr'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderFunctionToReturnUses
+     */
+    public function testFunctionToReturnUses(string $function): void
+    {
+        $this->expectNotToPerformAssertions();
+        $reflection = new ReflectionFunction($function);
+        $return = reflectionToReturnParameter($reflection);
+        $return->assertCompatible(bool());
+    }
+
+    public function testWithDefaultError(): void
+    {
+        $function = 'Chevere\Tests\src\withDefaultError';
+        $reflection = new ReflectionFunction($function);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Unable to use default value for parameter `int` in `Chevere\Tests\src\withDefaultError`: Argument value provided `1` is less than `2`
+            PLAIN
+        );
+        reflectionToParameters($reflection);
     }
 }

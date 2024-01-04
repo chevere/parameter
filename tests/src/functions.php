@@ -22,6 +22,7 @@ use Chevere\Parameter\Attributes\StringAttr;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\returnAttr;
+use function Chevere\Parameter\Attributes\stringAttr;
 use function Chevere\Parameter\Attributes\valid;
 use function PHPUnit\Framework\assertSame;
 
@@ -41,7 +42,9 @@ function usesAttr(
     )]
     array $spooky
 ): bool {
+    valid();
     valid('spooky');
+    arrayAttr('spooky')($spooky);
     assertSame(
         $spooky['id'],
         arrayArguments('spooky')->required('id')->int()
@@ -56,4 +59,23 @@ function noUsesAttr(
     valid('spooky');
 
     return returnAttr()(true);
+}
+
+function withDefaultError(
+    #[IntAttr(min: 2)]
+    int $int = 1
+): void {
+}
+
+#[ReturnAttr(
+    new IntAttr(min: 100, max: 200)
+)]
+function validates(
+    #[IntAttr(min: 1, max: 100)]
+    int $base,
+    #[IntAttr(min: 1, max: 5)]
+    int $times = 1,
+    string $name = '',
+): int {
+    return $base * $times;
 }

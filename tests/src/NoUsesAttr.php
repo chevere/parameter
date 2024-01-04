@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\src;
 
+use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Throwable;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
@@ -54,7 +55,10 @@ final class NoUsesAttr
         try {
             $name = stringAttr('name')($name);
         } catch (Throwable $e) {
-            assertSame('No attribute for parameter `name`', $e->getMessage());
+            assertSame(
+                'No `' . ParameterAttributeInterface::class . '` attribute for parameter `name`',
+                $e->getMessage()
+            );
         }
         // $age = intAttr('age')($age);
         // $cols = arrayAttr('cols')($cols);

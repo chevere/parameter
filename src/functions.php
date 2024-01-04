@@ -15,6 +15,8 @@ namespace Chevere\Parameter;
 
 use ArrayAccess;
 use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Exceptions\ParameterException;
+use Chevere\Parameter\Exceptions\ReturnException;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
@@ -232,7 +234,10 @@ function parameterAttr(string $parameter, array $caller): ParameterAttributeInte
     }
 
     throw new LogicException(
-        (string) message('No parameter attribute for `%name%`', name: $parameter)
+        (string) message(
+            "Parameter `%name%` doesn't exists",
+            name: $parameter
+        )
     );
 }
 
@@ -309,7 +314,11 @@ function reflectedParameterAttribute(
     $attributes = $reflection->getAttributes(ParameterAttributeInterface::class, ReflectionAttribute::IS_INSTANCEOF);
     if ($attributes === []) {
         throw new LogicException(
-            (string) message('No attribute for parameter `%name%`', name: $reflection->getName())
+            (string) message(
+                'No `%type%` attribute for parameter `%name%`',
+                type: ParameterAttributeInterface::class,
+                name: $reflection->getName()
+            )
         );
     }
     /** @var ReflectionAttribute<ParameterAttributeInterface> $attribute */
@@ -322,9 +331,62 @@ function validated(
     ReflectionFunction|ReflectionMethod $reflection,
     mixed ...$args
 ): mixed {
-    $parameters = reflectionToParameters($reflection);
-    $return = reflectionToReturnParameter($reflection);
-    $result = $parameters(...$args);
+    try {
+        $parameters = reflectionToParameters($reflection);
+        $return = reflectionToReturnParameter($reflection);
+        $parameters(...$args);
+    } catch (Throwable $e) {
+        // // @infection-ignore-all
+        throw new ParameterException(
+            ...getExceptionArguments($e, $reflection),
+        );
+    }
+    if ($reflection instanceof ReflectionMethod) {
+        $result = $reflection->invoke(null, ...$args);
+    } else {
+        $result = $reflection->invoke(...$args);
+    }
 
-    return $return->__invoke($result);
+    try {
+        $return->__invoke($result);
+    } catch (Throwable $e) {
+        // @infection-ignore-all
+        throw new ReturnException(
+            ...getExceptionArguments($e, $reflection),
+        );
+    }
+
+    return $return;
+}
+
+/**
+ * @return array{0: string, 1: Throwable, 2: string, 3: int}
+ */
+function getExceptionArguments(Throwable $e, ReflectionFunction|ReflectionMethod $reflection): array
+{
+    // @infection-ignore-all
+    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
+    $class = $reflection instanceof ReflectionMethod
+        ? $reflection->getDeclaringClass()->getName()
+        : null;
+    $function = $reflection->getName();
+    $actor = match (true) {
+        $class === null => $function,
+        default => $class . '::' . $function,
+    };
+
+    $message = (string) message(
+        '`%actor%` %exception% → %message%',
+        exception: $e::class,
+        actor: $actor,
+        message: $e->getMessage(),
+    );
+
+    // @infection-ignore-all
+    return [
+        $message,
+        $e,
+        $caller['file'] ?? 'na',
+        $caller['line'] ?? 0,
+    ];
 }
