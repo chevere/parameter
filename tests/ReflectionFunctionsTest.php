@@ -22,7 +22,7 @@ use ReflectionMethod;
 use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\bool;
 use function Chevere\Parameter\reflectionToParameters;
-use function Chevere\Parameter\reflectionToReturnParameter;
+use function Chevere\Parameter\reflectionToReturn;
 
 final class ReflectionFunctionsTest extends TestCase
 {
@@ -38,7 +38,7 @@ final class ReflectionFunctionsTest extends TestCase
             }
         };
         $reflection = new ReflectionMethod($class, 'wea');
-        $return = reflectionToReturnParameter($reflection);
+        $return = reflectionToReturn($reflection);
         $object = new $class();
         $object->wea(1);
         $this->expectException(InvalidArgumentException::class);
@@ -76,7 +76,7 @@ final class ReflectionFunctionsTest extends TestCase
                 return 10 * $base;
             };
         $reflection = new ReflectionFunction($function);
-        $return = reflectionToReturnParameter($reflection);
+        $return = reflectionToReturn($reflection);
         $function(10);
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argument value provided `100` is less than `1000`');
@@ -98,7 +98,7 @@ final class ReflectionFunctionsTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
         $reflection = new ReflectionFunction($function);
-        $return = reflectionToReturnParameter($reflection);
+        $return = reflectionToReturn($reflection);
         $return->assertCompatible(bool());
     }
 

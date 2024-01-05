@@ -22,8 +22,11 @@
 
 ## Summary
 
-Parameter is an abstraction around parameter-argument. It can be used to provide parameter validation rules via attributes backed on its own type system.
+Parameter is a library around parameter-argument which provides additional functionality with validation rules and schema introspection.
 
+Parameter supports built-in types including scalar (bool, int, string, float), null, array, object, union composite type and both mixed and iterable type alias.
+
+👉 Read [Parameter 1.0](#eee) author's introduction to this package.
 💡 Check [chevere/action](https://github.com/chevere/action) for a higher-level abstraction around this package.
 
 ## Quick start
@@ -33,6 +36,10 @@ Install with [Composer](https://packagist.org/packages/chevere/parameter).
 ```sh
 composer require chevere/parameter
 ```
+
+Check the [function](#function-reference) and [attribute](#attribute-reference) reference.
+
+## Inline use
 
 Use [inline validation](#inline-validation) to go from this:
 
@@ -45,12 +52,14 @@ if($var > 10 || $var < 1) {
 To this:
 
 ```php
-use function Chevere\Parameter\int;
+use function \Chevere\Parameter\int;
 
 int(min: 1, max: 10)($var);
 ```
 
-Use [attribute-based delegated validation](#attribute-based-delegated-validation) to go from this:
+### Attribute-based use
+
+Use [attribute delegated validation](#attribute-delegated-validation) to go from this:
 
 ```php
 function myFunction(int $var): string
@@ -59,7 +68,7 @@ function myFunction(int $var): string
         throw new InvalidArgumentException();
     }
     $return = 'done ok';
-    return str_ends_with($return, 'ok')
+    return preg_match('/ok$/', $return)
         ? $return
         : throw new InvalidArgumentException();
 }
@@ -87,21 +96,22 @@ function myFunction(
 $result = validated('myFunction', $var);
 ```
 
-Use reflection functions for custom delegation:
+Use `reflectionToParameters` and `reflectionToReturn` functions for manual validation:
 
 ```php
 use ReflectionFunction;
 use function Chevere\Parameter\reflectionToParameters;
-use function Chevere\Parameter\reflectionToReturnParameter;
+use function Chevere\Parameter\reflectionToReturn;
 
 $reflection = new ReflectionFunction('myFunction');
 $parameters = reflectionToParameters($reflection);
-$return = reflectionToReturnParameter($reflection);
+$return = reflectionToReturn($reflection);
+$parameters(...$args); // validate $args
 $result = myFunction(...$args);
-$result = $return->__invoke($result);
+$return($result); // validate $result
 ```
 
-Use [attribute-based inline validation](#attribute-based-inline-validation) for manual validation:
+Use [attribute inline validation](#attribute-inline-validation) for manual validation:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
@@ -118,10 +128,10 @@ function myFunction(
     int $var
 ): string
 {
-    valid(); // validation
+    valid(); // validate args
     $return = 'ok';
 
-    return returnAttr()($return); // validation
+    return returnAttr()($return); // validate return
 }
 ```
 
@@ -154,34 +164,6 @@ Following functions are available to create types and pseudo-types.
 | mixed    | `mixed()`       | description                                                                |
 | *many*   | `union()`       | `ParameterInterface,`                                                      |
 
-#### Function example usage
-
-* Inline validation:
-
-```php
-use function Chevere\Parameter\string;
-
-$string = string('/^oh/');
-$value = 'ohhhhh';
-$string($value);
-```
-
-* Array composition:
-
-```php
-use function Chevere\Parameter\arrayp;
-use function Chevere\Parameter\int;
-use function Chevere\Parameter\string;
-
-$array = arrayp(
-    id: int(min: 1),
-    name: string('/^R/'),
-);
-$value = ['id' => 1, 'name' => 'Rodolfo'];
-$array($value);
-
-```
-
 ### Attribute reference
 
 Following attributes enables to define validation rules for **parameters**.
@@ -206,30 +188,6 @@ For hinting **return** there's the `ReturnAttr` attribute, which takes any `Para
 
 ```php
 #[ReturnAttr(<ParameterAttributeInterface>)]
-```
-
-#### Attribute example usage
-
-* Inline validation for parameter and return:
-
-```php
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\StringAttr;
-use function Chevere\Parameter\valid;
-use function Chevere\Parameter\validAttr;
-
-#[ReturnAttr(
-    new StringAttr('/ok$/')
-)]
-function myFunction(
-    #[IntAttr(min: 1)]
-    int $value
-): string
-{
-    valid();
-
-    return validAttr('Estamos ok');
-}
 ```
 
 ## Cookbook
@@ -326,9 +284,9 @@ $value = 1;
 union(int(), null())($value);
 ```
 
-### Attribute-based delegated validation
+### Attribute delegated validation
 
-This enables to delegate validation on the *caller*, not in the function body.
+This enables to delegate validation on the caller, not in the function body.
 
 * Use function `validated()` to get a return validated against all rules.
 
@@ -353,19 +311,21 @@ $class = new class() {
     ): void {
     }
 };
-$reflection = new ReflectionMethod($class, 'wea');
-$parameters = reflectionToParameters($reflection);
 $object = new $class();
-$result = $parameters(base: 0);
+$reflection = new ReflectionMethod($object, 'wea');
+$parameters = reflectionToParameters($reflection);
+$args = ['base' => 10];
+$parameters(...$args); // Validates args
+$result = $object->wea(...$args);
 ```
 
-* Use function `reflectionToReturnParameter()` to get rules for validating return value:
+* Use function `reflectionToReturn()` to get rules for validating function/method return value:
 
 ```php
 use ReflectionFunction;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
-use function Chevere\Parameter\reflectionToReturnParameter;
+use function Chevere\Parameter\reflectionToReturn;
 
 $function =
     #[ReturnAttr(
@@ -375,15 +335,15 @@ $function =
         return 10 * $base;
     };
 $reflection = new ReflectionFunction($function);
-$return = reflectionToReturnParameter($reflection);
-$result = $return($function(10)); // Validates!
+$return = reflectionToReturn($reflection);
+$base = 10;
+$result = $function($base);
+$result = $return($result); // Validates result
 ```
 
-### Attribute-based inline validation
+### Attribute inline validation
 
-#### Parameters
-
-Use attributes on the function/method parameters to define validation rules. Use `valid()` on the function body to trigger validation.
+Use `valid()` on the function/method body to trigger validation for arguments.
 
 * Validate an string enum for `Hugo`, `Paco`, `Luis`:
 * Validate a min float value of `1000`:
@@ -462,7 +422,7 @@ $value = [
 myArray($value);
 ```
 
-* Validate an iterable int list:
+* Validate iterable int list:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
@@ -473,16 +433,14 @@ function myIterable(
     #[IterableAttr(
         new IntAttr(),
     )]
-    array $list
+    array $list = [0,1,2]
 ): void
 {
     valid();
 }
 ```
 
-#### Return
-
-Use attribute `ReturnAttr` on the function/method in combination with `validReturn($value)` on the function body. When omitting `ReturnAttr` the method `public static function return(): ParameterInterface` (if any) will be used to determine return validation rules.
+Use function `validReturn($value)` on the function/method body. When omitting `ReturnAttr` the method `public static function return(): ParameterInterface` (if any) will be used to determine return validation rules.
 
 * Validate int [min: 0, max: 5] return:
 
@@ -528,15 +486,13 @@ public function myReturnArray(): array
 }
 ```
 
-
-
 ## Documentation
 
 Documentation is available at [chevere.org](https://chevere.org/).
 
 ## License
 
-Copyright 2023 [Rodolfo Berrios A.](https://rodolfoberrios.com/)
+Copyright 2024 [Rodolfo Berrios A.](https://rodolfoberrios.com/)
 
 Chevere is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full license text.
 

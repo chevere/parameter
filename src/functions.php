@@ -293,7 +293,7 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
 /**
  * Get a return Parameter from a function or method reflection.
  */
-function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $reflection): ParameterInterface
+function reflectionToReturn(ReflectionFunction|ReflectionMethod $reflection): ParameterInterface
 {
     $attributes = $reflection->getAttributes(ReturnAttr::class);
     if ($attributes === []) {
@@ -301,7 +301,6 @@ function reflectionToReturnParameter(ReflectionFunction|ReflectionMethod $reflec
 
         return toParameter($returnType);
     }
-
     /** @var ReflectionAttribute<ReturnAttr> $attribute */
     $attribute = $attributes[0];
 
@@ -334,7 +333,7 @@ function validated(callable $callable, mixed ...$args): mixed
 
     try {
         $parameters = reflectionToParameters($reflection);
-        $return = reflectionToReturnParameter($reflection);
+        $return = reflectionToReturn($reflection);
         $parameters(...$args);
     } catch (Throwable $e) {
         // // @infection-ignore-all
@@ -345,7 +344,8 @@ function validated(callable $callable, mixed ...$args): mixed
     $result = $callable(...$args);
 
     try {
-        $return->__invoke($result);
+        /** @var callable $return */
+        $return($result);
     } catch (Throwable $e) {
         // @infection-ignore-all
         throw new ReturnException(
