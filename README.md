@@ -24,11 +24,6 @@
 
 Parameter is a library around parameter-argument which provides additional functionality with validation rules and schema introspection.
 
-Parameter supports built-in types including scalar (bool, int, string, float), null, array, object, union composite type and both mixed and iterable type alias.
-
-👉 Read [Parameter 1.0](#eee) author's introduction to this package.
-💡 Check [chevere/action](https://github.com/chevere/action) for a higher-level abstraction around this package.
-
 ## Quick start
 
 Install with [Composer](https://packagist.org/packages/chevere/parameter).
@@ -37,9 +32,134 @@ Install with [Composer](https://packagist.org/packages/chevere/parameter).
 composer require chevere/parameter
 ```
 
-Check the [function](#function-reference) and [attribute](#attribute-reference) reference.
+Use it with the [function](#function-reference) and [attribute](#attribute-reference) reference. Check the [cookbook](#cookbook) for recipes.
 
-## Inline use
+💡 Check [chevere/action](https://github.com/chevere/action) for a higher-level abstraction around this package.
+
+## Supported types
+
+Parameter supports built-in types including scalar (bool, int, string, float), null, array, object, union composite type and both mixed and iterable type alias.
+
+### String
+
+Type `string` and any pseudo-string is regex based. For example `time()` body’s a wrapper for passing the `$regex` variable:
+
+```php
+$regex = '/^\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
+string($regex);
+```
+
+To rely on regex enables to create many string pseudo-types as needed. Parameter includes support for pseudo-string types: `intString`, `enum`, `date`, `time` and `datetime`.
+
+### Integer and Float
+
+For numeric types (`int`, `float`) Parameter supports to define boundaries (min, max) and set filters (accept/reject list).
+
+### Bool, Null & Object
+
+Support for `bool`, `null` and `object` is basic (doesn’t require more) as validation needs to assert for type and that's it.
+
+### Array
+
+Type `array` is handled as a composite parameter holding parameter definition **for each one** of its members. As Parameter abstracts all usable PHP types, it supports to define rules for any array shape.
+
+```php
+use function Chevere\Parameter\arrayp;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\string;
+
+$array = arrayp(
+    id: int(min: 0),
+    name: string('^[\w]{1,255}')
+);
+$var = [
+    'id' => 1,
+    'name' => 'PeterVeneno'
+];
+$array($var);
+```
+
+Parameter supports array remixing (add, remove, modify). For example changing a member from required to optional:
+
+```php
+$array = $array->withMakeOptional('name');
+```
+
+Parameter supports nested arrays:
+
+```php
+use function Chevere\Parameter\arrayp;
+use function Chevere\Parameter\float;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\string;
+
+$array = arrayp(
+    id: int(min: 0),
+    items: arrayp(
+        id: int(min: 0),
+        qty: int(min: 1),
+        price: float(min: 0),
+        total: float(min: 0),
+    ),
+);
+$var = [
+    'id' => 1,
+    'items' => [
+        'id' => 25,
+        'qty' => 2,
+        'price' => 16.5,
+        'total' => 33.0
+    ]
+];
+$array($var);
+```
+
+### Iterable
+
+Iterable type `Traversable|array` is considered as a composite parameter holding a generic definition for key and value. Parameter enables to describe this collection of items sharing the same shape.
+
+For example a list of integers:
+
+```php
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\iterable;
+
+$iterable = iterable(int(min: 0));
+$var = [0, 1, 2, 3];
+$iterable($var);
+```
+
+Or an array collection:
+
+```php
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\iterable;
+use function Chevere\Parameter\string;
+
+$iterable = iterable(
+    arrayp(
+        id: int(min: 0),
+        name: string('^[\w]{1,255}'),
+    )
+);
+$var = [
+    [
+        'id' => 1,
+        'name' => 'OscarGangas'
+    ],
+    [
+        'id' => 2,
+        'name' => 'BomboFica'
+    ],
+];
+$iterable($var);
+```
+
+## How to use
+
+Parameter provides an API which can be used to create parameters using functions and/or attributes. Parameter objects can be used directly in the logic while attributes requires a read step.
+
+### Inline usage
 
 Use [inline validation](#inline-validation) to go from this:
 
@@ -57,9 +177,9 @@ use function \Chevere\Parameter\int;
 int(min: 1, max: 10)($var);
 ```
 
-### Attribute-based use
+### Attribute-based usage
 
-Use [attribute delegated validation](#attribute-delegated-validation) to go from this:
+Use [attribute delegated validation](#attribute-delegated-validation) with the `validated()` function to go from this:
 
 ```php
 function myFunction(int $var): string
@@ -96,7 +216,7 @@ function myFunction(
 $result = validated('myFunction', $var);
 ```
 
-Use `reflectionToParameters` and `reflectionToReturn` functions for manual validation:
+Use `reflectionToParameters` and `reflectionToReturn` functions for manual validation for arguments and return value:
 
 ```php
 use ReflectionFunction;
@@ -107,11 +227,11 @@ $reflection = new ReflectionFunction('myFunction');
 $parameters = reflectionToParameters($reflection);
 $return = reflectionToReturn($reflection);
 $parameters(...$args); // validate $args
-$result = myFunction(...$args);
+$result = myFunction(...$args); // myFunction call
 $return($result); // validate $result
 ```
 
-Use [attribute inline validation](#attribute-inline-validation) for manual validation:
+Use [attribute inline validation](#attribute-inline-validation) for manual validation within the function body:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
@@ -135,9 +255,7 @@ function myFunction(
 }
 ```
 
-## Reference
-
-### Function reference
+## Function reference
 
 `namespace Chevere\Parameter`
 
@@ -164,7 +282,7 @@ Following functions are available to create types and pseudo-types.
 | mixed    | `mixed()`       | description                                                                |
 | *many*   | `union()`       | `ParameterInterface,`                                                      |
 
-### Attribute reference
+## Attribute reference
 
 Following attributes enables to define validation rules for **parameters**.
 
@@ -285,8 +403,6 @@ union(int(), null())($value);
 ```
 
 ### Attribute delegated validation
-
-This enables to delegate validation on the caller, not in the function body.
 
 * Use function `validated()` to get a return validated against all rules.
 
@@ -440,34 +556,34 @@ function myIterable(
 }
 ```
 
-Use function `validReturn($value)` on the function/method body. When omitting `ReturnAttr` the method `public static function return(): ParameterInterface` (if any) will be used to determine return validation rules.
+Use function `returnAttr()` on the function/method body.
 
 * Validate int [min: 0, max: 5] return:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
-use function Chevere\Parameter\validReturn;
+use function Chevere\Parameter\returnAttr;
 
 #[ReturnAttr(
     new IntAttr(min: 0, max: 5)
 )]
 public function myReturnInt(): int
 {
-    $value = 1;
+    $result = 1;
 
-    return validReturn($value);
+    return returnAttr()($result);
 }
 ```
 
-* Validate array members return:
+* Validate array return:
 
 ```php
 use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\StringAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
-use function Chevere\Parameter\validReturn;
+use function Chevere\Parameter\returnAttr;
 
 #[ReturnAttr(
     new ArrayAttr(
@@ -477,14 +593,16 @@ use function Chevere\Parameter\validReturn;
 )]
 public function myReturnArray(): array
 {
-    $value = [
+    $result = [
         'id' => 1,
         'name' => 'Peoples Hernandez'
     ];
 
-    return validReturn($value);
+    return returnAttr()($result);
 }
 ```
+
+💡 By convention when omitting `ReturnAttr` the method `public static function return(): ParameterInterface` (if any) will be used to determine return validation rules.
 
 ## Documentation
 

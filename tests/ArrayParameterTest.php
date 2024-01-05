@@ -354,4 +354,20 @@ final class ArrayParameterTest extends TestCase
         $this->expectException(TypeError::class);
         $parameter(null);
     }
+
+    public function testList(): void
+    {
+        $parameter = arrayp(
+            string('/^foo$/'),
+            int(min: 1)
+        );
+        $parameter(['foo', 1]);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [0]: Argument #1 (\$value) must be of type Stringable|string, int given; [1]: Argument #1 (\$value) must be of type int, string given
+            PLAIN
+        );
+        $parameter([1, 'foo']);
+    }
 }

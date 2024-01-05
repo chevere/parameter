@@ -79,7 +79,7 @@ final class Arguments implements ArgumentsInterface
         $this->handleParameters();
         if ($this->errors !== []) {
             throw new InvalidArgumentException(
-                implode(', ', $this->errors)
+                implode('; ', $this->errors)
             );
         }
     }
