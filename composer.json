@@ -15,7 +15,7 @@
         "php": "^8.1",
         "chevere/data-structure": "^1.0.1",
         "chevere/message": "^1.0.0",
-        "chevere/regex": "^1.0"
+        "chevere/regex": "^1.0.1"
     },
     "require-dev": {
         "phpstan/phpstan": "^1.9",
