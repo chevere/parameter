@@ -24,6 +24,14 @@
 
 Parameter is a library around parameter-argument which provides additional functionality with validation rules and schema introspection.
 
+## Installing
+
+Parameter is available through [Packagist](https://packagist.org/packages/chevere/parameter) and the repository source is at [chevere/parameter](https://github.com/chevere/parameter).
+
+```sh
+composer require chevere/parameter
+```
+
 ## What it does?
 
 Parameter enables to spawn dynamic parameters of any type with extra rules.
