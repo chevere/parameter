@@ -54,7 +54,7 @@ function wageWeekWA(
     int $cents,
     #[FloatAttr(min: 0, max: 40)]
     float $hours
-) {
+): float {
     valid(); // valid $cents, $hours
     $wage = $cents*$hours/100;
     return returnAttr()($wage); // valid $wage
