@@ -1,6 +1,6 @@
 {
     "name": "chevere/parameter",
-    "description": "A chevere parameter package",
+    "description": "Library around parameter-argument",
     "homepage": "https://chevere.org",
     "type": "library",
     "license": "Apache-2.0",
