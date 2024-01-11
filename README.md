@@ -45,14 +45,14 @@ $int = int(min: 10);
 $int($var); // exception if $var < 10
 ```
 
-Use attributes to define validation rules for parameters and return value.
+In function or method parameters you can use attributes to define validation rules for parameters and return value.
 
 ```php
 use Chevere\Parameter\Attributes\FloatAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use function Chevere\Parameter\returnAttr;
-use function Chevere\Parameter\valid;
+use function Chevere\Parameter\validated;
 
 #[ReturnAttr(
     new FloatAttr(min: 0, max: 2400)
@@ -62,14 +62,13 @@ function wageWeekWA(
     int $cents,
     #[FloatAttr(min: 0, max: 40)]
     float $hours
-): float {
-    valid(); // valid $cents, $hours
-    $wage = $cents*$hours/100;
-    return returnAttr()($wage); // valid $wage
+) {
+    return $cents*$hours/100;
 }
+validated('wageWeekWA', $cents, $hours);
 ```
 
-Validation can be triggered inline (examples above in function body) or delegated to a caller wrapper. Parameter provides helpers to access these rules to ease wiring process.
+Validation can be triggered using `validated` (example above), [inline](#inline-usage) and/or [delegated](#attribute-delegated-validation) to a caller wrapper. Parameter provides helpers to access rules for both parameters and return value to ease wiring process.
 
 Rules defined by each parameter provide a human-readable schema which allows to expose the validation criteria.
 
