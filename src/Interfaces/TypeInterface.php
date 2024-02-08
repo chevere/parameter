@@ -17,6 +17,7 @@ use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\BoolParameter;
 use Chevere\Parameter\FloatParameter;
 use Chevere\Parameter\IntParameter;
+use Chevere\Parameter\IterableParameter;
 use Chevere\Parameter\MixedParameter;
 use Chevere\Parameter\NullParameter;
 use Chevere\Parameter\ObjectParameter;
@@ -102,6 +103,7 @@ interface TypeInterface
         'bool' => BoolParameter::class,
         'float' => FloatParameter::class,
         'int' => IntParameter::class,
+        'iterable' => IterableParameter::class,
         'string' => StringParameter::class,
         'object' => ObjectParameter::class,
         'null' => NullParameter::class,

@@ -143,7 +143,12 @@ function toParameter(string $type): ParameterInterface
         $class = TypeInterface::TYPE_TO_PARAMETER['object'];
         $className = $type;
     }
-    $parameter = new $class();
+    $arguments = [];
+    if ($class === IterableParameter::class) {
+        $parameter = iterable(mixed());
+    } else {
+        $parameter = new $class(...$arguments);
+    }
     if (isset($className)) {
         // @phpstan-ignore-next-line
         $parameter = $parameter->withClassName($className);
@@ -252,7 +257,8 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
             $push = reflectedParameterAttribute($reflectionParameter);
             $push = $push->parameter();
         } catch (LogicException) {
-            $push = mixed();
+            $reflectType = new ReflectionParameterTyped($reflectionParameter);
+            $push = $reflectType->parameter();
         }
         if ($reflectionParameter->isDefaultValueAvailable()) {
             try {
