@@ -40,12 +40,23 @@ final class FunctionsArrayTest extends TestCase
         $this->assertSame(['b'], $parameter->parameters()->optionalKeys()->toArray());
     }
 
-    public function testArrayRequiredEmpty(): void
+    public function arrayRequiredEmptyAnyDataProvider(): array
+    {
+        return [
+            [[]],
+            [[
+                'a' => 1,
+            ]],
+        ];
+    }
+
+    /**
+     * @dataProvider arrayRequiredEmptyAnyDataProvider
+     */
+    public function testArrayRequiredEmptyAny(array $test): void
     {
         $parameter = arrayp();
-        $this->assertSame([], assertArray($parameter, []));
-        $this->expectException(ArgumentCountError::class);
-        assertArray($parameter, [[]]);
+        $this->assertSame($test, assertArray($parameter, $test));
     }
 
     public function testArrayRequired(): void

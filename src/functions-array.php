@@ -73,6 +73,10 @@ function assertArray(
     ArrayTypeParameterInterface $parameter,
     array|ArrayAccess $argument,
 ): array {
+    if ($parameter->parameters()->count() === 0) {
+        return (array) $argument;
+    }
+
     return arguments($parameter->parameters(), $argument)->toArray();
 }
 
