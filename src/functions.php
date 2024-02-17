@@ -260,7 +260,10 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
             $reflectType = new ReflectionParameterTyped($reflectionParameter);
             $push = $reflectType->parameter();
         }
-        if ($reflectionParameter->isDefaultValueAvailable()) {
+        if ($reflectionParameter->isDefaultValueAvailable()
+            && $reflectionParameter->getDefaultValue() !== null
+            && $push->default() === null
+        ) {
             try {
                 $push = $push->withDefault($reflectionParameter->getDefaultValue());
             } catch (Throwable $e) {
