@@ -18,8 +18,6 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=chevere_parameter&metric=sqale_index)](https://sonarcloud.io/dashboard?id=chevere_parameter)
 [![CodeFactor](https://www.codefactor.io/repository/github/chevere/parameter/badge)](https://www.codefactor.io/repository/github/chevere/parameter)
 
-![Parameter](.github/banner/parameter-logo.svg)
-
 ## Summary
 
 Parameter is a library around parameter-argument which provides additional functionality with validation rules and schema introspection.
