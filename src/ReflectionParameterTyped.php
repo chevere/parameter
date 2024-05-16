@@ -15,12 +15,13 @@ namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ReflectionParameterTypedInterface;
-use InvalidArgumentException;
+use LogicException;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionUnionType;
 use Throwable;
+use TypeError;
 use function Chevere\Message\message;
 
 final class ReflectionParameterTyped implements ReflectionParameterTypedInterface
@@ -37,13 +38,26 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
 
         try {
             $attribute = reflectedParameterAttribute($reflection);
-            $parameter = $attribute->parameter();
         } catch (Throwable) {
-            // Do nothing
+            // do nothing
+        }
+        if (isset($attribute, $this->type)) {
+            $typeHint = $this->type->getName();
+            $attrHint = $attribute->parameter()->type()->typeHinting();
+            if ($typeHint !== $attrHint) {
+                throw new TypeError(
+                    (string) message(
+                        'Parameter %name% of type %type% is not compatible with %attr% attribute',
+                        name: $reflection->getName(),
+                        type: $typeHint,
+                        attr: $attribute->parameter()::class
+                    )
+                );
+            }
+            $parameter = $attribute->parameter();
         }
         if ($this->reflection->isDefaultValueAvailable()
             && method_exists($parameter, 'withDefault')
-            && $this->reflection->getDefaultValue() !== null
         ) {
             /** @var ParameterInterface $parameter */
             $parameter = $parameter
@@ -71,7 +85,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         $name = '$' . $this->reflection->getName();
         $type = $this->getReflectionType($reflection);
 
-        throw new InvalidArgumentException(
+        throw new LogicException(
             (string) message(
                 'Parameter %name% of type %type% is not supported',
                 name: $name,

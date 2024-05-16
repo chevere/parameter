@@ -19,11 +19,12 @@ use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\ReflectionParameterTyped;
 use Chevere\Tests\src\Depends;
-use InvalidArgumentException;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use ReflectionParameter;
 use stdClass;
+use TypeError;
 
 final class ReflectionParameterTypedTest extends TestCase
 {
@@ -71,7 +72,7 @@ final class ReflectionParameterTypedTest extends TestCase
     public function testUnion(): void
     {
         $parameter = $this->getReflection('useUnion');
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('$union of type union is not supported');
         new ReflectionParameterTyped($parameter);
     }
@@ -79,8 +80,16 @@ final class ReflectionParameterTypedTest extends TestCase
     public function testIntersection(): void
     {
         $parameter = $this->getReflection('useIntersection');
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage('$intersection of type intersection is not supported');
+        new ReflectionParameterTyped($parameter);
+    }
+
+    public function testInvalidAttribute(): void
+    {
+        $parameter = $this->getReflection('useInvalidAttribute');
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage('Parameter int of type int is not compatible with Chevere\Parameter\StringParameter attribute');
         new ReflectionParameterTyped($parameter);
     }
 

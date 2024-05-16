@@ -43,4 +43,10 @@ final class Depends
     public function useIntersection(stdClass&Depends $intersection)
     {
     }
+
+    public function useInvalidAttribute(
+        #[StringAttr()]
+        int $int
+    ) {
+    }
 }
