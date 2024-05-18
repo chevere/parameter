@@ -15,6 +15,7 @@ namespace Chevere\Parameter;
 
 use ArrayAccess;
 use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Exceptions\AttributeNotFoundException;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
@@ -255,11 +256,10 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
     foreach ($reflection->getParameters() as $reflectionParameter) {
         try {
             $push = reflectedParameterAttribute($reflectionParameter);
-            $push = $push->parameter();
-        } catch (LogicException) {
-            $reflectType = new ReflectionParameterTyped($reflectionParameter);
-            $push = $reflectType->parameter();
+        } catch (AttributeNotFoundException) {
+            $push = new ReflectionParameterTyped($reflectionParameter);
         }
+        $push = $push->parameter();
         if ($reflectionParameter->isDefaultValueAvailable()
             && $reflectionParameter->getDefaultValue() !== null
             && $push->default() === null
@@ -319,9 +319,12 @@ function reflectionToReturn(ReflectionFunction|ReflectionMethod $reflection): Pa
 function reflectedParameterAttribute(
     ReflectionParameter $reflection,
 ): ParameterAttributeInterface {
-    $attributes = $reflection->getAttributes(ParameterAttributeInterface::class, ReflectionAttribute::IS_INSTANCEOF);
+    $attributes = $reflection->getAttributes(
+        ParameterAttributeInterface::class,
+        ReflectionAttribute::IS_INSTANCEOF
+    );
     if ($attributes === []) {
-        throw new LogicException(
+        throw new AttributeNotFoundException(
             (string) message(
                 'No `%type%` attribute for parameter `%name%`',
                 type: ParameterAttributeInterface::class,
