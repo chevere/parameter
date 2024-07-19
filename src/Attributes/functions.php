@@ -29,7 +29,7 @@ function stringAttr(string $name): StringAttr
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller);
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
 function enumAttr(string $name): EnumAttr
@@ -37,7 +37,7 @@ function enumAttr(string $name): EnumAttr
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller);
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
 function intAttr(string $name): IntAttr
@@ -45,7 +45,7 @@ function intAttr(string $name): IntAttr
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller);
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
 function floatAttr(string $name): FloatAttr
@@ -53,7 +53,7 @@ function floatAttr(string $name): FloatAttr
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller);
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
 function boolAttr(string $name): BoolAttr
@@ -61,7 +61,7 @@ function boolAttr(string $name): BoolAttr
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller);
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
 function nullAttr(string $name): NullAttr
@@ -69,7 +69,7 @@ function nullAttr(string $name): NullAttr
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller);
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
 function arrayAttr(string $name): ArrayAttr
@@ -77,7 +77,7 @@ function arrayAttr(string $name): ArrayAttr
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller);
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
 function iteratorAttr(string $name): IterableAttr
@@ -85,7 +85,7 @@ function iteratorAttr(string $name): IterableAttr
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller);
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
 function returnAttr(): ReturnAttr

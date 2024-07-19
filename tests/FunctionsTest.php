@@ -354,6 +354,10 @@ final class FunctionsTest extends TestCase
             'object' => $this,
             'float' => 10.10,
             'null' => null,
+            'int' => 1,
+            'string' => 'foo',
+            'array' => [],
+            'bool' => true,
         ];
         foreach ($table as $type => $value) {
             $this->assertSame($type, getType($value));
@@ -372,7 +376,7 @@ final class FunctionsTest extends TestCase
         $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage("Parameter `foo` doesn't exists");
-        parameterAttr('foo', $caller);
+        parameterAttr('foo', $caller['function'], $caller['class'] ?? '');
     }
 
     public function testValidatedParameterError(): void

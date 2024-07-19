@@ -208,6 +208,9 @@ function getParameters(
         : $parameter;
 }
 
+/**
+ * Retrieves the type of a variable as defined by this library.
+ */
 function getType(mixed $variable): string
 {
     $type = \gettype($variable);
@@ -223,15 +226,15 @@ function getType(mixed $variable): string
 
 /**
  * Retrieves a Parameter attribute instance from a function or method parameter.
- * @param array<string, string> $caller The result of debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]
  */
-function parameterAttr(string $parameter, array $caller): ParameterAttributeInterface
-{
-    $class = $caller['class'] ?? null;
-    $method = $caller['function'];
-    $reflection = $class
-        ? new ReflectionMethod($class, $method)
-        : new ReflectionFunction($method);
+function parameterAttr(
+    string $parameter,
+    string $function,
+    string $class = ''
+): ParameterAttributeInterface {
+    $reflection = $class !== ''
+        ? new ReflectionMethod($class, $function)
+        : new ReflectionFunction($function);
     $parameters = $reflection->getParameters();
     foreach ($parameters as $parameterReflection) {
         if ($parameterReflection->getName() === $parameter) {
@@ -250,8 +253,9 @@ function parameterAttr(string $parameter, array $caller): ParameterAttributeInte
 /**
  * Get Parameters from a function or method reflection.
  */
-function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection): ParametersInterface
-{
+function reflectionToParameters(
+    ReflectionFunction|ReflectionMethod $reflection
+): ParametersInterface {
     $parameters = parameters();
     foreach ($reflection->getParameters() as $reflectionParameter) {
         try {
@@ -302,8 +306,9 @@ function reflectionToParameters(ReflectionFunction|ReflectionMethod $reflection)
 /**
  * Get a return Parameter from a function or method reflection.
  */
-function reflectionToReturn(ReflectionFunction|ReflectionMethod $reflection): ParameterInterface
-{
+function reflectionToReturn(
+    ReflectionFunction|ReflectionMethod $reflection
+): ParameterInterface {
     $attributes = $reflection->getAttributes(ReturnAttr::class);
     if ($attributes === []) {
         $returnType = (string) $reflection->getReturnType();

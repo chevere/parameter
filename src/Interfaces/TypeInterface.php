@@ -108,6 +108,10 @@ interface TypeInterface
         'object' => ObjectParameter::class,
         'null' => NullParameter::class,
         'mixed' => MixedParameter::class,
+        'integer' => IntParameter::class,
+        'boolean' => BoolParameter::class,
+        'double' => FloatParameter::class,
+        'NULL' => NullParameter::class,
     ];
 
     /**
