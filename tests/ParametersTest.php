@@ -81,13 +81,16 @@ final class ParametersTest extends TestCase
         $bar = int();
         $parameters = new Parameters($foo, $bar);
         $this->assertCount(2, $parameters);
-        $this->assertSame($foo, $parameters->get('1'));
-        $this->assertSame($bar, $parameters->get('2'));
+        $this->assertTrue($parameters->has('0'));
+        $this->assertTrue($parameters->has('1'));
+        $this->assertSame($foo, $parameters->get('0'));
+        $this->assertSame($bar, $parameters->get('1'));
     }
 
     public function testRequiredMissing(): void
     {
         $parameters = new Parameters();
+        $this->assertFalse($parameters->has('foo'));
         $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('Key `foo` not found');
         $parameters->required('foo');
@@ -96,6 +99,7 @@ final class ParametersTest extends TestCase
     public function testOptionalMissing(): void
     {
         $parameters = new Parameters();
+        $this->assertFalse($parameters->has('foo'));
         $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('Key `foo` not found');
         $parameters->optional('foo');
@@ -105,6 +109,7 @@ final class ParametersTest extends TestCase
     {
         $parameter = string();
         $parameters = new Parameters(foo: $parameter);
+        $this->assertTrue($parameters->has('foo'));
         $this->assertSame($parameter, $parameters->required('foo')->string());
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Parameter `foo` is required');
@@ -115,10 +120,11 @@ final class ParametersTest extends TestCase
     {
         $parameter = string();
         $parameters = new Parameters($parameter);
-        $this->assertSame($parameter, $parameters->required('1')->string());
+        $this->assertTrue($parameters->has('0'));
+        $this->assertSame($parameter, $parameters->required('0')->string());
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Parameter `1` is required');
-        $parameters->optional('1');
+        $this->expectExceptionMessage('Parameter `0` is required');
+        $parameters->optional('0');
     }
 
     public function testOptionalCasting(): void
@@ -340,25 +346,5 @@ final class ParametersTest extends TestCase
         $this->assertTrue($parametersWith->requiredKeys()->contains('bar'));
         $this->expectException(InvalidArgumentException::class);
         $parametersWith->withMakeRequired('bar');
-    }
-
-    public function testIsList(): void
-    {
-        $parameters = new Parameters();
-        $this->assertTrue($parameters->isList());
-        $parameters = new Parameters(
-            foo: string(),
-            bar: int()
-        );
-        $this->assertFalse($parameters->isList());
-        $parameters = new Parameters(
-            string(),
-            int()
-        );
-        $this->assertTrue($parameters->isList());
-        $parameters = (new Parameters())
-            ->withRequired('a', string())
-            ->withRequired('b', int());
-        $this->assertTrue($parameters->isList());
     }
 }
