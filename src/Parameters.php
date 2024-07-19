@@ -189,6 +189,7 @@ final class Parameters implements ParametersInterface
 
     public function required(string $name): ParameterCastInterface
     {
+        $parameter = $this->get($name);
         if ($this->optionalKeys()->contains($name)) {
             throw new InvalidArgumentException(
                 (string) message(
@@ -198,13 +199,12 @@ final class Parameters implements ParametersInterface
             );
         }
 
-        return new ParameterCast(
-            $this->get($name)
-        );
+        return new ParameterCast($parameter);
     }
 
     public function optional(string $name): ParameterCastInterface
     {
+        $parameter = $this->get($name);
         if (! $this->optionalKeys()->contains($name)) {
             throw new InvalidArgumentException(
                 (string) message(
@@ -214,9 +214,7 @@ final class Parameters implements ParametersInterface
             );
         }
 
-        return new ParameterCast(
-            $this->get($name)
-        );
+        return new ParameterCast($parameter);
     }
 
     private function remove(string ...$name): void

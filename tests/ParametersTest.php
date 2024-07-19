@@ -81,8 +81,24 @@ final class ParametersTest extends TestCase
         $bar = int();
         $parameters = new Parameters($foo, $bar);
         $this->assertCount(2, $parameters);
-        $this->assertSame($foo, $parameters->get('0'));
-        $this->assertSame($bar, $parameters->get('1'));
+        $this->assertSame($foo, $parameters->get('1'));
+        $this->assertSame($bar, $parameters->get('2'));
+    }
+
+    public function testRequiredMissing(): void
+    {
+        $parameters = new Parameters();
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('Key `foo` not found');
+        $parameters->required('foo');
+    }
+
+    public function testOptionalMissing(): void
+    {
+        $parameters = new Parameters();
+        $this->expectException(OutOfBoundsException::class);
+        $this->expectExceptionMessage('Key `foo` not found');
+        $parameters->optional('foo');
     }
 
     public function testRequiredCasting(): void
@@ -93,6 +109,16 @@ final class ParametersTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Parameter `foo` is required');
         $parameters->optional('foo');
+    }
+
+    public function testRequiredCastingPositional(): void
+    {
+        $parameter = string();
+        $parameters = new Parameters($parameter);
+        $this->assertSame($parameter, $parameters->required('1')->string());
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Parameter `1` is required');
+        $parameters->optional('1');
     }
 
     public function testOptionalCasting(): void
@@ -314,5 +340,25 @@ final class ParametersTest extends TestCase
         $this->assertTrue($parametersWith->requiredKeys()->contains('bar'));
         $this->expectException(InvalidArgumentException::class);
         $parametersWith->withMakeRequired('bar');
+    }
+
+    public function testIsList(): void
+    {
+        $parameters = new Parameters();
+        $this->assertTrue($parameters->isList());
+        $parameters = new Parameters(
+            foo: string(),
+            bar: int()
+        );
+        $this->assertFalse($parameters->isList());
+        $parameters = new Parameters(
+            string(),
+            int()
+        );
+        $this->assertTrue($parameters->isList());
+        $parameters = (new Parameters())
+            ->withRequired('a', string())
+            ->withRequired('b', int());
+        $this->assertTrue($parameters->isList());
     }
 }
