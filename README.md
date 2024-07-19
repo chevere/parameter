@@ -194,13 +194,13 @@ function myCallable(): ParameterInterface
 #[CallableAttr('myCallable')]
 ```
 
-## Parameter types
+## Types
 
-A Parameter is an object implementing `ParameterInterface`. There are several Parameter types, each one with its own validation rules. Every Parameter can define a `description` and a `default` value, plus additional validation rules depending on the type.
+A Parameter is an object implementing `ParameterInterface`. Every Parameter can define a `description` and a `default` value, plus additional validation rules depending on the type.
 
-A Parameter can be defined using functions and/or attributes, it takes the same arguments for both.
+A Parameter can be defined using functions and/or attributes, it takes same arguments for both.
 
-When invoking a Parameter it will trigger validation against the passed argument.
+When invoking a Parameter `$param('value')` it will trigger validation against the passed argument.
 
 ## String
 
@@ -691,7 +691,209 @@ $iterable([
 ]);
 ```
 
-## Cookbook
+## Helpers
+
+### parameters
+
+Use function `parameters` to create a `Parameters` instance.
+
+```php
+use function Chevere\Parameters\parameters;
+use function Chevere\Parameters\string;
+
+$parameters = parameters(foo: string());
+```
+
+### arguments
+
+Use function `arguments` to create a `Arguments` instance.
+
+```php
+use function Chevere\Parameters\arguments;
+use function Chevere\Parameters\string;
+
+$arguments = arguments($parameters, ['foo' => 'bar']);
+```
+
+### assertNamedArgument
+
+Use function `assertNamedArgument` to assert a named argument.
+
+```php
+use function Chevere\Parameters\assertNamedArgument;
+use function Chevere\Parameters\int;
+use function Chevere\Parameters\parameters;
+
+$parameter = int(min: 10);
+assertNamedArgument(
+    name: 'foo',
+    parameter: $parameter,
+    argument: 20
+);
+```
+
+### toParameter
+
+Use function `toParameter` to create a `ParameterInterface` instance from a type string. In the example below the resulting `$parameter` will be an `IntParameter`.
+
+```php
+use function Chevere\Parameters\toParameter;
+
+$parameter = toParameter('int');
+```
+
+### arrayFrom
+
+Use function `arrayFrom` to create an [Array parameter](#array) from another array parameter. In the example below the resulting `$array` will contain only `name` and `id` keys as defined in `$source`.
+
+```php
+use function Chevere\Parameters\arrayFrom;
+use function Chevere\Parameters\arrayp;
+use function Chevere\Parameters\int;
+use function Chevere\Parameters\string;
+
+$source = arrayp(
+    id: int(),
+    name: string(),
+    email: string(),
+    age: int(),
+);
+$array = arrayFrom($source, 'name', 'id');
+```
+
+### takeKeys
+
+Use function `takeKeys` to retrieve an array with the keys from a parameter. In the example below `$keys` will contain `id` and `size`.
+
+```php
+use function Chevere\Parameters\arrayp;
+use function Chevere\Parameters\int;
+use function Chevere\Parameters\takeKeys;
+
+$array = arrayp(
+    id: int(),
+    size: int(),
+);
+$keys = takeKeys($array);
+```
+
+### takeFrom
+
+Use function `takeFrom` to retrieve an iterator with the desired keys from a parameter. In the example below `$iterator` will yield `size` and `name` keys.
+
+```php
+use function Chevere\Parameters\arrayp;
+use function Chevere\Parameters\int;
+use function Chevere\Parameters\string;
+use function Chevere\Parameters\takeFrom;
+
+$array = arrayp(
+    id: int(min: 0),
+    size: int(min: 100),
+    name: string(),
+);
+$iterator = takeFrom($array, 'size', 'name');
+```
+
+### parametersFrom
+
+Use function `parametersFrom` to create a `Parameters` with desired keys from a parameter. In the example below `$parameters` will contain `size` and `name` keys.
+
+```php
+use function Chevere\Parameters\arrayp;
+use function Chevere\Parameters\int;
+use function Chevere\Parameters\string;
+use function Chevere\Parameters\parametersFrom;
+
+$array = arrayp(
+    id: int(min: 0),
+    size: int(min: 100),
+    name: string(),
+);
+$parameters = parametersFrom($array, 'size', 'name');
+```
+
+### getParameters
+
+Use function `getParameters` to retrieve a `Parameters` instance from an object implementing either `ParameterAccessInterface` or `ParametersInterface`.
+
+```php
+use function Chevere\Parameters\getParameters;
+
+$parameters = getParameters($object);
+```
+
+### getType
+
+Use function `getType` to retrieve the type as is known by this library.
+
+```php
+use function Chevere\Parameters\getType;
+
+$type = getType(1); // int
+```
+
+### parameterAttr
+
+Use function `parameterAttr` to retrieve an object implementing `ParameterAttributeInterface` from a function or class method parameter.
+
+```php
+use function Chevere\Parameters\parameterAttr;
+use Chevere\Parameter\Attributes\StringAttr;
+
+
+function myFunction(
+    #[StringAttr('/^bin-[\d]+$/')]
+    string $foo
+): void {
+    // ...
+}
+
+$stringAttr = parameterAttr('foo', 'myFunction');
+$stringAttr('bin-123');
+```
+
+### reflectionToParameters
+
+Use function `reflectionToParameters` to retrieve a `Parameters` instance from a `ReflectionFunction` or `ReflectionMethod` instance.
+
+```php
+use function Chevere\Parameter\reflectionToParameters;
+
+$parameters = reflectionToParameters($reflection);
+```
+
+### reflectionToReturn
+
+Use function `reflectionToReturn` to retrieve a `ParameterInterface` instance from a `ReflectionFunction` or `ReflectionMethod` instance.
+
+```php
+use function Chevere\Parameter\reflectionToReturn;
+
+$parameter = reflectionToReturn($reflection);
+```
+
+### reflectedParameterAttribute
+
+Use function `reflectedParameterAttribute` to retrieve an object implementing `ParameterAttributeInterface` from a `ReflectionParameter` instance.
+
+```php
+use function Chevere\Parameter\reflectedParameterAttribute;
+
+$parameterAttribute = reflectedParameterAttribute($reflectionParameter);
+```
+
+### validated
+
+Use function `validated` to validate a function or method arguments.
+
+```php
+use function Chevere\Parameter\validated;
+
+$result = validated('myFunction', $arg1, $arg2,);
+```
+
+## Examples
 
 ### Inline validation
 
@@ -941,7 +1143,7 @@ function myIterable(
 
 Use function `returnAttr()` on the function/method body.
 
-* Validate int [min: 0, max: 5] return:
+* Validate int `min: 0, max: 5` return:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
