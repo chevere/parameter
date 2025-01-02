@@ -21,7 +21,7 @@ use Stringable;
  */
 interface StringParameterInterface extends ParameterInterface
 {
-    public const PATTERN_DEFAULT = '/^.*$/';
+    public const PATTERN_DEFAULT = '/^.*$/s';
 
     /**
      * Asserts the given `$value` is valid.
