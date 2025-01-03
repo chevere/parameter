@@ -26,7 +26,7 @@ use function Chevere\Message\message;
 
 final class ReflectionParameterTyped implements ReflectionParameterTypedInterface
 {
-    private ?ReflectionNamedType $type;
+    private ReflectionUnionType|ReflectionNamedType|null $type;
 
     private ParameterInterface $parameter;
 
@@ -34,7 +34,9 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         private ReflectionParameter $reflection
     ) {
         $this->type = $this->getType();
-        $parameter = toParameter($this->type?->getName() ?? 'mixed');
+        $parameter = ($this->type instanceof ReflectionUnionType) ?
+            toUnionParameter($this->type->getTypes()) :
+            toParameter($this->type?->getName() ?? 'mixed');
 
         try {
             $attribute = reflectedParameterAttribute($reflection);
@@ -74,13 +76,13 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         return $this->parameter;
     }
 
-    private function getType(): ?ReflectionNamedType
+    private function getType(): ReflectionNamedType|ReflectionUnionType|null
     {
         $reflection = $this->reflection->getType();
         if ($reflection === null) {
             return null;
         }
-        if ($reflection instanceof ReflectionNamedType) {
+        if ($reflection instanceof ReflectionNamedType || $reflection instanceof ReflectionUnionType) {
             return $reflection;
         }
         $name = '$' . $this->reflection->getName();

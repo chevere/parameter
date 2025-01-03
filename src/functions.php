@@ -37,6 +37,7 @@ use LogicException;
 use ReflectionAttribute;
 use ReflectionFunction;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionParameter;
 use Throwable;
 use function Chevere\Message\message;
@@ -134,6 +135,20 @@ function assertNamedArgument(
             )
         );
     }
+}
+
+function toUnionParameter(array $types): UnionParameterInterface
+{
+    $parameters = [];
+
+    /** @var ReflectionNamedType $type */
+    foreach ($types as $type) {
+        $parameters[] = toParameter($type->getName());
+    }
+
+    $parameters = parameters(...$parameters);
+
+    return new UnionParameter($parameters);
 }
 
 function toParameter(string $type): ParameterInterface

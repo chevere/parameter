@@ -17,6 +17,7 @@ use Chevere\Parameter\Interfaces\MixedParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
+use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use Chevere\Parameter\ReflectionParameterTyped;
 use Chevere\Tests\src\Depends;
 use LogicException;
@@ -72,9 +73,9 @@ final class ReflectionParameterTypedTest extends TestCase
     public function testUnion(): void
     {
         $parameter = $this->getReflection('useUnion');
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('$union of type union is not supported');
-        new ReflectionParameterTyped($parameter);
+        $reflection = new ReflectionParameterTyped($parameter);
+        $reflected = $reflection->parameter();
+        $this->assertInstanceOf(UnionParameterInterface::class, $reflected);
     }
 
     public function testIntersection(): void
