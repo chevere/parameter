@@ -34,9 +34,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         private ReflectionParameter $reflection
     ) {
         $this->type = $this->getType();
-        $parameter = ($this->type instanceof ReflectionUnionType) ?
-            toUnionParameter($this->type->getTypes()) :
-            toParameter($this->type?->getName() ?? 'mixed');
+        $parameter = $this->getParameter();
 
         try {
             $attribute = reflectedParameterAttribute($reflection);
@@ -44,7 +42,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             // do nothing
         }
         if (isset($attribute, $this->type)) {
-            $typeHint = $this->type->getName();
+            $typeHint = $this->getTypeHint($this->type);
             $attrHint = $attribute->parameter()->type()->typeHinting();
             if ($typeHint !== $attrHint) {
                 throw new TypeError(
@@ -76,6 +74,25 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         return $this->parameter;
     }
 
+    private function getParameter(): ParameterInterface
+    {
+        if ($this->type instanceof ReflectionUnionType) {
+            $types = [];
+            foreach ($this->type->getTypes() as $type) {
+                if ($type instanceof ReflectionIntersectionType) {
+                    continue;
+                }
+                $types[] = $type->getName();
+            }
+
+            return toUnionParameter(...$types);
+        } elseif ($this->type !== null) {
+            return toParameter($this->getTypeHint($this->type));
+        }
+
+        return toParameter('mixed');
+    }
+
     private function getType(): ReflectionNamedType|ReflectionUnionType|null
     {
         $reflection = $this->reflection->getType();
@@ -95,6 +112,23 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
                 type: $type
             )
         );
+    }
+
+    private function getTypeHint(object $reflection): string
+    {
+        if (method_exists($reflection, 'getName')) {
+            return $reflection->getName();
+        }
+        if ($reflection instanceof ReflectionUnionType) {
+            $types = [];
+            foreach ($reflection->getTypes() as $type) {
+                $types[] = $this->getTypeHint($type);
+            }
+
+            return implode('|', $types);
+        }
+
+        return 'mixed';
     }
 
     /**
