@@ -139,6 +139,20 @@ final class Parameters implements ParametersInterface
         return $new;
     }
 
+    public function withMerge(ParametersInterface $parameters): ParametersInterface
+    {
+        $new = clone $this;
+        foreach ($parameters as $name => $parameter) {
+            $container = match ($parameters->requiredKeys()->contains($name)) {
+                true => 'requiredKeys',
+                default => 'optionalKeys',
+            };
+            $new->addProperty($container, $name, $parameter);
+        }
+
+        return $new;
+    }
+
     public function withOptionalMinimum(int $count): ParametersInterface
     {
         match (true) {

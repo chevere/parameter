@@ -73,6 +73,14 @@ interface ParametersInterface extends StringMappedInterface
     public function without(string ...$name): self;
 
     /**
+     * Return an instance with the specified parameter(s) merged.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified parameter(s) merged.
+     */
+    public function withMerge(self $parameters): self;
+
+    /**
      * Return an instance requiring at least `$count` of optional arguments.
      *
      * This method MUST retain the state of the current instance, and return
