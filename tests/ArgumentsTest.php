@@ -76,13 +76,15 @@ final class ArgumentsTest extends TestCase
         new Arguments($parameters, []);
     }
 
-    public function testExtraArguments(): void
+    public function testIgnoreExtraArguments(): void
     {
         $parameters = parameters(test: string());
-        $this->expectException(ArgumentCountError::class);
-        new Arguments($parameters, [
+        $arguments = new Arguments($parameters, [
             'test' => '123',
             'extra' => 'nono',
+        ]);
+        $this->assertSame($arguments->toArray(), [
+            'test' => '123',
         ]);
     }
 

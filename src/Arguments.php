@@ -72,7 +72,7 @@ final class Arguments implements ArgumentsInterface
             }
             $this->iterable = new Parameters(...$pairs);
         }
-        $this->assertNoArgumentsOverflow();
+        $this->ignoreExtraArguments();
         $this->handleDefaults();
         $this->assertRequired();
         $this->assertMinimumOptional();
@@ -169,20 +169,12 @@ final class Arguments implements ArgumentsInterface
         return null;
     }
 
-    private function assertNoArgumentsOverflow(): void
+    private function ignoreExtraArguments(): void
     {
-        $overflow = array_diff(
-            array_keys($this->arguments),
-            $this->parameters()->keys()
+        $this->arguments = array_intersect_key(
+            $this->arguments,
+            array_flip($this->parameters()->keys())
         );
-        if ($overflow !== []) {
-            throw new ArgumentCountError(
-                (string) message(
-                    'Invalid argument(s) provided: `%extra%`',
-                    extra: implode(', ', $overflow)
-                )
-            );
-        }
     }
 
     private function handleDefaults(): void

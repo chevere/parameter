@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
-use ArgumentCountError;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
 use InvalidArgumentException;
@@ -215,12 +214,12 @@ final class FunctionsTest extends TestCase
         $this->assertSame('foo', $parameter->description());
     }
 
-    public function testAssertArrayExtraArguments(): void
+    public function testAssertArrayIgnoreExtraArguments(): void
     {
         $parameter = arrayp(
             OK: string(),
         );
-        $this->expectException(ArgumentCountError::class);
+        $this->expectNotToPerformAssertions();
         assertArray($parameter, [
             'OK' => 'abc',
             'ERROR' => 123,
