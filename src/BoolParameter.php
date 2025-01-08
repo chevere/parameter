@@ -23,7 +23,7 @@ final class BoolParameter implements BoolParameterInterface
     use ParameterTrait;
     use SchemaTrait;
 
-    private ?bool $default;
+    private bool $default;
 
     public function __invoke(bool $value): bool
     {

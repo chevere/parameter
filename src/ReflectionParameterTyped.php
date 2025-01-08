@@ -57,7 +57,6 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             $parameter = $attribute->parameter();
         }
         if ($this->reflection->isDefaultValueAvailable()
-            && method_exists($parameter, 'withDefault')
             && $this->reflection->getDefaultValue() !== null
         ) {
             /** @var ParameterInterface $parameter */

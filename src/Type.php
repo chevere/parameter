@@ -48,7 +48,7 @@ final class Type implements TypeInterface
     public function validator(): callable
     {
         /** @var callable */
-        return $this->validator;
+        return $this->validator; // @phpstan-ignore-line
     }
 
     public function primitive(): string

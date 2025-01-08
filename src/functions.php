@@ -373,7 +373,7 @@ function validated(callable $callable, mixed ...$args): mixed
 
     try {
         /** @var callable $return */
-        $return($result);
+        $return($result); // @phpstan-ignore-line
     } catch (Throwable $e) {
         // @infection-ignore-all
         throw new ReturnException(
