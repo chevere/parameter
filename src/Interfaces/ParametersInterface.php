@@ -108,11 +108,36 @@ interface ParametersInterface extends StringMappedInterface
      */
     public function optionalKeys(): VectorInterface;
 
+    /**
+     * Indicates the minimum number of optional parameters required.
+     */
     public function optionalMinimum(): int;
 
+    /**
+     * Provides parameter access by name.
+     *
+     * ```php
+     * // @var StringParameterInterface
+     * $parameters->get('name');
+     * ```
+     */
     public function get(string $name): ParameterInterface;
 
+    /**
+     * Provides cast access to the required parameter by name.
+     *
+     * ```php
+     * $parameters->required('name')->string();
+     * ```
+     */
     public function required(string $name): ParameterCastInterface;
 
+    /**
+     * Provides cast access to the optional parameter by name.
+     *
+     * ```php
+     * $parameters->optional('name')->string();
+     * ```
+     */
     public function optional(string $name): ParameterCastInterface;
 }
