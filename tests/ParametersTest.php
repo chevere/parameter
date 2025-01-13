@@ -347,4 +347,16 @@ final class ParametersTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $parametersWith->withMakeRequired('bar');
     }
+
+    public function testWithMerge(): void
+    {
+        $foo = string();
+        $bar = int();
+        $parametersFoo = new Parameters(foo: $foo);
+        $parametersBar = (new Parameters())->withOptional('bar', $bar);
+        $parameters = (new Parameters(foo: $foo))->withOptional('bar', $bar);
+        $withMerge = $parametersFoo->withMerge($parametersBar);
+        $this->assertNotSame($parametersFoo, $withMerge);
+        $this->assertEquals($parameters, $withMerge);
+    }
 }
