@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\src;
 
+use Chevere\Parameter\Attributes\BoolAttr;
+use Chevere\Parameter\Attributes\NullAttr;
 use Chevere\Parameter\Attributes\StringAttr;
+use Chevere\Parameter\Attributes\UnionAttr;
 use stdClass;
 
 final class Depends
@@ -38,6 +41,19 @@ final class Depends
 
     public function useUnion(string|int $union)
     {
+    }
+
+    public function useMixed(mixed $mixed)
+    {
+    }
+
+    public function useWrongUnionAttr(
+        #[UnionAttr(
+            new BoolAttr(),
+            new NullAttr(),
+        )]
+        string|int $union
+    ) {
     }
 
     public function useIntersection(stdClass&Depends $intersection)

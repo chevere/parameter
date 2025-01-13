@@ -78,6 +78,18 @@ final class ReflectionParameterTypedTest extends TestCase
         $this->assertInstanceOf(UnionParameterInterface::class, $reflected);
     }
 
+    public function testUnionAttributeError(): void
+    {
+        $parameter = $this->getReflection('useWrongUnionAttr');
+        $this->expectException(TypeError::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Parameter \$union of type string|int is not compatible with Chevere\Parameter\UnionParameter attribute
+            PLAIN
+        );
+        new ReflectionParameterTyped($parameter);
+    }
+
     public function testIntersection(): void
     {
         $parameter = $this->getReflection('useIntersection');
@@ -86,11 +98,19 @@ final class ReflectionParameterTypedTest extends TestCase
         new ReflectionParameterTyped($parameter);
     }
 
+    public function testMixed(): void
+    {
+        $parameter = $this->getReflection('useMixed');
+        $reflection = new ReflectionParameterTyped($parameter);
+        $reflected = $reflection->parameter();
+        $this->assertInstanceOf(MixedParameterInterface::class, $reflected);
+    }
+
     public function testInvalidAttribute(): void
     {
         $parameter = $this->getReflection('useInvalidAttribute');
         $this->expectException(TypeError::class);
-        $this->expectExceptionMessage('Parameter int of type int is not compatible with Chevere\Parameter\StringParameter attribute');
+        $this->expectExceptionMessage('Parameter $int of type int is not compatible with Chevere\Parameter\StringParameter attribute');
         new ReflectionParameterTyped($parameter);
     }
 

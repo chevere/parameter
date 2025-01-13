@@ -47,7 +47,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             if ($typeHint !== $attrHint) {
                 throw new TypeError(
                     (string) message(
-                        'Parameter %name% of type %type% is not compatible with %attr% attribute',
+                        'Parameter $%name% of type %type% is not compatible with %attr% attribute',
                         name: $reflection->getName(),
                         type: $typeHint,
                         attr: $attribute->parameter()::class
@@ -127,7 +127,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             return implode('|', $types);
         }
 
-        return 'mixed';
+        return 'mixed'; // @codeCoverageIgnore
     }
 
     /**
