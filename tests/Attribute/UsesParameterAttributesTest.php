@@ -21,118 +21,66 @@ use PHPUnit\Framework\TestCase;
 
 final class UsesParameterAttributesTest extends TestCase
 {
+    public const DEFAULT_ARGUMENTS = [
+        'name' => 'Test',
+        'age' => 12,
+        'cols' => [
+            'id' => 1,
+        ],
+        'tags' => ['Chevere', 'Chevere', 'Chevere', 'Uh'],
+        'flag' => false,
+        'amount' => 0,
+        'null' => null,
+        'enum' => 'value',
+        'union' => 1,
+    ];
+
     public function dataProviderWillSuccess(): array
     {
         return [
-            [
-                'name' => 'Rodolfo',
-                'age' => 25,
-                'cols' => [
-                    'id' => 1,
-                ],
-                'tags' => ['Chevere', 'Chevere', 'Chevere', 'Uh'],
-                'flag' => false,
-                'amount' => 0,
-                'null' => null,
-                'enum' => 'test',
-            ],
+            static::DEFAULT_ARGUMENTS,
         ];
     }
 
     public function dataProviderWillFail(): array
     {
         return [
-            [
+            array_merge(static::DEFAULT_ARGUMENTS, [
                 'name' => 'Peoples Hernandez',
-                'age' => 66,
-                'cols' => [
-                    'id' => 1,
-                ],
-                'tags' => ['people'],
-                'flag' => false,
-                'amount' => 0,
-                'null' => null,
-                'enum' => 'test',
-                'error' => "Argument value provided `Peoples Hernandez` doesn't match the regex `/^[A-Za-z]+$/`",
-            ],
-            [
-                'name' => 'zerothehero',
+                'error' => "[name]: Argument value provided `Peoples Hernandez` doesn't match the regex `/^[A-Za-z]+$/`",
+            ]),
+            array_merge(static::DEFAULT_ARGUMENTS, [
                 'age' => 0,
-                'cols' => [
-                    'id' => 1,
-                ],
-                'tags' => ['zero'],
-                'flag' => false,
-                'amount' => 0,
-                'null' => null,
-                'enum' => 'test',
-                'error' => 'Argument value provided `0` is less than `1`',
-            ],
-            [
-                'name' => 'SergioDalmata',
+                'error' => '[age]: Argument value provided `0` is less than `1`',
+            ]),
+            array_merge(static::DEFAULT_ARGUMENTS, [
                 'age' => 101,
-                'cols' => [
-                    'id' => 1,
-                ],
-                'tags' => ['dalmata'],
-                'flag' => false,
-                'amount' => 0,
-                'null' => null,
-                'enum' => 'test',
-                'error' => 'Argument value provided `101` is greater than `100`',
-            ],
-            [
-                'name' => 'DonZeroId',
-                'age' => 42,
+                'error' => '[age]: Argument value provided `101` is greater than `100`',
+            ]),
+            array_merge(static::DEFAULT_ARGUMENTS, [
                 'cols' => [
                     'id' => 0,
                 ],
-                'tags' => ['zeroid'],
-                'flag' => false,
-                'amount' => 0,
-                'null' => null,
-                'enum' => 'test',
-                'error' => '[id]: Argument value provided `0` is less than `1`',
-            ],
-            [
-                'name' => 'iterableNull',
-                'age' => 24,
-                'cols' => [
-                    'id' => 42,
-                ],
+                'error' => '[cols]: [id]: Argument value provided `0` is less than `1`',
+            ]),
+            array_merge(static::DEFAULT_ARGUMENTS, [
                 'tags' => [123],
-                'flag' => false,
-                'amount' => 0,
-                'null' => null,
-                'enum' => 'test',
-                'error' => 'Argument #1 ($value) must be of type Stringable|string, int given',
-            ],
-            [
-                'name' => 'negativeAmount',
-                'age' => 24,
-                'cols' => [
-                    'id' => 42,
-                ],
-                'tags' => ['test'],
-                'flag' => false,
+                'error' => '[tags]: [V *iterable]: Argument #1 ($value) must be of type Stringable|string, int given',
+            ]),
+            array_merge(static::DEFAULT_ARGUMENTS, [
                 'amount' => -10.5,
-                'null' => null,
-                'enum' => 'test',
-                'error' => 'Argument value provided `-10.5` is less than `0`',
-            ],
-            [
-                'name' => 'wrongEnum',
-                'age' => 24,
-                'cols' => [
-                    'id' => 42,
-                ],
-                'tags' => ['test'],
-                'flag' => false,
-                'amount' => 100.5,
-                'null' => null,
+                'error' => '[amount]: Argument value provided `-10.5` is less than `0`',
+            ]),
+            array_merge(static::DEFAULT_ARGUMENTS, [
                 'enum' => 'try',
-                'error' => "Argument value provided `try` doesn't match the regex `/\b(test|value)\b/`",
-            ],
+                'error' => "[enum]: Argument value provided `try` doesn't match the regex `/\b(test|value)\b/`",
+            ]),
+            array_merge(static::DEFAULT_ARGUMENTS, [
+                'union' => 0,
+                'error' => <<<PLAIN
+                [union]: Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\IntParameter>: Argument value provided `0` is less than `1`; Parameter `1` <Chevere\Parameter\StringParameter>: Argument #1 (\$value) must be of type Stringable|string, int given
+                PLAIN,
+            ]),
         ];
     }
 
@@ -148,6 +96,7 @@ final class UsesParameterAttributesTest extends TestCase
         float $amount,
         mixed $null,
         string $enum,
+        int|string $union,
         string $error
     ): void {
         $this->expectException(InvalidArgumentException::class);

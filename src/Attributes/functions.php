@@ -88,6 +88,14 @@ function iteratorAttr(string $name): IterableAttr
     return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
+function unionAttr(string $name): UnionAttr
+{
+    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
+
+    // @phpstan-ignore-next-line
+    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+}
+
 function returnAttr(): ReturnAttr
 {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);

@@ -23,6 +23,7 @@ use Chevere\Parameter\Attributes\IterableAttr;
 use Chevere\Parameter\Attributes\NullAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
+use Chevere\Parameter\Attributes\UnionAttr;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
@@ -34,6 +35,7 @@ use function Chevere\Parameter\Attributes\iteratorAttr;
 use function Chevere\Parameter\Attributes\nullAttr;
 use function Chevere\Parameter\Attributes\returnAttr;
 use function Chevere\Parameter\Attributes\stringAttr;
+use function Chevere\Parameter\Attributes\unionAttr;
 use function Chevere\Parameter\Attributes\valid;
 use function Chevere\Parameter\int;
 
@@ -65,6 +67,11 @@ final class UsesAttr
         mixed $null = null,
         #[EnumAttr('test', 'value')]
         string $enum = 'value',
+        #[UnionAttr(
+            new IntAttr(min: 1),
+            new StringAttr('/^[A-Za-z]+$/'),
+        )]
+        int|string $union = 1,
     ) {
         // Validate all
         valid();
@@ -85,6 +92,7 @@ final class UsesAttr
         $amount = floatAttr('amount')($amount);
         $null = nullAttr('null')($null);
         $enum = enumAttr('enum')($enum);
+        $union = unionAttr('union')($union);
         // Validate return attr
         returnAttr()($id);
     }
