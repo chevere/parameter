@@ -15,10 +15,10 @@ namespace Chevere\Parameter\Attributes;
 
 use ArrayAccess;
 use Attribute;
+use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use function Chevere\Parameter\arrayp;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class ArrayAttr implements ParameterAttributeInterface
@@ -28,7 +28,7 @@ class ArrayAttr implements ParameterAttributeInterface
     public function __construct(
         ParameterAttributeInterface ...$parameterAttribute,
     ) {
-        $parameter = arrayp();
+        $parameter = new ArrayParameter();
         foreach ($parameterAttribute as $name => $attribute) {
             $parameter = $parameter
                 ->withRequired(
