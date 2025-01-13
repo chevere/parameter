@@ -355,8 +355,13 @@ final class ParametersTest extends TestCase
         $parametersFoo = new Parameters(foo: $foo);
         $parametersBar = (new Parameters())->withOptional('bar', $bar);
         $parameters = (new Parameters(foo: $foo))->withOptional('bar', $bar);
-        $withMerge = $parametersFoo->withMerge($parametersBar);
-        $this->assertNotSame($parametersFoo, $withMerge);
-        $this->assertEquals($parameters, $withMerge);
+        $fooWithMerge = $parametersFoo->withMerge($parametersBar);
+        $this->assertNotSame($parametersFoo, $fooWithMerge);
+        $this->assertEquals($parameters, $fooWithMerge);
+        $this->assertSame(['foo'], $fooWithMerge->requiredKeys()->toArray());
+        $this->assertSame(['bar'], $fooWithMerge->optionalKeys()->toArray());
+        $barWithMerge = $parametersBar->withMerge($parametersFoo);
+        $this->assertSame(['foo'], $barWithMerge->requiredKeys()->toArray());
+        $this->assertSame(['bar'], $barWithMerge->optionalKeys()->toArray());
     }
 }
