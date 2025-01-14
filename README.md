@@ -214,7 +214,7 @@ $string = string('/^bin-[\d]+$/');
 $string('bin-123');
 ```
 
-Use `StringAttr` attribute to define a string parameter.
+Use `StringAttr` attribute to define a string parameter using attribute notation.
 
 ```php
 use Chevere\Parameter\Attributes\StringAttr;
@@ -238,7 +238,7 @@ $enum('on');
 $enum('off');
 ```
 
-Use `EnumAttr` attribute to define an enum string parameter.
+Use `EnumAttr` attribute to define an enum string parameter using attribute notation.
 
 ```php
 use Chevere\Parameter\Attributes\EnumAttr;
@@ -323,7 +323,7 @@ $int = int(reject: [1, 2, 3]);
 $int(4);
 ```
 
-Use `IntAttr` attribute to define an integer parameter.
+Use `IntAttr` attribute to define an integer parameter using attribute notation.
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
@@ -368,7 +368,7 @@ $float = float(reject: [1.5, 2.5, 3.5]);
 $float(4.5);
 ```
 
-Use `FloatAttr` attribute to define a float parameter.
+Use `FloatAttr` attribute to define a float parameter using attribute notation.
 
 ```php
 use Chevere\Parameter\Attributes\FloatAttr;
@@ -388,7 +388,7 @@ $bool(true);
 $bool(false);
 ```
 
-Use `BoolAttr` attribute to define a bool parameter.
+Use `BoolAttr` attribute to define a bool parameter using attribute notation.
 
 ```php
 use Chevere\Parameter\Attributes\BoolAttr;
@@ -407,7 +407,7 @@ $null = null();
 $null(null);
 ```
 
-Use `NullAttr` attribute to define a null parameter.
+Use `NullAttr` attribute to define a null parameter using attribute notation.
 
 ```php
 use Chevere\Parameter\Attributes\NullAttr;
@@ -426,7 +426,7 @@ $object = object(stdClass::class);
 $object(new stdClass());
 ```
 
-Use `ObjectAttr` attribute to define an object parameter.
+Use `ObjectAttr` attribute to define an object parameter using attribute notation.
 
 ```php
 use Chevere\Parameter\Attributes\ObjectAttr;
@@ -466,6 +466,19 @@ $union = union(
 );
 $union('100');
 $union(100);
+```
+
+Use `UnionAttr` attribute to define an union parameter using attribute notation.
+
+```php
+use Chevere\Parameter\Attributes\UnionAttr;
+use Chevere\Parameter\Attributes\FloatAttr;
+use Chevere\Parameter\Attributes\IntAttr;
+
+#[UnionAttr(
+    new IntAttr(),
+    new FloatAttr()
+)]
 ```
 
 ## Array
@@ -508,7 +521,7 @@ $array([
 ]);
 ```
 
-Use `ArrayAttr` attribute to define an array parameter.
+Use `ArrayAttr` attribute to define an array parameter using attribute notation.
 
 ```php
 use Chevere\Parameter\Attributes\ArrayAttr;
