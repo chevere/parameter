@@ -18,7 +18,7 @@
 
 ## Summary
 
-Parameter is a library around parameter-argument which provides additional functionality with validation rules and schema introspection.
+Parameter is a library around parameter-argument which provides additional functionality with validation rules and schema introspection. Go to [chevere/action](https://github.com/chevere/action) for our object-oriented convention around this package.
 
 ## Installing
 
@@ -68,11 +68,61 @@ Validation can be triggered using `validated` (example above), [inline](#inline-
 
 Rules defined by each parameter provide a human-readable schema which allows to expose the validation criteria.
 
+## Reference
+
+Core types provided by Parameter.
+
+| Type                  | Helper     | Attribute      | Description                 |
+| --------------------- | ---------- | -------------- | --------------------------- |
+| [Array](#array)       | `arrayp`   | `ArrayAttr`    | Array with named parameters |
+| [Bool](#bool)         | `bool`     | `BoolAttr`     | Boolean                     |
+| [Float](#float)       | `float`    | `FloatAttr`    | Floating point number       |
+| [Int](#int)           | `int`      | `IntAttr`      | Integer                     |
+| [Iterable](#iterable) | `iterable` | `IterableAttr` | Iterable of key-value pairs |
+| [Mixed](#mixed)       | `mixed`    | --             | Mixed                       |
+| [Null](#null)         | `null`     | `NullAttr`     | Null                        |
+| [Object](#object)     | `object`   | --             | Object                      |
+| [String](#string)     | `string`   | `StringAttr`   | String matching a regex     |
+| [Union](#union)       | `union`    | `UnionAttr`    | Union of parameters         |
+
+[Array based-parameters](#array-based-parameters) provided.
+
+| Type                         | Helper        | Description              |
+| ---------------------------- | ------------- | ------------------------ |
+| [ArrayString](#array-string) | `arrayString` | Array with string values |
+| [File](#file)                | `file`        | File upload              |
+
+[String based-parameters](#string-based-parameters) provided.
+
+| Type                         | Helper       | Description     |
+| ---------------------------- | ------------ | --------------- |
+| [BoolString](#bool-string)   | `boolString` | Bool string     |
+| [Date](#date-string)         | `date`       | Date string     |
+| [Datetime](#datetime-string) | `datetime`   | Datetime string |
+| [Enum](#enum-string)         | `enum`       | Enum string     |
+| [IntString](#int-string)     | `intString`  | Int string      |
+| [Time](#time-string)         | `time`       | Time string     |
+
+[Int based-parameters](#int-based-parameters) provided.
+
+| Type                 | Helper    | Description |
+| -------------------- | --------- | ----------- |
+| [BoolInt](#bool-int) | `boolInt` | Bool int    |
+
+Non-type attributes provided.
+
+| Attribute                     | Description                                |
+| ----------------------------- | ------------------------------------------ |
+| [CallableAttr](#callableattr) | Forward parameter resolution to a callable |
+| [ReturnAttr](#returnattr)     | Return value validation                    |
+
 ## How to use
 
 Parameter provides an API which can be used to create parameters using functions and/or attributes. Parameter objects can be used directly in the logic while attributes requires a read step.
 
 ### Inline usage
+
+Inline usage refers to the direct use of functions to create parameters and validate arguments.
 
 Use [inline validation](#inline-validation) to go from this:
 
@@ -92,7 +142,7 @@ int(min: 1, max: 10)($var);
 
 ### Attribute-based usage
 
-Use attributes to define rules for parameters and return value.
+Attribute usage refers to the use of attributes to define parameters and return rules. You can use attribute notation for class properties, methods/functions parameters and return value.
 
 Use [attribute delegated validation](#attribute-delegated-validation) with the `validated()` function to go from this:
 
@@ -170,6 +220,23 @@ function myFunction(
 }
 ```
 
+### ReturnAttr
+
+Use `ReturnAttr` attribute to define a return value validation rule.
+
+```php
+use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Attributes\StringAttr;
+
+#[ReturnAttr(
+    new StringAttr('/ok$/')
+)]
+function myFunction(): string
+{
+    return 'done ok';
+}
+```
+
 ### CallableAttr
 
 Attributes in PHP only support expressions you can use on class constants. Is not possible to directly define dynamic parameters using attributes.
@@ -191,6 +258,8 @@ function myCallable(): ParameterInterface
 
 #[CallableAttr('myCallable')]
 ```
+
+
 
 ## Types
 
@@ -222,11 +291,11 @@ use Chevere\Parameter\Attributes\StringAttr;
 #[StringAttr('/^bin-[\d]+$/')]
 ```
 
-## String pseudo-parameters
+### String based-parameters
 
 The following parameters are based on String.
 
-### Enum string
+#### Enum string
 
 Use function `enum` to create a `StringParameter` matching a list of strings.
 
@@ -246,7 +315,7 @@ use Chevere\Parameter\Attributes\EnumAttr;
 #[EnumAttr('on', 'off')]
 ```
 
-### Int string
+#### Int string
 
 Use function `intString` to create a `StringParameter` matching a string integers.
 
@@ -257,7 +326,7 @@ $int = intString();
 $int('100');
 ```
 
-### Bool string
+#### Bool string
 
 Use function `boolString` to create a `StringParameter` matching `0` and `1` strings.
 
@@ -269,7 +338,7 @@ $bool('0');
 $bool('1');
 ```
 
-### Date string
+#### Date string
 
 Use function `date` to create a `StringParameter` matching `YYYY-MM-DD` strings.
 
@@ -280,7 +349,7 @@ $date = date();
 $date('2021-01-01');
 ```
 
-### Time string
+#### Time string
 
 Use function `time` to create a `StringParameter` matching `hh:mm:ss` strings.
 
@@ -291,7 +360,7 @@ $time = time();
 $time('12:00:00');
 ```
 
-### Datetime string
+#### Datetime string
 
 Use function `datetime` to create a `StringParameter` matching `YYYY-MM-DD hh:mm:ss` strings.
 
@@ -331,11 +400,11 @@ use Chevere\Parameter\Attributes\IntAttr;
 #[IntAttr(min: 0, max: 100)]
 ```
 
-## Int pseudo-parameters
+### Int based-parameters
 
 The following parameters are based on Int.
 
-### Bool int
+#### Bool int
 
 Use function `boolInt` to create a `IntParameter` matching `0` and `1` integers.
 
@@ -607,11 +676,11 @@ $array = $array
     ->withOptionalMinimum(1);
 ```
 
-## Array pseudo-parameters
+### Array based-parameters
 
 The following parameters are based on Array.
 
-### Array String
+#### Array String
 
 Use function `arrayString` to create an `ArrayStringParameterInterface` for string values. It only supports string parameters.
 
@@ -625,7 +694,7 @@ $array = arrayString(
 $array(['test' => 'foo']);
 ```
 
-### File
+#### File
 
 Use function `file` to create an `ArrayParameter` for file uploads.
 
