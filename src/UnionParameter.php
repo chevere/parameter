@@ -35,7 +35,7 @@ final class UnionParameter implements UnionParameterInterface
 
     private mixed $default = null;
 
-    final public function __construct(
+    public function __construct(
         private ParametersInterface $parameters,
         private string $description = '',
     ) {

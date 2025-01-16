@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Chevere\Tests\Parameter\Attributes;
+namespace Chevere\Tests\Attributes;
 
 use Chevere\Parameter\Attributes\FloatAttr;
 use InvalidArgumentException;

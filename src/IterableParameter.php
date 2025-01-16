@@ -34,7 +34,7 @@ final class IterableParameter implements IterableParameterInterface
      */
     private ?iterable $default = null;
 
-    final public function __construct(
+    public function __construct(
         private ParameterInterface $value,
         private ParameterInterface $key,
         private string $description = ''
