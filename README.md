@@ -259,8 +259,6 @@ function myCallable(): ParameterInterface
 #[CallableAttr('myCallable')]
 ```
 
-
-
 ## Types
 
 A Parameter is an object implementing `ParameterInterface`. Every Parameter can define a `description` and a `default` value, plus additional validation rules depending on the type.
