@@ -60,11 +60,14 @@ final class Arguments implements ArgumentsInterface
         if ($arguments instanceof ArrayAccess) {
             $arguments = $this->getArrayAccessArray($arguments);
         }
-        if (array_is_list($arguments) && count($arguments) === count($parameters)) {
-            $arguments = array_combine($parameters->keys(), $arguments);
+        $isIterable = $parameters->keys() === ['K', 'V'];
+        $countArguments = count($arguments);
+        if (array_is_list($arguments) && ! $isIterable) {
+            $parametersMap = array_slice($this->parameters->keys(), 0, $countArguments);
+            $arguments = array_combine($parametersMap, $arguments);
         }
         $this->setArguments($arguments);
-        if ($parameters->keys() === ['K', 'V']) {
+        if ($isIterable) {
             $pairs = [];
             foreach (array_keys($arguments) as $key) {
                 $key = strval($key);
