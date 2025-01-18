@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Parameter;
 
 use ArrayAccess;
+use BadMethodCallException;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Exceptions\AttributeNotFoundException;
 use Chevere\Parameter\Exceptions\ParameterException;
@@ -41,8 +42,32 @@ use ReflectionParameter;
 use Throwable;
 use function Chevere\Message\message;
 
-function cast(mixed $argument): CastInterface
+function cast(mixed $argument, string|int ...$key): CastInterface
 {
+    if ($key !== []) {
+        if (! ($argument instanceof ArrayAccess || is_array($argument))) {
+            throw new BadMethodCallException(
+                (string) message(
+                    'Argument must be array-accessible, %type% provided',
+                    type: gettype($argument)
+                )
+            );
+        }
+        $fn = function ($carry, $item) {
+            if (array_key_exists($item, $carry)) {
+                return $carry[$item];
+            }
+
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Key `%key%` not found in array',
+                    key: $item
+                )
+            );
+        };
+        $argument = array_reduce($key, $fn, $argument);
+    }
+
     return new Cast($argument);
 }
 

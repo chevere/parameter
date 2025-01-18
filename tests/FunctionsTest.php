@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
+use BadMethodCallException;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
 use InvalidArgumentException;
@@ -368,6 +369,44 @@ final class FunctionsTest extends TestCase
         $value = 'string';
         $cast = cast($value);
         $this->assertSame($value, $cast->string());
+    }
+
+    public function testCastNested(): void
+    {
+        $value = [
+            'super' => [
+                'taldo' => null,
+            ],
+            3 => 'co',
+            'agac',
+        ];
+        $cast = cast($value);
+        $this->assertSame($value, $cast->array());
+        $cast = cast($value, 'super');
+        $this->assertSame($value['super'], $cast->array());
+        $cast = cast($value, 'super', 'taldo');
+        $this->assertSame($value['super']['taldo'], $cast->mixed());
+        $cast = cast($value, 3);
+        $this->assertSame($value[3], $cast->string());
+        $cast = cast($value, 4);
+        $this->assertSame($value[4], $cast->string());
+    }
+
+    public static function dataProviderCastNestedError(): array
+    {
+        return [
+            [1, BadMethodCallException::class],
+            [[], InvalidArgumentException::class],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderCastNestedError
+     */
+    public function testCastNestedError(mixed $value, string $exception): void
+    {
+        $this->expectException($exception);
+        $cast = cast($value, 'foo');
     }
 
     public function testParameterAttr(): void
