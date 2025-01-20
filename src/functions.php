@@ -42,14 +42,20 @@ use ReflectionParameter;
 use Throwable;
 use function Chevere\Message\message;
 
-function cast(mixed $argument, string|int ...$key): CastInterface
+/**
+ * Cast a variable to a CastInterface instance.
+ *
+ * @param mixed $variable The variable to cast.
+ * @param string|int ...$key The key to access in the array (array reduce)
+ */
+function cast(mixed $variable, string|int ...$key): CastInterface
 {
     if ($key !== []) {
-        if (! ($argument instanceof ArrayAccess || is_array($argument))) {
+        if (! ($variable instanceof ArrayAccess || is_array($variable))) {
             throw new BadMethodCallException(
                 (string) message(
                     'Argument must be array-accessible, %type% provided',
-                    type: gettype($argument)
+                    type: gettype($variable)
                 )
             );
         }
@@ -65,10 +71,10 @@ function cast(mixed $argument, string|int ...$key): CastInterface
                 )
             );
         };
-        $argument = array_reduce($key, $fn, $argument);
+        $variable = array_reduce($key, $fn, $variable);
     }
 
-    return new Cast($argument);
+    return new Cast($variable);
 }
 
 function null(
