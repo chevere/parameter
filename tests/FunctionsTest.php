@@ -371,6 +371,15 @@ final class FunctionsTest extends TestCase
         $this->assertSame($value, $cast->string());
     }
 
+    public function testCastArray(): void
+    {
+        $value = [
+            'foo' => 'bar',
+        ];
+        $cast = cast($value, 'foo');
+        $this->assertSame('bar', $cast->string());
+    }
+
     public function testCastNested(): void
     {
         $value = [
@@ -383,13 +392,15 @@ final class FunctionsTest extends TestCase
         $cast = cast($value);
         $this->assertSame($value, $cast->array());
         $cast = cast($value, 'super');
-        $this->assertSame($value['super'], $cast->array());
+        $this->assertSame([
+            'taldo' => null,
+        ], $cast->array());
         $cast = cast($value, 'super', 'taldo');
-        $this->assertSame($value['super']['taldo'], $cast->mixed());
+        $this->assertSame(null, $cast->mixed());
         $cast = cast($value, 3);
-        $this->assertSame($value[3], $cast->string());
+        $this->assertSame('co', $cast->string());
         $cast = cast($value, 4);
-        $this->assertSame($value[4], $cast->string());
+        $this->assertSame('agac', $cast->string());
     }
 
     public static function dataProviderCastNestedError(): array

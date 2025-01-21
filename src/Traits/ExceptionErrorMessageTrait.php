@@ -29,9 +29,10 @@ trait ExceptionErrorMessageTrait
             $strstr = substr($strstr, strlen($needle));
         }
         $calledIn = strpos($strstr, ', called in');
-
-        return $calledIn
+        $message = $calledIn
             ? substr($strstr, 0, $calledIn)
             : $strstr;
+
+        return str_replace(' #1 ($value)', '', $message);
     }
 }

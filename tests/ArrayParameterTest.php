@@ -365,7 +365,7 @@ final class ArrayParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [0]: Argument #1 (\$value) must be of type Stringable|string, int given; [1]: Argument #1 (\$value) must be of type int, string given
+            [0]: Argument must be of type Stringable|string, int given; [1]: Argument must be of type int, string given
             PLAIN
         );
         $parameter([1, 'foo']);

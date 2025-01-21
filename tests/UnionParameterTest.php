@@ -136,7 +136,7 @@ final class UnionParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\StringParameter>: Argument #1 (\$value) must be of type Stringable|string, float given; Parameter `1` <Chevere\Parameter\IntParameter>: Argument #1 (\$value) must be of type int, float given
+            Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\StringParameter>: Argument must be of type Stringable|string, float given; Parameter `1` <Chevere\Parameter\IntParameter>: Argument must be of type int, float given
             PLAIN
         );
         $parameter(1.1);
@@ -155,7 +155,7 @@ final class UnionParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\StringParameter>: Argument #1 (\$value) must be of type Stringable|string, array given; Parameter `1` <Chevere\Parameter\IntParameter>: Argument #1 (\$value) must be of type int, array given
+            Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\StringParameter>: Argument must be of type Stringable|string, array given; Parameter `1` <Chevere\Parameter\IntParameter>: Argument must be of type int, array given
             PLAIN
         );
         $parameter->withDefault([]);

@@ -50,6 +50,8 @@ final class Parameters implements ParametersInterface
 
     private int $optionalMinimum = 0;
 
+    private bool $isVariadic = false;
+
     /**
      * @param ParameterInterface $parameter Required parameters
      */
@@ -67,6 +69,19 @@ final class Parameters implements ParametersInterface
     public function __invoke(mixed ...$argument): ArgumentsInterface
     {
         return new Arguments($this, $argument);
+    }
+
+    public function withVariadic(bool $flag): ParametersInterface
+    {
+        $new = clone $this;
+        $new->isVariadic = $flag;
+
+        return $new;
+    }
+
+    public function isVariadic(): bool
+    {
+        return $this->isVariadic;
     }
 
     public function withRequired(string $name, ParameterInterface $parameter): ParametersInterface

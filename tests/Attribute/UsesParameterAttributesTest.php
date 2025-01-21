@@ -65,7 +65,7 @@ final class UsesParameterAttributesTest extends TestCase
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'tags' => [123],
-                'error' => '[tags]: [V *iterable]: Argument #1 ($value) must be of type Stringable|string, int given',
+                'error' => '[tags]: [V *iterable]: Argument must be of type Stringable|string, int given',
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'amount' => -10.5,
@@ -78,7 +78,7 @@ final class UsesParameterAttributesTest extends TestCase
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'union' => 0,
                 'error' => <<<PLAIN
-                [union]: Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\IntParameter>: Argument value provided `0` is less than `1`; Parameter `1` <Chevere\Parameter\StringParameter>: Argument #1 (\$value) must be of type Stringable|string, int given
+                [union]: Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\IntParameter>: Argument value provided `0` is less than `1`; Parameter `1` <Chevere\Parameter\StringParameter>: Argument must be of type Stringable|string, int given
                 PLAIN,
             ]),
         ];

@@ -75,7 +75,9 @@ final class Arguments implements ArgumentsInterface
             }
             $this->iterable = new Parameters(...$pairs);
         }
-        $this->ignoreExtraArguments();
+        if (! $this->parameters->isVariadic()) {
+            $this->ignoreExtraArguments();
+        }
         $this->handleDefaults();
         $this->assertRequired();
         $this->assertMinimumOptional();
@@ -114,7 +116,7 @@ final class Arguments implements ArgumentsInterface
     public function withPut(string $name, mixed $value): ArgumentsInterface
     {
         $new = clone $this;
-        $new->assertArgument($name, $value);
+        $new->assertSetArgument($name, $value);
         $new->arguments[$name] = $value;
 
         return $new;
@@ -232,39 +234,61 @@ final class Arguments implements ArgumentsInterface
     /**
      * @infection-ignore-all
      */
-    private function assertArgument(string $name, mixed $argument): void
+    private function assertSetArgument(string $name, mixed $argument, ?string $key = null): void
     {
         $parameter = $this->parameters()->get($name);
+        $property = $name;
+        if ($key !== null) {
+            $property = $key . '...' . $name;
+        }
 
         try {
-            $this->arguments[$name] = $parameter->__invoke($argument);
+            $this->arguments[$key ?? $name] = $parameter->__invoke($argument);
         } catch (TypeError $e) {
             throw new TypeError(
-                $this->getExceptionPropertyMessage($name, $e)
+                $this->getExceptionPropertyMessage($property, $e)
             );
         } catch (Throwable $e) {
             throw new InvalidArgumentException(
-                $this->getExceptionPropertyMessage($name, $e)
+                $this->getExceptionPropertyMessage($property, $e)
             );
         }
     }
 
-    private function getExceptionPropertyMessage(string $property, Throwable $e): string
+    private function getExceptionPropertyMessage(string $name, Throwable $e): string
     {
         $message = $this->getExceptionMessage($e);
 
-        return "[{$property}]: {$message}";
+        return "[{$name}]: {$message}";
     }
 
     private function handleParameters(): void
     {
-        foreach ($this->parameters()->keys() as $name) {
+        $lastPos = array_key_last($this->parameters()->keys());
+        foreach ($this->parameters()->keys() as $pos => $name) {
+            if ($pos === $lastPos && $this->parameters->isVariadic()) {
+                $variadicKeys = array_diff_key(
+                    $this->arguments,
+                    array_flip($this->parameters->keys())
+                );
+                foreach ($variadicKeys as $key => $value) {
+                    $key = strval($key);
+
+                    try {
+                        $this->assertSetArgument($name, $value, $key);
+                    } catch (Throwable $e) {
+                        $this->errors[] = $e->getMessage();
+                    }
+                }
+
+                break;
+            }
             if ($this->isSkipOptional($name)) {
                 continue;
             }
 
             try {
-                $this->assertArgument($name, $this->get($name));
+                $this->assertSetArgument($name, $this->get($name));
             } catch (Throwable $e) {
                 $this->errors[] = $e->getMessage();
             }

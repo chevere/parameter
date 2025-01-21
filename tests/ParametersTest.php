@@ -25,11 +25,14 @@ use Chevere\Parameter\ObjectParameter;
 use Chevere\Parameter\Parameters;
 use Chevere\Parameter\StringParameter;
 use Chevere\Parameter\UnionParameter;
+use Chevere\Tests\src\VariadicParameters;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use OverflowException;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use function Chevere\Parameter\int;
+use function Chevere\Parameter\reflectionToParameters;
 use function Chevere\Parameter\string;
 
 final class ParametersTest extends TestCase
@@ -42,6 +45,7 @@ final class ParametersTest extends TestCase
         $this->assertCount(0, $parameters->optionalKeys());
         $this->assertCount(0, $parameters->requiredKeys());
         $this->assertFalse($parameters->has($name));
+        $this->assertFalse($parameters->isVariadic());
         $this->expectException(OutOfBoundsException::class);
         $parameters->get($name);
     }
@@ -195,6 +199,48 @@ final class ParametersTest extends TestCase
         $this->assertSame($parameter, $parametersWith->get($name));
         $this->expectException(OverflowException::class);
         $parametersWith->withOptional($name, $parameter);
+    }
+
+    public function testWithVariadicParameters(): void
+    {
+        $reflector = new ReflectionMethod(VariadicParameters::class, 'main');
+        $parameters = reflectionToParameters($reflector);
+        $this->assertTrue($parameters->isVariadic());
+        $return = $parameters(
+            _task: 'test',
+            _priority: 2,
+            _maxRetries: 3,
+            foo: 'bar',
+            bar: 'baz',
+        );
+        $this->assertSame(
+            [
+                '_task' => 'test',
+                '_priority' => 2,
+                '_maxRetries' => 3,
+                'foo' => 'bar',
+                'bar' => 'baz',
+            ],
+            $return->toArray()
+        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [foo...argument]: Argument must be of type Stringable|string, true given
+            PLAIN
+        );
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [bar...argument]: Argument must be of type Stringable|string, int given
+            PLAIN
+        );
+        $parameters(
+            _task: 'test',
+            _priority: 0,
+            _maxRetries: 0,
+            foo: true,
+            bar: 123,
+        );
     }
 
     public function dataProviderCast(): array

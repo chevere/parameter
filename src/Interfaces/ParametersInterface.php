@@ -140,4 +140,8 @@ interface ParametersInterface extends StringMappedInterface
      * ```
      */
     public function optional(string $name): ParameterCastInterface;
+
+    public function withVariadic(bool $flag): self;
+
+    public function isVariadic(): bool;
 }
