@@ -188,6 +188,7 @@ final class ParametersTest extends TestCase
         $name = 'name';
         $parameter = new StringParameter();
         $parameters = new Parameters();
+        $this->assertSame(false, $parameters->isVariadic());
         $parametersWith = $parameters->withOptional($name, $parameter);
         $this->assertNotSame($parameters, $parametersWith);
         $this->assertCount(1, $parametersWith);
@@ -409,5 +410,13 @@ final class ParametersTest extends TestCase
         $barWithMerge = $parametersBar->withMerge($parametersFoo);
         $this->assertSame(['foo'], $barWithMerge->requiredKeys()->toArray());
         $this->assertSame(['bar'], $barWithMerge->optionalKeys()->toArray());
+    }
+
+    public function withIsVariadic(): void
+    {
+        $parameters = new Parameters();
+        $with = $parameters->withIsVariadic(true);
+        $this->assertNotEquals($with, $parameters);
+        $this->assertTrue($with->isVariadic());
     }
 }
