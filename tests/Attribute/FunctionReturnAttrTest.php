@@ -41,7 +41,11 @@ final class FunctionReturnAttrTest extends TestCase
             ],
         ];
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('[role]: [tenants]: [V *iterable]: Argument value provided `6` is greater than `5`');
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [role]: [tenants]: [V *iterable]: Argument value provided `6` is greater than `5`
+            PLAIN
+        );
         usesAttr($value);
     }
 

@@ -157,11 +157,20 @@ function assertNamedArgument(
     try {
         return arguments($parameters, $arguments);
     } catch (Throwable $e) {
+        $message = $e->getMessage();
+        if (! str_ends_with($name, '*iterable')) {
+            $needle = "[{$name}]: ";
+            $pos = strpos($message, $needle);
+            if ($pos !== false) {
+                $message = substr_replace($message, '', $pos, strlen($needle));
+            }
+        }
+
         throw new InvalidArgumentException(
             (string) message(
                 'Argument [%name%]: %message%',
                 name: $name,
-                message: $e->getMessage(),
+                message: $message,
             )
         );
     }
@@ -341,7 +350,7 @@ function reflectionToParameters(
             $push
         );
         if ($reflectionParameter->isVariadic()) {
-            $parameters = $parameters->withVariadic(true);
+            $parameters = $parameters->withIsVariadic(true);
         }
     }
 
