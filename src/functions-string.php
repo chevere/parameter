@@ -50,7 +50,7 @@ function enum(string $string, string ...$strings): StringParameterInterface
 {
     array_unshift($strings, $string);
     $cases = implode('|', $strings);
-    $regex = "/\b({$cases})\b/";
+    $regex = "/\b{$cases}\b/";
 
     return string($regex);
 }
