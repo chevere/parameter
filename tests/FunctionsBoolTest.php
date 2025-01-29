@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\bool;
 
@@ -33,9 +34,7 @@ final class FunctionsBoolTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider boolArgumentsProvider
-     */
+    #[DataProvider('boolArgumentsProvider')]
     public function testBoolArguments(string $description, bool $default): void
     {
         $bool = bool($description, $default);

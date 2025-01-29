@@ -29,6 +29,7 @@ use Chevere\Tests\src\VariadicParameters;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use OverflowException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 use function Chevere\Parameter\int;
@@ -244,7 +245,7 @@ final class ParametersTest extends TestCase
         );
     }
 
-    public function dataProviderCast(): array
+    public static function dataProviderGetCast(): array
     {
         return [
             [new StringParameter(), 'string'],
@@ -257,9 +258,7 @@ final class ParametersTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderCast
-     */
+    #[DataProvider('dataProviderGetCast')]
     public function testGetCast(
         ParameterInterface $parameter,
         string $type,

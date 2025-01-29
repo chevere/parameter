@@ -24,6 +24,7 @@ use Chevere\Tests\src\ArrayAccessMixed;
 use Chevere\Tests\src\ArrayAccessScoped;
 use InvalidArgumentException;
 use OutOfBoundsException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
@@ -346,9 +347,7 @@ final class ArgumentsTest extends TestCase
         $arguments->required($foo);
     }
 
-    /**
-     * @dataProvider arrayAccessDataProvider
-     */
+    #[DataProvider('dataProviderArrayAccess')]
     public function testArrayAccess(
         ArrayParameterInterface $parameter,
         \ArrayAccess $arrayAccess,
@@ -358,7 +357,7 @@ final class ArgumentsTest extends TestCase
         $this->assertSame($array, $arguments->toArray());
     }
 
-    public function arrayAccessDataProvider(): array
+    public static function dataProviderArrayAccess(): array
     {
         $named = [
             'string' => 'test',

@@ -15,11 +15,12 @@ namespace Chevere\Tests;
 
 use ArrayObject;
 use Chevere\Parameter\Cast;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class CastTest extends TestCase
 {
-    public function castDataProvider(): array
+    public static function dataProviderCast(): array
     {
         return [
             [null, 'mixed'],
@@ -59,9 +60,7 @@ final class CastTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider castDataProvider
-     */
+    #[DataProvider('dataProviderCast')]
     public function testCast($expected, string $method): void
     {
         $cast = new Cast($expected);

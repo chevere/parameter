@@ -294,9 +294,11 @@ final class IntParameterTest extends TestCase
         $notCompatible = (new IntParameter())->withAccept(1, 4);
         $expected = implode(', ', $parameter->accept());
         $this->expectException(InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage(<<<PLAIN
-        Expected accept values in `[{$expected}]`, provided `[]`
-        PLAIN);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Expected accept values in `[1, 2, 3, 4]`, provided `[1, 4]`
+            PLAIN
+        );
         $parameter->assertCompatible($notCompatible);
     }
 
@@ -307,11 +309,12 @@ final class IntParameterTest extends TestCase
         $parameter->assertCompatible($compatible);
         $compatible->assertCompatible($parameter);
         $notCompatible = (new IntParameter())->withReject(1, 4);
-        $expected = implode(', ', $parameter->reject());
         $this->expectException(InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage(<<<PLAIN
-        Expected reject values in `[{$expected}]`, provided `[]`
-        PLAIN);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Expected reject values in `[1, 2, 3, 4]`, provided `[1, 4]`
+            PLAIN
+        );
         $parameter->assertCompatible($notCompatible);
     }
 
@@ -320,7 +323,11 @@ final class IntParameterTest extends TestCase
         $parameter = (new IntParameter())->withAccept(1, 2, 3, 4);
         $notCompatible = (new IntParameter())->withMin(0);
         $this->expectException(InvalidArgumentException::class);
-        $this->getExpectedExceptionMessage('value null');
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Expected accept values in `[1, 2, 3, 4]`, provided `[]`
+            PLAIN
+        );
         $parameter->assertCompatible($notCompatible);
     }
 

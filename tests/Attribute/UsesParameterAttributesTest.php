@@ -17,6 +17,7 @@ use Chevere\Tests\src\NoUsesAttr;
 use Chevere\Tests\src\UsesAttr;
 use InvalidArgumentException;
 use LogicException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class UsesParameterAttributesTest extends TestCase
@@ -35,14 +36,14 @@ final class UsesParameterAttributesTest extends TestCase
         'union' => 1,
     ];
 
-    public function dataProviderWillSuccess(): array
+    public static function dataProviderWillSuccess(): array
     {
         return [
             static::DEFAULT_ARGUMENTS,
         ];
     }
 
-    public function dataProviderWillFail(): array
+    public static function dataProviderWillFail(): array
     {
         return [
             array_merge(static::DEFAULT_ARGUMENTS, [
@@ -84,9 +85,7 @@ final class UsesParameterAttributesTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderWillFail
-     */
+    #[DataProvider('dataProviderWillFail')]
     public function testWillFail(
         string $name,
         int $age,
@@ -106,9 +105,7 @@ final class UsesParameterAttributesTest extends TestCase
         new UsesAttr(...$args);
     }
 
-    /**
-     * @dataProvider dataProviderWillSuccess
-     */
+    #[DataProvider('dataProviderWillSuccess')]
     public function testWillSuccess(
         string $name,
         int $age,
@@ -118,6 +115,7 @@ final class UsesParameterAttributesTest extends TestCase
         float $amount,
         mixed $null,
         string $enum,
+        int|string $union
     ): void {
         $this->expectNotToPerformAssertions();
 

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use Chevere\Parameter\ObjectParameter;
+use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -69,7 +70,7 @@ final class ObjectParameterTest extends TestCase
         ], $withDefault->schema());
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage('Argument value provided is not of type `stdClass`');
-        $parameter->withDefault(new self());
+        $parameter->withDefault(new Exception());
     }
 
     public function testAssertCompatible(): void

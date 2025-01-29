@@ -13,6 +13,5 @@
     },
     "mutators": {
         "@default": true
-    },
-    "testFrameworkOptions": "--configuration=phpunit-coverage.xml"
+    }
 }

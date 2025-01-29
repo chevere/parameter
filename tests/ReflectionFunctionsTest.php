@@ -16,6 +16,7 @@ namespace Chevere\Tests;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionMethod;
@@ -83,7 +84,7 @@ final class ReflectionFunctionsTest extends TestCase
         $return($function(10));
     }
 
-    public function dataProviderFunctionToReturnUses(): array
+    public static function dataProviderFunctionToReturnUses(): array
     {
         return [
             ['Chevere\Tests\src\usesAttr'],
@@ -91,9 +92,7 @@ final class ReflectionFunctionsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderFunctionToReturnUses
-     */
+    #[DataProvider('dataProviderFunctionToReturnUses')]
     public function testFunctionToReturnUses(string $function): void
     {
         $this->expectNotToPerformAssertions();

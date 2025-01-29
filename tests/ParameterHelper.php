@@ -17,6 +17,11 @@ use PHPUnit\Framework\TestCase;
 
 class ParameterHelper extends TestCase
 {
+    public function __construct()
+    {
+        parent::__construct(__CLASS__);
+    }
+
     public function testWithParameterDefault(
         string $primitive,
         object $parameter,

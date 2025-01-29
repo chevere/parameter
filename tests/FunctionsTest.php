@@ -19,6 +19,7 @@ use Chevere\Parameter\Exceptions\ReturnException;
 use InvalidArgumentException;
 use LogicException;
 use OutOfBoundsException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
@@ -42,6 +43,7 @@ use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
 use function Chevere\Parameter\validated;
+use function Chevere\Parameter\valMd;
 
 final class FunctionsTest extends TestCase
 {
@@ -411,9 +413,7 @@ final class FunctionsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderCastNestedError
-     */
+    #[DataProvider('dataProviderCastNestedError')]
     public function testCastNestedError(mixed $value, string $exception): void
     {
         $this->expectException($exception);
@@ -458,5 +458,21 @@ final class FunctionsTest extends TestCase
         $name = 'Test';
         $this->expectNotToPerformAssertions();
         validated($function, $base, $times, $name);
+    }
+
+    #[DataProvider('dataProviderValMd')]
+    public function testValMd(mixed $value, string $expects): void
+    {
+        $this->assertSame($expects, valMd($value));
+    }
+
+    public static function dataProviderValMd(): array
+    {
+        return [
+            [null, ' `null`'],
+            [1, ' `1`'],
+            ['foo', ' `foo`'],
+            ['', ''],
+        ];
     }
 }

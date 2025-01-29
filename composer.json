@@ -20,7 +20,7 @@
     "require-dev": {
         "chevere/var-dump": "^2.0",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^11.5",
         "symplify/easy-coding-standard": "^12.3"
     },
     "autoload": {
@@ -63,11 +63,11 @@
         "phpstan": "vendor/bin/phpstan analyze src/ --memory-limit 512M --level 9",
         "test": [
             "Composer\\Config::disableProcessTimeout",
-            "vendor/bin/phpunit -c phpunit.xml"
+            "vendor/bin/phpunit -c phpunit.xml --no-coverage"
         ],
         "test-coverage": [
             "Composer\\Config::disableProcessTimeout",
-            "vendor/bin/phpunit -c phpunit-coverage.xml"
+            "vendor/bin/phpunit -c phpunit.xml"
         ],
         "cs-update": "mkdir -p .ecs && cd .ecs && curl -O https://raw.githubusercontent.com/chevere/code-style/main/.ecs/ecs-chevere.php",
         "cs-fix": "vendor/bin/ecs --config='.ecs/ecs.php' check src --fix",

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\boolInt;
 use function Chevere\Parameter\int;
@@ -68,9 +69,7 @@ final class FunctionsIntTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider boolIntArgumentsProvider
-     */
+    #[DataProvider('boolIntArgumentsProvider')]
     public function testBoolIntArguments(string $description, int $default): void
     {
         $int = boolInt($description, $default);

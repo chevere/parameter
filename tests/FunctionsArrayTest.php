@@ -15,6 +15,7 @@ namespace Chevere\Tests;
 
 use ArgumentCountError;
 use Chevere\Parameter\ArrayStringParameter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\arrayString;
@@ -40,7 +41,7 @@ final class FunctionsArrayTest extends TestCase
         $this->assertSame(['b'], $parameter->parameters()->optionalKeys()->toArray());
     }
 
-    public function arrayRequiredEmptyAnyDataProvider(): array
+    public static function dataProviderArrayRequiredEmptyAny(): array
     {
         return [
             [[]],
@@ -50,9 +51,7 @@ final class FunctionsArrayTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider arrayRequiredEmptyAnyDataProvider
-     */
+    #[DataProvider('dataProviderArrayRequiredEmptyAny')]
     public function testArrayRequiredEmptyAny(array $test): void
     {
         $parameter = arrayp();

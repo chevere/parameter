@@ -15,6 +15,7 @@ namespace Chevere\Tests;
 
 use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Type;
+use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -58,10 +59,10 @@ final class TypeTest extends TestCase
 
     public function testClassName(): void
     {
-        $type = new Type(self::class);
+        $type = new Type(Exception::class);
         $this->assertSame(Type::PRIMITIVE_CLASS_NAME, $type->primitive());
-        $this->assertSame(self::class, $type->typeHinting());
-        $this->assertTrue($type->validate(new self()));
+        $this->assertSame(Exception::class, $type->typeHinting());
+        $this->assertTrue($type->validate(new Exception()));
         $this->assertFalse($type->isScalar());
     }
 
@@ -71,6 +72,6 @@ final class TypeTest extends TestCase
         $this->assertSame(Type::PRIMITIVE_INTERFACE_NAME, $type->primitive());
         $this->assertSame(TypeInterface::class, $type->typeHinting());
         $this->assertTrue($type->validate(new Type(Type::STRING)));
-        $this->assertFalse($type->validate(new self()));
+        $this->assertFalse($type->validate(new Exception()));
     }
 }

@@ -15,6 +15,7 @@ namespace Chevere\Tests;
 
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\boolString;
 use function Chevere\Parameter\date;
@@ -125,9 +126,7 @@ final class FunctionsStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider boolStringArgumentsProvider
-     */
+    #[DataProvider('boolStringArgumentsProvider')]
     public function testBoolStringArguments(string $description, string $default): void
     {
         $string = boolString($description, $default);
@@ -135,7 +134,7 @@ final class FunctionsStringTest extends TestCase
         $this->assertSame($default, $string->default());
     }
 
-    public function defaultsProvider(): array
+    public static function dataProviderFunctionDefaults(): array
     {
         return [
             [time(), 'hh:mm:ss'],
@@ -144,7 +143,7 @@ final class FunctionsStringTest extends TestCase
         ];
     }
 
-    public function descriptionsProvider(): array
+    public static function dataProviderFunctionDescription(): array
     {
         return [
             [time('Test'), 'Test'],
@@ -153,18 +152,14 @@ final class FunctionsStringTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider defaultsProvider
-     */
+    #[DataProvider('dataProviderFunctionDefaults')]
     public function testFunctionDefaults(ParameterInterface $parameter, string $description): void
     {
         $this->assertSame($description, $parameter->description());
         $this->assertSame(null, $parameter->default());
     }
 
-    /**
-     * @dataProvider descriptionsProvider
-     */
+    #[DataProvider('dataProviderFunctionDescription')]
     public function testFunctionDescription(ParameterInterface $parameter, string $description): void
     {
         $this->assertSame($description, $parameter->description());

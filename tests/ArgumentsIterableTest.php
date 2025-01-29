@@ -15,6 +15,7 @@ namespace Chevere\Tests;
 
 use Chevere\Parameter\Arguments;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\int;
@@ -24,7 +25,7 @@ use function Chevere\Parameter\string;
 
 final class ArgumentsIterableTest extends TestCase
 {
-    public function iterableArrayProvider(): array
+    public static function dataProviderIterableArrayConflict(): array
     {
         return [
             [
@@ -36,7 +37,7 @@ final class ArgumentsIterableTest extends TestCase
         ];
     }
 
-    public function iterableArrayPropertyProvider(): array
+    public static function dataProviderIterableArrayProperty(): array
     {
         return [
             [
@@ -50,7 +51,7 @@ final class ArgumentsIterableTest extends TestCase
         ];
     }
 
-    public function iterableArrayNestedPropertyProvider(): array
+    public static function dataProviderIterableArrayNestedPropertyConflict(): array
     {
         return [
             [
@@ -70,7 +71,7 @@ final class ArgumentsIterableTest extends TestCase
         ];
     }
 
-    public function iterableProvider(): array
+    public static function iterableProvider(): array
     {
         return [
             [
@@ -84,9 +85,7 @@ final class ArgumentsIterableTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider iterableProvider
-     */
+    #[DataProvider('iterableProvider')]
     public function testIterable(array $args): void
     {
         $parameters = parameters(
@@ -99,9 +98,7 @@ final class ArgumentsIterableTest extends TestCase
         new Arguments($parameters, $args);
     }
 
-    /**
-     * @dataProvider iterableProvider
-     */
+    #[DataProvider('iterableProvider')]
     public function testIterableConflict(array $args): void
     {
         $parameters = parameters(
@@ -114,9 +111,7 @@ final class ArgumentsIterableTest extends TestCase
         new Arguments($parameters, $args);
     }
 
-    /**
-     * @dataProvider iterableArrayPropertyProvider
-     */
+    #[DataProvider('dataProviderIterableArrayProperty')]
     public function testIterableArrayProperty(array $args): void
     {
         $parameters = parameters(
@@ -129,9 +124,7 @@ final class ArgumentsIterableTest extends TestCase
         new Arguments($parameters, $args);
     }
 
-    /**
-     * @dataProvider iterableArrayPropertyProvider
-     */
+    #[DataProvider('dataProviderIterableArrayProperty')]
     public function testIterableArrayPropertyConflict(array $args): void
     {
         $parameters = parameters(
@@ -146,9 +139,7 @@ final class ArgumentsIterableTest extends TestCase
         new Arguments($parameters, $args);
     }
 
-    /**
-     * @dataProvider iterableArrayNestedPropertyProvider
-     */
+    #[DataProvider('dataProviderIterableArrayNestedPropertyConflict')]
     public function testIterableArrayNestedProperty(array $args): void
     {
         $parameters = parameters(
@@ -164,9 +155,7 @@ final class ArgumentsIterableTest extends TestCase
         new Arguments($parameters, $args);
     }
 
-    /**
-     * @dataProvider iterableArrayNestedPropertyProvider
-     */
+    #[DataProvider('dataProviderIterableArrayNestedPropertyConflict')]
     public function testIterableArrayNestedPropertyConflict(array $args): void
     {
         $parameters = parameters(
@@ -183,9 +172,7 @@ final class ArgumentsIterableTest extends TestCase
         new Arguments($parameters, $args);
     }
 
-    /**
-     * @dataProvider iterableArrayProvider
-     */
+    #[DataProvider('dataProviderIterableArrayConflict')]
     public function testIterableArray(array $args): void
     {
         $parameter = iterable(
@@ -196,9 +183,7 @@ final class ArgumentsIterableTest extends TestCase
         $parameter($args);
     }
 
-    /**
-     * @dataProvider iterableArrayProvider
-     */
+    #[DataProvider('dataProviderIterableArrayConflict')]
     public function testIterableArrayConflict(array $args): void
     {
         $parameter = iterable(
