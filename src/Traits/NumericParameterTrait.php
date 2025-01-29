@@ -18,6 +18,7 @@ use Chevere\Parameter\Interfaces\IntParameterInterface;
 use InvalidArgumentException;
 use OverflowException;
 use function Chevere\Message\message;
+use function Chevere\Parameter\valMd;
 
 /**
  * @template-covariant TValue
@@ -203,8 +204,8 @@ trait NumericParameterTrait
 
             throw new InvalidArgumentException(
                 (string) message(
-                    'Argument value provided `%provided%` is not an accepted value in `%value%`',
-                    provided: strval($argument),
+                    'Argument value provided%provided% is not an accepted value in `%value%`',
+                    provided: valMd($argument),
                     value: "[{$values}]"
                 )
             );
@@ -217,8 +218,8 @@ trait NumericParameterTrait
 
             throw new InvalidArgumentException(
                 (string) message(
-                    'Argument value provided `%provided%` is on rejected list `%value%`',
-                    provided: strval($argument),
+                    'Argument value provided%provided% is on rejected list `%value%`',
+                    provided: valMd($argument),
                     value: "[{$values}]"
                 )
             );
@@ -226,8 +227,8 @@ trait NumericParameterTrait
         if ($this->min() !== null && $argument < $this->min()) {
             throw new InvalidArgumentException(
                 (string) message(
-                    'Argument value provided `%provided%` is less than `%min%`',
-                    provided: strval($argument),
+                    'Argument value provided%provided% is less than `%min%`',
+                    provided: valMd($argument),
                     min: strval($this->min())
                 )
             );
@@ -235,8 +236,8 @@ trait NumericParameterTrait
         if ($this->max !== null && $argument > $this->max) {
             throw new InvalidArgumentException(
                 (string) message(
-                    'Argument value provided `%provided%` is greater than `%max%`',
-                    provided: strval($argument),
+                    'Argument value provided%provided% is greater than `%max%`',
+                    provided: valMd($argument),
                     max: strval($this->max)
                 )
             );

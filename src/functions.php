@@ -450,3 +450,22 @@ function getExceptionArguments(Throwable $e, ReflectionFunction $reflection): ar
         $caller['line'] ?? 0,
     ];
 }
+
+/**
+ * @return string A markdown formatted string " `code`" with leading space or empty string.
+ */
+function valMd(mixed $value): string
+{
+    if ($value === null) {
+        $value = 'null';
+    }
+    if (! is_scalar($value)) {
+        $value = var_export($value, true);
+    } else {
+        $value = strval($value);
+    }
+
+    return $value === ''
+        ? ''
+        : " `{$value}`";
+}
