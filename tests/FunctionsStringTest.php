@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Tests\src\RegexPatternEnum;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -174,5 +175,14 @@ final class FunctionsStringTest extends TestCase
         $this->assertSame('1', $parameter('1'));
         $this->expectException(InvalidArgumentException::class);
         $parameter('1abc');
+    }
+
+    public function testEnumBackedString(): void
+    {
+        $parameter = string(RegexPatternEnum::EMAIL);
+        $this->assertSame(
+            RegexPatternEnum::EMAIL->value,
+            $parameter->regex()->__toString()
+        );
     }
 }
