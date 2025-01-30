@@ -31,11 +31,13 @@ class IterableAttr implements ParameterAttributeInterface
         ParameterAttributeInterface $V,
         ?ParameterAttributeInterface $K = null,
         string $description = '',
+        bool $sensitive = false
     ) {
         $this->parameter = iterable(
             V: $V->parameter(),
             K: $K?->parameter(),
             description: $description,
+            sensitive: $sensitive
         );
     }
 

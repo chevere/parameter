@@ -80,9 +80,8 @@ function cast(mixed $variable, string|int ...$key): CastInterface
 
 function null(
     string $description = '',
-    bool $sensitive = false,
 ): NullParameterInterface {
-    return new NullParameter($description, $sensitive);
+    return new NullParameter($description);
 }
 
 function mixed(

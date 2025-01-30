@@ -30,10 +30,12 @@ class BoolAttr implements ParameterAttributeInterface
     public function __construct(
         string $description = '',
         ?bool $default = null,
+        bool $sensitive = false
     ) {
         $this->parameter = bool(
             description: $description,
-            default: $default
+            default: $default,
+            sensitive: $sensitive
         );
     }
 

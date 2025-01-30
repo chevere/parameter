@@ -37,6 +37,7 @@ class IntAttr implements ParameterAttributeInterface
         ?int $max = null,
         array $accept = [],
         array $reject = [],
+        bool $sensitive = false
     ) {
         $this->parameter = int(
             description: $description,
@@ -44,6 +45,7 @@ class IntAttr implements ParameterAttributeInterface
             max: $max,
             accept: $accept,
             reject: $reject,
+            sensitive: $sensitive
         );
     }
 

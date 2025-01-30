@@ -37,6 +37,7 @@ class FloatAttr implements ParameterAttributeInterface
         ?float $max = null,
         array $accept = [],
         array $reject = [],
+        bool $sensitive = false
     ) {
         $this->parameter = float(
             description: $description,
@@ -44,6 +45,7 @@ class FloatAttr implements ParameterAttributeInterface
             max: $max,
             accept: $accept,
             reject: $reject,
+            sensitive: $sensitive
         );
     }
 
