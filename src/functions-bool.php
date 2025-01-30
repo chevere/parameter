@@ -20,8 +20,9 @@ use Chevere\Parameter\Interfaces\StringParameterInterface;
 function bool(
     string $description = '',
     ?bool $default = null,
+    bool $sensitive = false,
 ): BoolParameterInterface {
-    $parameter = new BoolParameter($description);
+    $parameter = new BoolParameter($description, $sensitive);
     if ($default !== null) {
         $parameter = $parameter->withDefault($default);
     }
@@ -32,21 +33,25 @@ function bool(
 function boolInt(
     string $description = '',
     ?int $default = null,
+    bool $sensitive = false,
 ): IntParameterInterface {
     return int(
         description: $description,
         default: $default,
-        accept: [0, 1]
+        accept: [0, 1],
+        sensitive: $sensitive
     );
 }
 
 function boolString(
     string $description = '',
     ?string $default = null,
+    bool $sensitive = false,
 ): StringParameterInterface {
     return string(
         regex: '/^[01]$/',
         description: $description,
-        default: $default
+        default: $default,
+        sensitive: $sensitive
     );
 }

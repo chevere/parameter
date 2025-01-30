@@ -27,8 +27,9 @@ function float(
     ?float $max = null,
     array $accept = [],
     array $reject = [],
+    bool $sensitive = false,
 ): FloatParameterInterface {
-    $parameter = new FloatParameter($description);
+    $parameter = new FloatParameter($description, $sensitive);
     if ($accept !== []) {
         $parameter = $parameter->withAccept(...$accept);
     }
@@ -59,8 +60,9 @@ function int(
     ?int $max = null,
     array $accept = [],
     array $reject = [],
+    bool $sensitive = false,
 ): IntParameterInterface {
-    $parameter = new IntParameter($description);
+    $parameter = new IntParameter($description, $sensitive);
     if ($accept !== []) {
         $parameter = $parameter->withAccept(...$accept);
     }

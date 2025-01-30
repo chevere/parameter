@@ -22,6 +22,7 @@ function string(
     string|BackedEnum $regex = '',
     string $description = '',
     ?string $default = null,
+    bool $sensitive = false
 ): StringParameterInterface {
     if ($regex instanceof BackedEnum) {
         if (! is_string($regex->value)) {
@@ -29,7 +30,7 @@ function string(
         }
         $regex = $regex->value;
     }
-    $parameter = new StringParameter($description);
+    $parameter = new StringParameter($description, $sensitive);
     if ($regex !== '') {
         $parameter = $parameter
             ->withRegex(
@@ -46,11 +47,13 @@ function string(
 function intString(
     string $description = '',
     ?string $default = null,
+    bool $sensitive = false
 ): StringParameterInterface {
     return string(
         regex: '/^\d+$/',
         description: $description,
-        default: $default
+        default: $default,
+        sensitive: $sensitive
     );
 }
 
@@ -68,11 +71,12 @@ function enum(string $string, string ...$strings): StringParameterInterface
  */
 function date(
     string $description = 'YYYY-MM-DD',
-    ?string $default = null
+    ?string $default = null,
+    bool $sensitive = false
 ): StringParameterInterface {
     $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/';
 
-    return string($regex, $description, $default);
+    return string($regex, $description, $default, $sensitive);
 }
 
 /**
@@ -80,11 +84,12 @@ function date(
  */
 function time(
     string $description = 'hh:mm:ss',
-    ?string $default = null
+    ?string $default = null,
+    bool $sensitive = false
 ): StringParameterInterface {
     $regex = '/^\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
 
-    return string($regex, $description, $default);
+    return string($regex, $description, $default, $sensitive);
 }
 
 /**
@@ -92,9 +97,10 @@ function time(
  */
 function datetime(
     string $description = 'YYYY-MM-DD hh:mm:ss',
-    ?string $default = null
+    ?string $default = null,
+    bool $sensitive = false
 ): StringParameterInterface {
     $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\s{1}\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
 
-    return string($regex, $description, $default);
+    return string($regex, $description, $default, $sensitive);
 }

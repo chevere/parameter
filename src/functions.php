@@ -80,21 +80,24 @@ function cast(mixed $variable, string|int ...$key): CastInterface
 
 function null(
     string $description = '',
+    bool $sensitive = false,
 ): NullParameterInterface {
-    return new NullParameter($description);
+    return new NullParameter($description, $sensitive);
 }
 
 function mixed(
     string $description = '',
+    bool $sensitive = false,
 ): MixedParameterInterface {
-    return new MixedParameter($description);
+    return new MixedParameter($description, $sensitive);
 }
 
 function object(
     string $className,
     string $description = '',
+    bool $sensitive = false,
 ): ObjectParameterInterface {
-    $parameter = new ObjectParameter($description);
+    $parameter = new ObjectParameter($description, $sensitive);
 
     return $parameter->withClassName($className);
 }
@@ -107,10 +110,11 @@ function iterable(
     ParameterInterface $V,
     ?ParameterInterface $K = null,
     string $description = '',
+    bool $sensitive = false,
 ): IterableParameterInterface {
     $K ??= int();
 
-    return new IterableParameter($V, $K, $description);
+    return (new IterableParameter($V, $K, $description))->withIsSensitive($sensitive);
 }
 
 function union(

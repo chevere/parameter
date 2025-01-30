@@ -23,10 +23,12 @@ trait ParameterTrait
     private bool $isSensitive = false;
 
     final public function __construct(
-        private string $description = ''
+        private string $description = '',
+        bool $isSensitive = false,
     ) {
         $this->setUp();
         $this->type = $this->type();
+        $this->isSensitive = $isSensitive;
     }
 
     public function setUp(): void
