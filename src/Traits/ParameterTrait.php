@@ -20,6 +20,8 @@ trait ParameterTrait
 {
     private TypeInterface $type;
 
+    private bool $isSensitive = false;
+
     final public function __construct(
         private string $description = ''
     ) {
@@ -51,6 +53,19 @@ trait ParameterTrait
         $new->description = $description;
 
         return $new;
+    }
+
+    final public function withIsSensitive(bool $isSensitive): static
+    {
+        $new = clone $this;
+        $new->isSensitive = $isSensitive;
+
+        return $new;
+    }
+
+    final public function isSensitive(): bool
+    {
+        return $this->isSensitive;
     }
 
     abstract private function typeName(): string;

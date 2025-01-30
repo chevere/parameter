@@ -241,11 +241,18 @@ final class Arguments implements ArgumentsInterface
         if ($key !== null) {
             $property = $key . '...' . $name;
         }
+        if (
+            version_compare(PHP_VERSION, '8.2.0', '>=')
+            && class_exists('SensitiveParameterValue')
+            && $argument instanceof \SensitiveParameterValue
+        ) {
+            $argument = $argument->getValue();
+        }
 
         try {
             $this->arguments[$key ?? $name] = $parameter->__invoke($argument);
         } catch (TypeError $e) {
-            throw new TypeError(
+            throw new $e(
                 $this->getExceptionPropertyMessage($property, $e)
             );
         } catch (Throwable $e) {

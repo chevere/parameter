@@ -17,12 +17,15 @@ use Attribute;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\null;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class NullAttr implements ParameterAttributeInterface
 {
-    public readonly NullParameterInterface $parameter;
+    use AttrTrait;
+
+    private NullParameterInterface $parameter;
 
     public function __construct(
         string $description = '',

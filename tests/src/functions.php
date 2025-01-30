@@ -15,10 +15,12 @@ namespace Chevere\Tests\src;
 
 use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\BoolAttr;
+use Chevere\Parameter\Attributes\EnumAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\IterableAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
+use SensitiveParameter;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\returnAttr;
@@ -78,4 +80,15 @@ function validates(
     string $name = '',
 ): int {
     return $base * $times;
+}
+
+function usesSensitiveParameterAttr(
+    #[SensitiveParameter]
+    #[IntAttr(min: 1000)]
+    int $code,
+    #[SensitiveParameter]
+    #[EnumAttr('super', 'safe')]
+    string $password
+): void {
+    valid();
 }

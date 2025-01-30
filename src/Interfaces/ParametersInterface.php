@@ -141,7 +141,13 @@ interface ParametersInterface extends StringMappedInterface
      */
     public function optional(string $name): ParameterCastInterface;
 
-    public function withIsVariadic(bool $flag): self;
+    /**
+     * Return an instance with the specified $isVariadic.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified $isVariadic.
+     */
+    public function withIsVariadic(bool $isVariadic): self;
 
     public function isVariadic(): bool;
 }

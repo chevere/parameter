@@ -17,12 +17,15 @@ use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
+use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\enum;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class EnumAttr implements ParameterAttributeInterface
 {
-    public readonly StringParameterInterface $parameter;
+    use AttrTrait;
+
+    private StringParameterInterface $parameter;
 
     public function __construct(
         string $string,

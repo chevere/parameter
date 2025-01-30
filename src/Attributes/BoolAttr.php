@@ -17,12 +17,15 @@ use Attribute;
 use Chevere\Parameter\Interfaces\BoolParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\bool;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class BoolAttr implements ParameterAttributeInterface
 {
-    public readonly BoolParameterInterface $parameter;
+    use AttrTrait;
+
+    private BoolParameterInterface $parameter;
 
     public function __construct(
         string $description = '',

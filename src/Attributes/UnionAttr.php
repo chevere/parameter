@@ -18,12 +18,15 @@ use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use Chevere\Parameter\Parameters;
+use Chevere\Parameter\Traits\AttrTrait;
 use Chevere\Parameter\UnionParameter;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class UnionAttr implements ParameterAttributeInterface
 {
-    public readonly UnionParameterInterface $parameter;
+    use AttrTrait;
+
+    private UnionParameterInterface $parameter;
 
     public function __construct(
         ParameterAttributeInterface ...$parameterAttribute,

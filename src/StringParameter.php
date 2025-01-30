@@ -40,7 +40,7 @@ final class StringParameter implements StringParameterInterface
         throw new InvalidArgumentException(
             (string) message(
                 "Argument value provided%provided% doesn't match the regex `%regex%`",
-                provided: valMd($value),
+                provided: valMd($value, $this->isSensitive),
                 regex: strval($this->regex),
             )
         );

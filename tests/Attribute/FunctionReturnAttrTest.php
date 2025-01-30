@@ -18,6 +18,7 @@ use LogicException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Tests\src\noUsesAttr;
 use function Chevere\Tests\src\usesAttr;
+use function Chevere\Tests\src\usesSensitiveParameterAttr;
 
 final class FunctionReturnAttrTest extends TestCase
 {
@@ -54,5 +55,17 @@ final class FunctionReturnAttrTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No applicable return rules to validate');
         noUsesAttr([]);
+    }
+
+    public function testUsesSensitiveParameterAttr(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [code]: Argument value provided is less than `1000`
+            [password]: Argument value provided doesn't match the regex `/\bsuper|safe\b/`
+            PLAIN
+        );
+        usesSensitiveParameterAttr(999, 'password');
     }
 }

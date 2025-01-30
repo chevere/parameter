@@ -17,12 +17,15 @@ use Attribute;
 use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\iterable;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class IterableAttr implements ParameterAttributeInterface
 {
-    public readonly IterableParameterInterface $parameter;
+    use AttrTrait;
+
+    private IterableParameterInterface $parameter;
 
     public function __construct(
         ParameterAttributeInterface $V,

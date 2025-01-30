@@ -17,12 +17,15 @@ use Attribute;
 use Chevere\Parameter\Interfaces\FloatParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\float;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class FloatAttr implements ParameterAttributeInterface
 {
-    public readonly FloatParameterInterface $parameter;
+    use AttrTrait;
+
+    private FloatParameterInterface $parameter;
 
     /**
      * @param float[] $accept

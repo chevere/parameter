@@ -17,12 +17,15 @@ use Attribute;
 use Chevere\Parameter\Interfaces\IntParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\int;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class IntAttr implements ParameterAttributeInterface
 {
-    public readonly IntParameterInterface $parameter;
+    use AttrTrait;
+
+    private IntParameterInterface $parameter;
 
     /**
      * @param int[] $accept

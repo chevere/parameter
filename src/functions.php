@@ -39,6 +39,7 @@ use ReflectionAttribute;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionParameter;
+use SensitiveParameter;
 use Throwable;
 use function Chevere\Message\message;
 
@@ -378,6 +379,7 @@ function reflectionToReturn(
 function reflectedParameterAttribute(
     ReflectionParameter $reflection,
 ): ParameterAttributeInterface {
+    $isSensitive = $reflection->getAttributes(SensitiveParameter::class) !== [];
     $attributes = $reflection->getAttributes(
         ParameterAttributeInterface::class,
         ReflectionAttribute::IS_INSTANCEOF
@@ -394,7 +396,7 @@ function reflectedParameterAttribute(
     /** @var ReflectionAttribute<ParameterAttributeInterface> $attribute */
     $attribute = $attributes[0];
 
-    return $attribute->newInstance();
+    return $attribute->newInstance()->withIsSensitive($isSensitive);
 }
 
 function validated(callable $callable, mixed ...$args): mixed
@@ -452,10 +454,18 @@ function getExceptionArguments(Throwable $e, ReflectionFunction $reflection): ar
 }
 
 /**
- * @return string A markdown formatted string " `code`" with leading space or empty string.
+ * Returns an string representation of a user provided value.
+ *
+ * Will return " `value`" with leading space and wrap in backtick.
+ * If the value is empty or sensitive, will return an empty string.
+ *
+ * @return string A markdown formatted string.
  */
-function valMd(mixed $value): string
+function valMd(mixed $value, bool $isSensitive = false): string
 {
+    if ($isSensitive) {
+        return '';
+    }
     if ($value === null) {
         $value = 'null';
     }

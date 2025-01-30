@@ -16,13 +16,16 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Traits\AttrTrait;
 use InvalidArgumentException;
 use function Chevere\Message\message;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION)]
 class CallableAttr implements ParameterAttributeInterface
 {
-    public readonly ParameterInterface $parameter;
+    use AttrTrait;
+
+    private ParameterInterface $parameter;
 
     public function __construct(callable $callable)
     {

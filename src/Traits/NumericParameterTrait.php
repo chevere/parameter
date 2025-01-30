@@ -35,6 +35,8 @@ trait NumericParameterTrait
      */
     private array $reject = [];
 
+    private bool $isSensitive = false;
+
     private function errorOverflow(string $property, string $topic): string
     {
         return (string) message(
@@ -205,7 +207,7 @@ trait NumericParameterTrait
             throw new InvalidArgumentException(
                 (string) message(
                     'Argument value provided%provided% is not an accepted value in `%value%`',
-                    provided: valMd($argument),
+                    provided: valMd($argument, $this->isSensitive),
                     value: "[{$values}]"
                 )
             );
@@ -219,7 +221,7 @@ trait NumericParameterTrait
             throw new InvalidArgumentException(
                 (string) message(
                     'Argument value provided%provided% is on rejected list `%value%`',
-                    provided: valMd($argument),
+                    provided: valMd($argument, $this->isSensitive),
                     value: "[{$values}]"
                 )
             );
@@ -228,7 +230,7 @@ trait NumericParameterTrait
             throw new InvalidArgumentException(
                 (string) message(
                     'Argument value provided%provided% is less than `%min%`',
-                    provided: valMd($argument),
+                    provided: valMd($argument, $this->isSensitive),
                     min: strval($this->min())
                 )
             );
@@ -237,7 +239,7 @@ trait NumericParameterTrait
             throw new InvalidArgumentException(
                 (string) message(
                     'Argument value provided%provided% is greater than `%max%`',
-                    provided: valMd($argument),
+                    provided: valMd($argument, $this->isSensitive),
                     max: strval($this->max)
                 )
             );

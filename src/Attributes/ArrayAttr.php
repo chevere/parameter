@@ -19,11 +19,14 @@ use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Traits\AttrTrait;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
 class ArrayAttr implements ParameterAttributeInterface
 {
-    public readonly ArrayParameterInterface $parameter;
+    use AttrTrait;
+
+    private ArrayParameterInterface $parameter;
 
     public function __construct(
         ParameterAttributeInterface ...$parameterAttribute,

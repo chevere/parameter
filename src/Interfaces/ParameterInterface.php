@@ -54,4 +54,14 @@ interface ParameterInterface
      * an instance that contains the specified description.
      */
     public function withDescription(string $description): self;
+
+    /**
+     * Return an instance with the specified $isSensitive.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified $isSensitive.
+     */
+    public function withIsSensitive(bool $isSensitive): self;
+
+    public function isSensitive(): bool;
 }
