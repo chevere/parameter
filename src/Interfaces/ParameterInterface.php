@@ -61,7 +61,7 @@ interface ParameterInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified $isSensitive.
      */
-    public function withIsSensitive(bool $isSensitive): self;
+    public function withIsSensitive(bool $isSensitive = true): self;
 
     public function isSensitive(): bool;
 }

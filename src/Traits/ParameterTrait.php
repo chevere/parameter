@@ -57,7 +57,7 @@ trait ParameterTrait
         return $new;
     }
 
-    final public function withIsSensitive(bool $isSensitive): static
+    final public function withIsSensitive(bool $isSensitive = true): static
     {
         $new = clone $this;
         $new->isSensitive = $isSensitive;

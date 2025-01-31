@@ -18,7 +18,7 @@ namespace Chevere\Parameter\Interfaces;
  */
 interface ParameterAttributeInterface
 {
-    public function withIsSensitive(bool $isSensitive): static;
+    public function withIsSensitive(bool $isSensitive = true): static;
 
     public function parameter(): ParameterInterface;
 }

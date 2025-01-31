@@ -15,7 +15,7 @@ namespace Chevere\Parameter\Traits;
 
 trait AttrTrait
 {
-    public function withIsSensitive(bool $isSensitive): static
+    public function withIsSensitive(bool $isSensitive = true): static
     {
         $new = clone $this;
         // @phpstan-ignore-next-line
