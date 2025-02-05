@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
+use BackedEnum;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
@@ -28,7 +29,7 @@ class StringAttr implements ParameterAttributeInterface
     private StringParameterInterface $parameter;
 
     public function __construct(
-        string $pattern = '',
+        string|BackedEnum $pattern = '',
         string $description = '',
         bool $sensitive = false
     ) {
