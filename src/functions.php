@@ -215,7 +215,7 @@ function toParameter(string $type): ParameterInterface
 
 function arrayFrom(
     ParametersAccessInterface|ParametersInterface $parameter,
-    string ...$name
+    string|int ...$name
 ): ArrayParameterInterface {
     return arrayp(
         ...takeFrom($parameter, ...$name)
@@ -236,10 +236,11 @@ function takeKeys(
  */
 function takeFrom(
     ParametersAccessInterface|ParametersInterface $parameter,
-    string ...$name
+    string|int ...$name
 ): Iterator {
     $parameters = getParameters($parameter);
     foreach ($name as $item) {
+        $item = strval($item);
         yield $item => $parameters->get($item);
     }
 }
