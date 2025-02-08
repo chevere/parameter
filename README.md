@@ -135,7 +135,7 @@ if($var > 10 || $var < 1) {
 To this:
 
 ```php
-use function \Chevere\Parameter\int;
+use function Chevere\Parameter\int;
 
 int(min: 1, max: 10)($var);
 ```
