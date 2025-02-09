@@ -82,7 +82,10 @@ final class ArgumentsTest extends TestCase
         array $expect,
         array $arguments
     ): void {
-        $parameters = parameters(test: string());
+        $parameters = parameters(
+            test: string(),
+            try: string(default: 'default')
+        );
         $arguments = new Arguments($parameters, $arguments);
         $this->assertSame($expect, $arguments->toArray());
     }
@@ -92,38 +95,104 @@ final class ArgumentsTest extends TestCase
         return [
             [
                 [
-                    0 => '123',
+                    '123',
+                    'try' => 'default',
                 ],
                 [
-                    0 => '123',
-                    1 => 'nono',
+                    '123',
                 ],
             ],
             [
                 [
                     'test' => '123',
+                    'try' => 'abc',
                 ],
                 [
                     'test' => '123',
+                    'try' => 'abc',
+                    'bonus' => 'remove',
+                    'super' => 'taldo',
+                ],
+            ],
+            [
+                [
+                    '123',
+                    'try' => 'default',
+                ],
+                [
+                    '123',
                     'extra' => 'nono',
                 ],
             ],
             [
                 [
-                    0 => '123',
+                    'test' => '123',
+                    'try' => 'abc',
                 ],
                 [
-                    0 => '123',
-                    'extra' => 'nono',
+                    'test' => '123',
+                    'super' => 'taldo',
+                    'try' => 'abc',
+                ],
+            ],
+        ];
+    }
+
+    #[DataProvider('dataProviderVariadic')]
+    public function testVariadic(
+        array $expect,
+        array $arguments
+    ): void {
+        $parameters = parameters(super: int())
+            ->withOptional('taldo', string())
+            ->withIsVariadic();
+        $arguments = new Arguments($parameters, $arguments);
+        $this->assertSame($expect, $arguments->toArray());
+    }
+
+    public static function dataProviderVariadic(): array
+    {
+        return [
+            [
+                [
+                    100,
+                    'a',
+                    'b',
+                    'c',
+                ],
+                [
+                    100,
+                    'a',
+                    'b',
+                    'c',
                 ],
             ],
             [
                 [
-                    'test' => '123',
+                    'super' => 200,
+                    'a',
+                    'b',
+                    'c',
                 ],
                 [
-                    'test' => '123',
-                    0 => 'nono',
+                    'super' => 200,
+                    'a',
+                    'b',
+                    'c',
+                ],
+            ],
+            [
+                [
+                    'super' => 300,
+                    'taldo' => 'a',
+                    'b',
+                    'c',
+                ],
+                [
+                    'super' => 300,
+                    'taldo' => 'a',
+                    'b',
+                    'c',
                 ],
             ],
         ];
