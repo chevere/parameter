@@ -480,6 +480,10 @@ final class FunctionsTest extends TestCase
             [1, ' `1`'],
             ['foo', ' `foo`'],
             ['', ''],
+            [
+                [0, 1, 2],
+                ' `array ( 0 => 0, 1 => 1, 2 => 2, )`',
+            ],
         ];
     }
 }

@@ -473,10 +473,11 @@ function valMd(mixed $value, bool $isSensitive = false): string
     if ($value === null) {
         $value = 'null';
     }
-    if (! is_scalar($value)) {
-        $value = var_export($value, true);
-    } else {
+    if (is_scalar($value)) {
         $value = strval($value);
+    } else {
+        $value = var_export($value, true);
+        $value = preg_replace('/\s+/', ' ', $value);
     }
 
     return $value === ''
