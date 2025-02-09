@@ -463,11 +463,8 @@ final class FunctionsTest extends TestCase
     public function testValidatedFunction(): void
     {
         $function = 'Chevere\Tests\src\validates';
-        $base = 100;
-        $times = 1;
-        $name = 'Test';
         $this->expectNotToPerformAssertions();
-        validated($function, $base, $times, $name);
+        validated($function, 100, 1, 'Test'); // base, times, name
     }
 
     #[DataProvider('dataProviderValMd')]

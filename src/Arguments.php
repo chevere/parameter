@@ -330,7 +330,7 @@ final class Arguments implements ArgumentsInterface
     /**
      * @infection-ignore-all
      */
-    private function assertSetArgument(string $name, mixed $argument, ?string $key = null): void
+    private function assertSetArgument(string $name, mixed $argument, null|int|string $key = null): void
     {
         $parameter = $this->parameters()->get($name);
         $property = $name;
@@ -373,15 +373,20 @@ final class Arguments implements ArgumentsInterface
         $lastPos = array_key_last($this->parameters()->keys());
         foreach ($this->parameters()->keys() as $pos => $name) {
             if ($pos === $lastPos && $this->parameters->isVariadic()) {
-                $variadicKeys = array_diff_key(
-                    $this->arguments,
-                    array_flip($this->parameters->keys())
-                );
-                foreach ($variadicKeys as $key => $value) {
-                    $key = strval($key);
-
+                if ($this->isPositional) {
+                    $variadicKeys = array_slice(
+                        array_keys($this->arguments),
+                        $pos
+                    );
+                } else {
+                    $variadicKeys = array_diff(
+                        array_keys($this->arguments),
+                        $this->parameters->keys()
+                    );
+                }
+                foreach ($variadicKeys as $id) {
                     try {
-                        $this->assertSetArgument($name, $value, $key);
+                        $this->assertSetArgument($name, $this->arguments[$id], $id);
                     } catch (Throwable $e) {
                         $this->errors[] = $e->getMessage();
                     }
