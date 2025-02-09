@@ -17,6 +17,7 @@ use ArgumentCountError;
 use ArrayAccess;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
+use Chevere\Parameter\Interfaces\ParametersAccessInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
 use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
@@ -52,6 +53,12 @@ final class Arguments implements ArgumentsInterface
      */
     private array $errors = [];
 
+    private bool $isPositional;
+
+    private bool $isIterable;
+
+    private int $count;
+
     // @phpstan-ignore-next-line
     public function __construct(
         private ParametersInterface $parameters,
@@ -60,28 +67,24 @@ final class Arguments implements ArgumentsInterface
         if ($arguments instanceof ArrayAccess) {
             $arguments = $this->getArrayAccessArray($arguments);
         }
-        $isIterable = $parameters->keys() === ['K', 'V'];
-        $countArguments = count($arguments);
-        if (array_is_list($arguments) && ! $isIterable) {
-            $parametersMap = array_slice($this->parameters->keys(), 0, $countArguments);
-            $arguments = array_combine($parametersMap, $arguments);
-        }
-        $this->setArguments($arguments);
-        if ($isIterable) {
+        $this->isIterable = $parameters->keys() === ['K', 'V'];
+        $this->isPositional = array_is_list($arguments) && ! $this->isIterable;
+        if ($this->isIterable) {
             $pairs = [];
             foreach (array_keys($arguments) as $key) {
+                $parameters->get('K')($key); // @phpstan-ignore-line
                 $key = strval($key);
                 $pairs[$key] = $parameters->get('V');
             }
             $this->iterable = new Parameters(...$pairs);
         }
-        if (! $this->parameters->isVariadic()) {
-            $this->ignoreExtraArguments();
-        }
+        $this->arguments = $arguments;
+        $this->excludeExtraArguments();
         $this->handleDefaults();
-        $this->assertRequired();
+        $this->count = count($this->arguments);
+        $this->assertArgumentCount();
         $this->assertMinimumOptional();
-        $this->handleParameters();
+        $this->assertValues();
         if ($this->errors !== []) {
             throw new InvalidArgumentException(
                 implode("\n", $this->errors)
@@ -136,6 +139,9 @@ final class Arguments implements ArgumentsInterface
     public function get(string $name): mixed
     {
         $this->parameters()->assertHas($name);
+        if (! array_key_exists($name, $this->arguments)) {
+            $name = array_search($name, $this->parameters()->keys(), true);
+        }
 
         return $this->arguments[$name] ?? null;
     }
@@ -172,44 +178,134 @@ final class Arguments implements ArgumentsInterface
         return null;
     }
 
-    private function ignoreExtraArguments(): void
+    private function excludeExtraArguments(): void
     {
-        $this->arguments = array_intersect_key(
-            $this->arguments,
-            array_flip($this->parameters()->keys())
-        );
+        if ($this->parameters->isVariadic()
+            || $this->isIterable
+        ) {
+            return;
+        }
+        if ($this->isPositional) {
+            $this->arguments = array_slice(
+                $this->arguments,
+                0,
+                $this->parameters->count()
+            );
+
+            return;
+        }
+        $count = 0;
+        foreach (array_keys($this->arguments) as $key) {
+            if ($count >= $this->parameters->count()) {
+                unset($this->arguments[$key]);
+
+                continue;
+            }
+            if (is_string($key)) {
+                $name = $key;
+            } else {
+                $name = $this->parameters->keys()[$key] ?? null;
+            }
+            if ($name && $this->parameters->has($name)) {
+                $count++;
+
+                continue;
+            }
+
+            unset($this->arguments[$key]);
+        }
     }
 
     private function handleDefaults(): void
     {
-        foreach ($this->parameters() as $name => $parameter) {
-            if ($this->has($name)) {
+        foreach ($this->parameters as $id => $parameter) {
+            if ($parameter instanceof ParametersAccessInterface) {
+                $hasStock = array_key_exists($id, $this->arguments);
+                $this->handleDefaultNested($parameter, $id);
+                if (! $hasStock
+                    && ($this->arguments[$id] ?? []) === []
+                ) {
+                    unset($this->arguments[$id]);
+                }
+
+                continue;
+            }
+            if ($this->has($id)) {
                 continue;
             }
             if ($parameter->default() === null) {
-                $this->null[] = $name;
+                $this->null[] = $id;
 
                 continue;
             }
-            $this->arguments[$name] = $parameter->default();
+
+            $this->arguments[$id] = $parameter->default();
         }
     }
 
-    private function assertRequired(): void
-    {
-        $values = array_keys($this->arguments);
-        $missing = array_diff(
-            $this->parameters()->requiredKeys()->toArray(),
-            $values,
-        );
-        if ($missing !== []) {
-            throw new ArgumentCountError(
-                (string) message(
-                    'Missing required argument(s): `%missing%`',
-                    missing: implode(', ', $missing)
-                )
-            );
+    private function handleDefaultNested(
+        ParametersAccessInterface $access,
+        string ...$id
+    ): void {
+        if ($access->parameters()->keys() === ['K', 'V']) {
+            return;
         }
+        // If union?
+        foreach ($access->parameters() as $name => $parameter) {
+            if ($parameter instanceof ParametersAccessInterface) {
+                $args = $id;
+                $args[] = $name;
+                $this->handleDefaultNested($parameter, ...$args);
+
+                continue;
+            }
+            $current = &$this->arguments;
+            foreach ($id as $key) {
+                if (! array_key_exists($key, $current ?? [])) {
+                    $current[$key] = [];
+                }
+                $current = &$current[$key];
+            }
+            if (! is_array($current)) {
+                continue;
+            }
+            if (array_key_exists($name, $current)) {
+                unset($current);
+
+                continue;
+            }
+            if ($parameter->default() !== null) {
+                $current[$name] = $parameter->default();
+            }
+        }
+    }
+
+    private function assertArgumentCount(): void
+    {
+        if ($this->parameters()->requiredKeys()->count() <= $this->count) {
+            return;
+        }
+        $argumentKeys = array_keys($this->arguments);
+        $missingNamed = array_diff(
+            $this->parameters()->keys(),
+            $argumentKeys
+        );
+        $missingPositional = array_diff(
+            array_keys($this->parameters()->keys()),
+            $argumentKeys
+        );
+        $missingPositional = array_map(
+            fn (int $key) => $this->parameters()->keys()[$key],
+            $missingPositional
+        );
+        $missing = array_unique(array_merge($missingNamed, $missingPositional));
+
+        throw new ArgumentCountError(
+            (string) message(
+                'Missing required argument(s): `%missing%`',
+                missing: implode(', ', $missing)
+            )
+        );
     }
 
     private function assertMinimumOptional(): void
@@ -250,7 +346,10 @@ final class Arguments implements ArgumentsInterface
         }
 
         try {
-            $this->arguments[$key ?? $name] = $parameter->__invoke($argument);
+            $parameter->__invoke($argument);
+            if (isset($key)) {
+                $this->arguments[$key] = $argument;
+            }
         } catch (TypeError $e) {
             throw new $e(
                 $this->getExceptionPropertyMessage($property, $e)
@@ -269,7 +368,7 @@ final class Arguments implements ArgumentsInterface
         return "[{$name}]: {$message}";
     }
 
-    private function handleParameters(): void
+    private function assertValues(): void
     {
         $lastPos = array_key_last($this->parameters()->keys());
         foreach ($this->parameters()->keys() as $pos => $name) {
@@ -306,18 +405,6 @@ final class Arguments implements ArgumentsInterface
     {
         return $this->parameters()->optionalKeys()->contains($name)
             && ! $this->has($name);
-    }
-
-    /**
-     * @param array<int|string, mixed> $arguments
-     */
-    private function setArguments(array $arguments): void
-    {
-        $keys = array_keys($arguments);
-        foreach ($keys as $name) {
-            $name = strval($name);
-            $this->arguments[$name] = $arguments[$name];
-        }
     }
 
     /**

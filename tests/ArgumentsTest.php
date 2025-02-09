@@ -77,16 +77,56 @@ final class ArgumentsTest extends TestCase
         new Arguments($parameters, []);
     }
 
-    public function testIgnoreExtraArguments(): void
-    {
+    #[DataProvider('dataProviderExcludeExtraArguments')]
+    public function testExcludeExtraArguments(
+        array $expect,
+        array $arguments
+    ): void {
         $parameters = parameters(test: string());
-        $arguments = new Arguments($parameters, [
-            'test' => '123',
-            'extra' => 'nono',
-        ]);
-        $this->assertSame($arguments->toArray(), [
-            'test' => '123',
-        ]);
+        $arguments = new Arguments($parameters, $arguments);
+        $this->assertSame($expect, $arguments->toArray());
+    }
+
+    public static function dataProviderExcludeExtraArguments(): array
+    {
+        return [
+            [
+                [
+                    0 => '123',
+                ],
+                [
+                    0 => '123',
+                    1 => 'nono',
+                ],
+            ],
+            [
+                [
+                    'test' => '123',
+                ],
+                [
+                    'test' => '123',
+                    'extra' => 'nono',
+                ],
+            ],
+            [
+                [
+                    0 => '123',
+                ],
+                [
+                    0 => '123',
+                    'extra' => 'nono',
+                ],
+            ],
+            [
+                [
+                    'test' => '123',
+                ],
+                [
+                    'test' => '123',
+                    0 => 'nono',
+                ],
+            ],
+        ];
     }
 
     public function testInvalidArgumentType(): void

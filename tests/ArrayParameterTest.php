@@ -134,7 +134,7 @@ final class ArrayParameterTest extends TestCase
             one: $string,
             two: $union
         );
-        $assert = assertArray($with, []);
+        $assert = assertArray($with, []); //
         $this->assertSame([], $assert);
         $expected = [
             'two' => null,

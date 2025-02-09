@@ -91,7 +91,7 @@ final class IterableParameterTest extends TestCase
         $parameter->assertCompatible($notCompatible);
     }
 
-    public function testNestedIterable(): void
+    public function testIterable(): void
     {
         $this->expectNotToPerformAssertions();
         $parameter = iterable(
@@ -102,9 +102,16 @@ final class IterableParameterTest extends TestCase
             'a' => 'A',
         ];
         $parameter($argument);
-        $parameter = iterable(
-            V: $parameter,
+    }
+
+    public function testNestedIterable(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $iterable = iterable(
+            V: string(),
+            K: string()
         );
+        $parameter = iterable(V: $iterable);
         $argument = [
             [
                 'b' => 'B',
@@ -128,7 +135,10 @@ final class IterableParameterTest extends TestCase
             2 => 'baz',
         ];
         $arguments = arguments($parameter, $array);
-        $this->assertSame($array['0'], $arguments->required('0')->string());
+        $this->assertSame(
+            $array,
+            $arguments->toArray()
+        );
         $parameter = iterable(
             V: iterable(
                 string()
@@ -136,12 +146,15 @@ final class IterableParameterTest extends TestCase
             K: string()
         );
         $array = [
-            '0' => ['foo', 'oof'],
-            '1' => ['bar'],
-            '2' => ['baz', 'bar'],
+            '.0' => ['foo', 'oof'],
+            '.1' => ['bar'],
+            '.2' => ['baz', 'bar'],
         ];
         $arguments = arguments($parameter, $array);
-        $this->assertSame($array['0'], $arguments->required('0')->array());
+        $this->assertSame(
+            $array,
+            $arguments->toArray()
+        );
     }
 
     public function testInvoke(): void

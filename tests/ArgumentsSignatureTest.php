@@ -57,10 +57,10 @@ final class ArgumentsSignatureTest extends TestCase
     {
         $expect = [
             'foo' => 'super',
-            'bar' => '',
+            'bar' => 'baz',
         ];
         $arguments = ['super'];
-        $fn = function (string $foo, string $bar = ''): array {
+        $fn = function (string $foo, string $bar = 'baz'): array {
             return get_defined_vars();
         };
         $parameters = reflectionToParameters(
@@ -71,21 +71,17 @@ final class ArgumentsSignatureTest extends TestCase
             $fn(...$arguments)
         );
         $this->assertSame(
-            $expect,
+            [
+                0 => 'super',
+                'bar' => 'baz',
+            ],
             $parameters(...$arguments)->toArray()
         );
     }
 
-    public function testVariadicNoNames(): void
+    #[DataProvider('dataProviderVariadic')]
+    public function testVariadic(array $expect): void
     {
-        $expect = [
-            0 => 'super',
-            1 => 'taldo',
-        ];
-        $arguments = [
-            'super',
-            'taldo',
-        ];
         $fn = function (mixed ...$mixed): array {
             return $mixed;
         };
@@ -94,65 +90,36 @@ final class ArgumentsSignatureTest extends TestCase
         );
         $this->assertSame(
             $expect,
-            $fn(...$arguments)
+            $fn(...$expect)
         );
         $this->assertSame(
             $expect,
-            $parameters(...$arguments)->toArray()
+            $parameters(...$expect)->toArray()
         );
     }
 
-    public function testVariadicSomeNames(): void
+    public static function dataProviderVariadic(): array
     {
-        $expect = [
-            0 => 1,
-            1 => 'super',
-            'bar' => 'taldo',
+        return [
+            [
+                [
+                    'foo' => 'super',
+                    'bar' => 'taldo',
+                ],
+            ],
+            [
+                [
+                    1,
+                    'super',
+                    'bar' => 'taldo',
+                ],
+            ],
+            [
+                [
+                    0 => 'super',
+                    1 => 'taldo',
+                ],
+            ],
         ];
-        $arguments = [
-            1,
-            'super',
-            'bar' => 'taldo',
-        ];
-        $fn = function (mixed ...$mixed): array {
-            return $mixed;
-        };
-        $parameters = reflectionToParameters(
-            new ReflectionFunction($fn)
-        );
-        $this->assertSame(
-            $expect,
-            $fn(...$arguments)
-        );
-        $this->assertSame(
-            $expect,
-            $parameters(...$arguments)->toArray()
-        );
-    }
-
-    public function testVariadicNames(): void
-    {
-        $expect = [
-            'foo' => 'super',
-            'bar' => 'taldo',
-        ];
-        $arguments = [
-            'foo' => 'super',
-            'bar' => 'taldo',
-        ];
-        $fn = function (mixed ...$mixed): array {
-            return $mixed;
-        };
-        $parameters = reflectionToParameters(
-            new ReflectionFunction($fn)
-        );
-        $this->assertSame(
-            $expect,
-            $fn(...$arguments)
-        );
-        $this->assertSame(
-            $expect,
-            $parameters(...$arguments)->toArray()
-        );
     }
 }

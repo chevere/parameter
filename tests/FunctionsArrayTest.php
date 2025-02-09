@@ -81,11 +81,10 @@ final class FunctionsArrayTest extends TestCase
     public function testArrayDefaults(): void
     {
         $parameter = arrayp(a: int(default: 10));
-        $array = [];
         $expected = [
             'a' => 10,
         ];
-        $this->assertSame($expected, assertArray($parameter, $array));
+        $this->assertSame($expected, assertArray($parameter, []));
     }
 
     public function testArrayOptionalDefaults(): void

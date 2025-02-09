@@ -172,6 +172,11 @@ final class FunctionsTest extends TestCase
         $parameter = arrayp(
             one: string(),
             two: int(default: 222),
+            nestTwice: arrayp(
+                first: arrayp(
+                    twice: int(default: 1)
+                )
+            ),
             nest: arrayp(
                 nestOne: int(default: 1),
                 nestTwo: int(default: 2),
@@ -188,10 +193,15 @@ final class FunctionsTest extends TestCase
                 'nestTwo' => 2,
             ],
             'two' => 222,
+            'nestTwice' => [
+                'first' => [
+                    'twice' => 1,
+                ],
+            ],
         ];
         $assert = assertArray($parameter, $array);
-        $this->assertSame($assert, $expected);
-        $this->assertCount(3, $parameter->parameters());
+        $this->assertSame($expected, $assert);
+        $this->assertCount(4, $parameter->parameters());
         $this->expectException(TypeError::class);
         $parameter(1);
     }
