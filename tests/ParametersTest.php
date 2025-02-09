@@ -411,10 +411,10 @@ final class ParametersTest extends TestCase
         $this->assertSame(['bar'], $barWithMerge->optionalKeys()->toArray());
     }
 
-    public function withIsVariadic(): void
+    public function testWithIsVariadic(): void
     {
         $parameters = new Parameters();
-        $with = $parameters->withIsVariadic(true);
+        $with = $parameters->withIsVariadic();
         $this->assertNotEquals($with, $parameters);
         $this->assertTrue($with->isVariadic());
     }

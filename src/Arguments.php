@@ -70,13 +70,7 @@ final class Arguments implements ArgumentsInterface
         $this->isIterable = $parameters->keys() === ['K', 'V'];
         $this->isPositional = array_is_list($arguments) && ! $this->isIterable;
         if ($this->isIterable) {
-            $pairs = [];
-            foreach (array_keys($arguments) as $key) {
-                $parameters->get('K')($key); // @phpstan-ignore-line
-                $key = strval($key);
-                $pairs[$key] = $parameters->get('V');
-            }
-            $this->iterable = new Parameters(...$pairs);
+            $this->iterable = new Parameters();
         }
         $this->arguments = $arguments;
         $this->excludeExtraArguments();
@@ -371,16 +365,14 @@ final class Arguments implements ArgumentsInterface
     private function assertValues(): void
     {
         $lastPos = array_key_last($this->parameters()->keys());
+        $argumentsKeys = array_keys($this->arguments);
         foreach ($this->parameters()->keys() as $pos => $name) {
             if ($pos === $lastPos && $this->parameters->isVariadic()) {
                 if ($this->isPositional) {
-                    $variadicKeys = array_slice(
-                        array_keys($this->arguments),
-                        $pos
-                    );
+                    $variadicKeys = array_slice($argumentsKeys, $pos);
                 } else {
                     $variadicKeys = array_filter(
-                        array_keys($this->arguments),
+                        $argumentsKeys,
                         fn (string|int $key) => ! in_array($key, $this->parameters->keys(), true)
                             && ! (is_int($key) && $key < $pos)
                     );
