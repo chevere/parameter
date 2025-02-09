@@ -147,7 +147,7 @@ interface ParametersInterface extends StringMappedInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified $isVariadic.
      */
-    public function withIsVariadic(bool $isVariadic): self;
+    public function withIsVariadic(bool $isVariadic = true): self;
 
     public function isVariadic(): bool;
 }

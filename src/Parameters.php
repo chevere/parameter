@@ -71,7 +71,7 @@ final class Parameters implements ParametersInterface
         return new Arguments($this, $argument);
     }
 
-    public function withIsVariadic(bool $flag): ParametersInterface
+    public function withIsVariadic(bool $flag = true): ParametersInterface
     {
         $new = clone $this;
         $new->isVariadic = $flag;
