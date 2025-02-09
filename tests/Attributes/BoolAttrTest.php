@@ -22,10 +22,16 @@ final class BoolAttrTest extends TestCase
     public function testConstruct(): void
     {
         $parameter = bool(default: false);
-        $attr = new BoolAttr(
-            default: false
-        );
-        $parameter = $attr->parameter();
+        $attr = new BoolAttr(default: false);
         $this->assertEquals($parameter, $attr->parameter());
+    }
+
+    public function testWithSensitive(): void
+    {
+        $parameter = bool(sensitive: true);
+        $attr = new BoolAttr();
+        $with = $attr->withIsSensitive();
+        $this->assertNotEquals($attr, $with);
+        $this->assertEquals($parameter, $with->parameter());
     }
 }

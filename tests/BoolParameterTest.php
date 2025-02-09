@@ -15,6 +15,7 @@ namespace Chevere\Tests;
 
 use Chevere\Parameter\BoolParameter;
 use PHPUnit\Framework\TestCase;
+use function Chevere\Parameter\bool;
 
 final class BoolParameterTest extends TestCase
 {
@@ -35,5 +36,13 @@ final class BoolParameterTest extends TestCase
             'description' => '',
             'default' => $default,
         ], $parameterWithDefault->schema());
+    }
+
+    public function testWithSensitive(): void
+    {
+        $parameter = bool();
+        $with = $parameter->withIsSensitive();
+        $this->assertNotEquals($parameter, $with);
+        $this->assertTrue($with->isSensitive());
     }
 }
