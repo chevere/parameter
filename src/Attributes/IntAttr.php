@@ -33,6 +33,7 @@ class IntAttr implements ParameterAttributeInterface
      */
     public function __construct(
         string $description = '',
+        ?int $default = null,
         ?int $min = null,
         ?int $max = null,
         array $accept = [],
@@ -41,6 +42,7 @@ class IntAttr implements ParameterAttributeInterface
     ) {
         $this->parameter = int(
             description: $description,
+            default: $default,
             min: $min,
             max: $max,
             accept: $accept,

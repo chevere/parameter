@@ -30,11 +30,13 @@ class StringAttr implements ParameterAttributeInterface
     public function __construct(
         string $pattern = '',
         string $description = '',
+        ?string $default = null,
         bool $sensitive = false
     ) {
         $this->parameter = string(
             regex: $pattern,
             description: $description,
+            default: $default,
             sensitive: $sensitive
         );
     }
