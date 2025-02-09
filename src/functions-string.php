@@ -13,23 +13,15 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
-use BackedEnum;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Regex\Regex;
-use InvalidArgumentException;
 
 function string(
-    string|BackedEnum $regex = '',
+    string $regex = '',
     string $description = '',
     ?string $default = null,
     bool $sensitive = false
 ): StringParameterInterface {
-    if ($regex instanceof BackedEnum) {
-        if (! is_string($regex->value)) {
-            throw new InvalidArgumentException('Non-string BackedEnum provided');
-        }
-        $regex = $regex->value;
-    }
     $parameter = new StringParameter($description, $sensitive);
     if ($regex !== '') {
         $parameter = $parameter
