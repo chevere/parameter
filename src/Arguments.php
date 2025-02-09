@@ -379,11 +379,13 @@ final class Arguments implements ArgumentsInterface
                         $pos
                     );
                 } else {
-                    $variadicKeys = array_diff(
+                    $variadicKeys = array_filter(
                         array_keys($this->arguments),
-                        $this->parameters->keys()
+                        fn (string|int $key) => ! in_array($key, $this->parameters->keys(), true)
+                            && ! (is_int($key) && $key < $pos)
                     );
                 }
+
                 foreach ($variadicKeys as $id) {
                     try {
                         $this->assertSetArgument($name, $this->arguments[$id], $id);
