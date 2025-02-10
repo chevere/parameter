@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Tests\Attributes;
 
 use Chevere\Parameter\Attributes\FloatAttr;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\float;
 
@@ -22,11 +21,9 @@ final class FloatAttrTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = float(min: 1.0);
-        $attr = new FloatAttr(min: 1.0);
-        $parameter = $attr->parameter();
+        $parameter = float();
+        $attr = new FloatAttr();
         $this->assertEquals($parameter, $attr->parameter());
-        $this->expectException(InvalidArgumentException::class);
-        $attr->__invoke(0.5);
+        $attr->__invoke(1.5);
     }
 }

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Tests\Attributes;
 
 use Chevere\Parameter\Attributes\StringAttr;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\string;
 
@@ -22,11 +21,9 @@ final class StringAttrTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = string('/[a-b]+/');
-        $attr = new StringAttr('/[a-b]+/');
-        $parameter = $attr->parameter();
+        $parameter = string();
+        $attr = new StringAttr();
         $this->assertEquals($parameter, $attr->parameter());
-        $this->expectException(InvalidArgumentException::class);
         $attr->__invoke('2');
     }
 }

@@ -24,7 +24,6 @@ final class NullAttrTest extends TestCase
     {
         $parameter = null();
         $attr = new NullAttr();
-        $parameter = $attr->parameter();
         $this->assertEquals($parameter, $attr->parameter());
         $this->expectException(TypeError::class);
         $attr->__invoke(true);

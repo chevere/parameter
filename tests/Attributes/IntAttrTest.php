@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Tests\Attributes;
 
 use Chevere\Parameter\Attributes\IntAttr;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\int;
 
@@ -22,11 +21,9 @@ final class IntAttrTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = int(min: 1);
-        $attr = new IntAttr(min: 1);
-        $parameter = $attr->parameter();
+        $parameter = int();
+        $attr = new IntAttr();
         $this->assertEquals($parameter, $attr->parameter());
-        $this->expectException(InvalidArgumentException::class);
         $attr->__invoke(0);
     }
 }

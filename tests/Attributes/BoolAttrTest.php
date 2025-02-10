@@ -21,8 +21,8 @@ final class BoolAttrTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = bool(default: false);
-        $attr = new BoolAttr(default: false);
+        $parameter = bool();
+        $attr = new BoolAttr();
         $this->assertEquals($parameter, $attr->parameter());
     }
 

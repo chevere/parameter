@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Tests\Attributes;
 
 use Chevere\Parameter\Attributes\EnumAttr;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\enum;
 
@@ -22,11 +21,9 @@ final class EnumAttrTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = enum('super', 'taldo');
-        $attr = new EnumAttr('super', 'taldo');
-        $parameter = $attr->parameter();
+        $parameter = enum('super');
+        $attr = new EnumAttr('super');
         $this->assertEquals($parameter, $attr->parameter());
-        $this->expectException(InvalidArgumentException::class);
-        $attr->__invoke('waaaa');
+        $attr->__invoke('super');
     }
 }

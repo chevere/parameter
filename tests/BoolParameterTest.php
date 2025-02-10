@@ -42,7 +42,11 @@ final class BoolParameterTest extends TestCase
     {
         $parameter = bool();
         $with = $parameter->withIsSensitive();
-        $this->assertNotEquals($parameter, $with);
         $this->assertTrue($with->isSensitive());
+        $without = $parameter->withIsSensitive(false);
+        $this->assertSame(
+            false,
+            $without->isSensitive()
+        );
     }
 }

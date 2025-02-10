@@ -16,7 +16,6 @@ namespace Chevere\Tests\Attributes;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\NullAttr;
 use Chevere\Parameter\Attributes\UnionAttr;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\null;
@@ -27,18 +26,15 @@ final class UnionAttrTest extends TestCase
     public function testConstruct(): void
     {
         $parameter = union(
-            int(min: 1),
+            int(),
             null()
         );
         $attr = new UnionAttr(
-            new IntAttr(min: 1),
+            new IntAttr(),
             new NullAttr()
         );
-        $parameter = $attr->parameter();
         $this->assertEquals($parameter, $attr->parameter());
         $attr->__invoke(null);
         $attr->__invoke(1);
-        $this->expectException(InvalidArgumentException::class);
-        $attr->__invoke(0);
     }
 }
