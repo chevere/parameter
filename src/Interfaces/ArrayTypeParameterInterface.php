@@ -13,11 +13,16 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Interfaces;
 
+use Iterator;
+use IteratorAggregate;
+
 /**
  * Describes the component in charge of defining an array type parameter to be
  * used as a base for array-shape parameters.
+ *
+ * @extends IteratorAggregate<ParameterInterface>
  */
-interface ArrayTypeParameterInterface extends ParameterInterface, ParametersAccessInterface
+interface ArrayTypeParameterInterface extends ParameterInterface, ParametersAccessInterface, IteratorAggregate
 {
     /**
      * Provides access to the default value (if any).
@@ -31,4 +36,10 @@ interface ArrayTypeParameterInterface extends ParameterInterface, ParametersAcce
     public function isList(): bool;
 
     public function isMap(): bool;
+
+    /**
+     * @return Traversable<string, ParameterInterface>
+     * @phpstan-return Iterator<string, ParameterInterface>
+     */
+    public function getIterator(): Iterator;
 }

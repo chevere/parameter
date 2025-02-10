@@ -16,6 +16,7 @@ namespace Chevere\Parameter\Traits;
 use ArrayAccess;
 use Chevere\Parameter\Interfaces\ParametersInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
+use Iterator;
 use function Chevere\Parameter\assertArray;
 
 trait ArrayParameterTrait
@@ -88,6 +89,12 @@ trait ArrayParameterTrait
         $new->parameters = $new->parameters->withOptionalMinimum($count);
 
         return $new;
+    }
+
+    public function getIterator(): Iterator
+    {
+        // @phpstan-ignore-next-line
+        return $this->parameters()->getIterator();
     }
 
     private function typeName(): string

@@ -13,10 +13,14 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Interfaces;
 
+use IteratorAggregate;
+
 /**
  * Describes the component in charge of defining a parameter of type iterable.
+ *
+ * @extends IteratorAggregate<ParameterInterface>
  */
-interface IterableParameterInterface extends ParameterInterface, ParametersAccessInterface
+interface IterableParameterInterface extends ParameterInterface, ParametersAccessInterface, IteratorAggregate
 {
     /**
      * Asserts the given `$value` is valid.
