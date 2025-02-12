@@ -86,6 +86,13 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
 
             return toUnionParameter(...$types);
         } elseif ($this->type !== null) {
+            if ($this->type->allowsNull() && $this->type->__toString() !== 'mixed') {
+                return toUnionParameter(
+                    $this->getTypeHint($this->type),
+                    'null'
+                );
+            }
+
             return toParameter($this->getTypeHint($this->type));
         }
 
