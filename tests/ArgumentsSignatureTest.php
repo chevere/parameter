@@ -16,7 +16,10 @@ namespace Chevere\Tests;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\null;
 use function Chevere\Parameter\reflectionToParameters;
+use function Chevere\Parameter\union;
 
 final class ArgumentsSignatureTest extends TestCase
 {
@@ -121,5 +124,19 @@ final class ArgumentsSignatureTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    public function testAllowsNull(): void
+    {
+        $fn = function (?int $number): ?int {
+            return $number;
+        };
+        $parameters = reflectionToParameters(
+            new ReflectionFunction($fn)
+        );
+        $this->assertEquals(
+            $parameters->get('number'),
+            union(int(), null())
+        );
     }
 }
