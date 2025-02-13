@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Parameter;
 
 use ArgumentCountError;
-use ArrayAccess;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
@@ -22,7 +21,6 @@ use Chevere\Parameter\Interfaces\ParametersInterface;
 use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
 use OutOfBoundsException;
-use ReflectionClass;
 use Throwable;
 use TypeError;
 use function Chevere\Message\message;
@@ -44,11 +42,6 @@ final class Arguments implements ArgumentsInterface
     private array $null = [];
 
     /**
-     * @var array<string>
-     */
-    private array $reflected = [];
-
-    /**
      * @var string[]
      */
     private array $errors = [];
@@ -62,11 +55,8 @@ final class Arguments implements ArgumentsInterface
     // @phpstan-ignore-next-line
     public function __construct(
         private ParametersInterface $parameters,
-        array|ArrayAccess $arguments
+        array $arguments
     ) {
-        if ($arguments instanceof ArrayAccess) {
-            $arguments = $this->getArrayAccessArray($arguments);
-        }
         $this->isIterable = $parameters->keys() === ['K', 'V'];
         $this->isPositional = array_is_list($arguments) && ! $this->isIterable;
         if ($this->isIterable) {
@@ -404,41 +394,5 @@ final class Arguments implements ArgumentsInterface
     {
         return $this->parameters()->optionalKeys()->contains($name)
             && ! $this->has($name);
-    }
-
-    /**
-     * @param ArrayAccess<int|string, mixed> $arguments
-     * @return array<int|string, mixed>
-     */
-    private function getArrayAccessArray(ArrayAccess $arguments): array
-    {
-        $array = [];
-        $cast = (array) $arguments;
-        $reflector = new ReflectionClass($arguments);
-        $properties = $reflector->getProperties();
-        foreach ($properties as $property) {
-            $name = $property->getName();
-            $array[$name] = $property->getValue($arguments);
-            $this->reflected[] = $name;
-        }
-        $this->fixScopeArrayCast($array, $cast);
-
-        return $array;
-    }
-
-    /**
-     * @param array<int|string, mixed> $array
-     * @param array<int|string, mixed> $cast
-     */
-    private function fixScopeArrayCast(array &$array, array $cast): void
-    {
-        foreach ($cast as $key => $value) {
-            $key = strval($key);
-            if (str_contains($key, "\x00")
-                || in_array($key, $this->reflected, true)) {
-                continue;
-            }
-            $array[$key] = $value;
-        }
     }
 }

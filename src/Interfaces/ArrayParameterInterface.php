@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Interfaces;
 
-use ArrayAccess;
-
 /**
  * Describes the component in charge of defining a parameter of type array.
  */
@@ -24,7 +22,7 @@ interface ArrayParameterInterface extends ArrayTypeParameterInterface, ArrayPara
      * Asserts the given `$value` is valid.
      * @phpstan-ignore-next-line
      */
-    public function __invoke(array|ArrayAccess $value): array|ArrayAccess;
+    public function __invoke(array $value): array;
 
     /**
      * Return an instance with the specified default value.

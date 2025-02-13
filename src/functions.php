@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
-use ArrayAccess;
 use BadMethodCallException;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Exceptions\AttributeNotFoundException;
@@ -52,7 +51,7 @@ use function Chevere\Message\message;
 function cast(mixed $variable, string|int ...$key): CastInterface
 {
     if ($key !== []) {
-        if (! ($variable instanceof ArrayAccess || is_array($variable))) {
+        if (! is_array($variable)) {
             throw new BadMethodCallException(
                 (string) message(
                     'Argument must be array-accessible, %type% provided',
@@ -137,7 +136,7 @@ function parameters(
  */
 function arguments(
     ParametersInterface|ParametersAccessInterface $parameters,
-    array|ArrayAccess $arguments
+    array $arguments
 ): ArgumentsInterface {
     $parameters = getParameters($parameters);
 

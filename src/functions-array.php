@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
-use ArrayAccess;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\ArrayStringParameterInterface;
 use Chevere\Parameter\Interfaces\ArrayTypeParameterInterface;
@@ -66,12 +65,12 @@ function file(
 }
 
 /**
- * @param array<int|string, mixed>|ArrayAccess<int|string, mixed> $argument
+ * @param array<int|string, mixed> $argument
  * @return array<int|string, mixed> Asserted array, with fixed optional values.
  */
 function assertArray(
     ArrayTypeParameterInterface $parameter,
-    array|ArrayAccess $argument,
+    array $argument,
 ): array {
     if ($parameter->parameters()->count() === 0) {
         return (array) $argument;

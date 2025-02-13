@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Traits;
 
-use ArrayAccess;
 use Chevere\Parameter\Interfaces\ParametersInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
 use Iterator;
@@ -28,7 +27,7 @@ trait ArrayParameterTrait
     private bool $isList = false;
 
     // @phpstan-ignore-next-line
-    public function __invoke(array|ArrayAccess $array): array|ArrayAccess
+    public function __invoke(array $array): array
     {
         // @phpstan-ignore-next-line
         return assertArray($this, $array);

@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Attributes;
 
-use ArrayAccess;
 use Attribute;
 use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
@@ -44,7 +43,7 @@ class ArrayAttr implements ParameterAttributeInterface
     }
 
     // @phpstan-ignore-next-line
-    public function __invoke(array|ArrayAccess $array): array|ArrayAccess
+    public function __invoke(array $array): array
     {
         return $this->parameter->__invoke($array);
     }

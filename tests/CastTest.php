@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
-use ArrayObject;
 use Chevere\Parameter\Cast;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -65,13 +64,5 @@ final class CastTest extends TestCase
     {
         $cast = new Cast($expected);
         $this->assertSame($expected, $cast->{$method}());
-    }
-
-    public function testArrayAccess(): void
-    {
-        $input = ['foo'];
-        $value = new ArrayObject($input);
-        $cast = new Cast($value);
-        $this->assertSame($input, $cast->array());
     }
 }

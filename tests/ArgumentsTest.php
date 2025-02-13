@@ -15,20 +15,15 @@ namespace Chevere\Tests;
 
 use ArgumentCountError;
 use Chevere\Parameter\Arguments;
-use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\IntParameter;
 use Chevere\Parameter\Parameters;
 use Chevere\Regex\Regex;
-use Chevere\Tests\src\ArrayAccessDynamic;
-use Chevere\Tests\src\ArrayAccessMixed;
-use Chevere\Tests\src\ArrayAccessScoped;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
-use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\bool;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\parameters;
@@ -454,57 +449,6 @@ final class ArgumentsTest extends TestCase
         $this->assertNull($arguments->optional($foo));
         $this->expectException(InvalidArgumentException::class);
         $arguments->required($foo);
-    }
-
-    #[DataProvider('dataProviderArrayAccess')]
-    public function testArrayAccess(
-        ArrayParameterInterface $parameter,
-        \ArrayAccess $arrayAccess,
-        array $array
-    ): void {
-        $arguments = new Arguments($parameter->parameters(), $arrayAccess);
-        $this->assertSame($array, $arguments->toArray());
-    }
-
-    public static function dataProviderArrayAccess(): array
-    {
-        $named = [
-            'string' => 'test',
-            'int' => 1,
-            'bool' => false,
-        ];
-        $parameter = arrayp(
-            string: string(),
-            int: int(),
-            bool: bool()
-        );
-
-        return [
-            [
-                arrayp(),
-                new ArrayAccessDynamic([]),
-                [],
-            ],
-            [
-                $parameter,
-                new ArrayAccessScoped(...$named),
-                $named,
-            ],
-            [
-                $parameter,
-                new ArrayAccessDynamic($named),
-                $named,
-            ],
-            [
-                $parameter->withRequired(
-                    dynamic: string()
-                ),
-                new ArrayAccessMixed(...$named),
-                $named + [
-                    'dynamic' => '123abc',
-                ],
-            ],
-        ];
     }
 
     public function testMinimumOptional(): void
