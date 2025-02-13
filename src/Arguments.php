@@ -206,7 +206,6 @@ final class Arguments implements ArgumentsInterface
      */
     private function handleDefaults(): void
     {
-        $positions = array_keys($this->parameters->keys());
         foreach ($this->parameters as $id => $parameter) {
             if ($parameter instanceof ParametersAccessInterface) {
                 $hasStock = array_key_exists($id, $this->arguments);
@@ -221,17 +220,8 @@ final class Arguments implements ArgumentsInterface
             }
             if (! array_key_exists($id, $this->arguments)) {
                 $namedPos = array_search($id, $this->parameters->keys());
-                if ($namedPos === false) {
-                    $posId = array_search($id, $positions);
-                    if ($posId === false) {
-                        continue;
-                    }
-                    $id = $posId;
-                } else {
-                    $name = $id;
-                    $id = $namedPos;
-                }
-                $id = strval($id);
+                $name = $id;
+                $id = strval($namedPos);
             }
             if ($this->has($id)) {
                 continue;

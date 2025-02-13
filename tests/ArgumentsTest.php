@@ -105,6 +105,9 @@ final class ArgumentsTest extends TestCase
                 [
                     '123',
                     'super',
+                    'taldo',
+                    'missing',
+                    'tiempos',
                 ],
             ],
             [
