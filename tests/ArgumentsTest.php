@@ -99,12 +99,22 @@ final class ArgumentsTest extends TestCase
             ],
             [
                 [
-                    'test' => '123',
-                    'try' => 'abc',
+                    '123',
+                    'super',
                 ],
                 [
-                    'test' => '123',
+                    '123',
+                    'super',
+                ],
+            ],
+            [
+                [
                     'try' => 'abc',
+                    'test' => '123',
+                ],
+                [
+                    'try' => 'abc',
+                    'test' => '123',
                     'bonus' => 'remove',
                     'super' => 'taldo',
                 ],
@@ -117,6 +127,9 @@ final class ArgumentsTest extends TestCase
                 [
                     '123',
                     'extra' => 'nono',
+                    'extra2' => 'nono',
+                    2 => 'nono',
+                    3 => 'nono',
                 ],
             ],
             [
