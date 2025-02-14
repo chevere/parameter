@@ -265,6 +265,37 @@ A Parameter is an object implementing `ParameterInterface`. Every Parameter can 
 
 A Parameter can be defined using functions or attributes, it takes same arguments for both.
 
+### Immutable methods
+
+A Parameter provides immutable methods to re-define its rules. Every `with` method returns a new instance preserving the original state. This enables to create Parameter variations from a base definition.
+
+```php
+// Base generic methods
+public function withDescription(string $description): self;
+public function withIsSensitive(bool $isSensitive = true): self;
+```
+
+Immutable methods of a Parameter can be used to re-define its rules. For example, `IntParameter` provides additional methods to define integer range:
+
+```php
+use function Chevere\Parameter\int;
+
+$int = int(min: 0, max: 100);
+// Same as:
+$int = int()->withMin(0)->withMax(100);
+```
+
+Methods unique to each parameter:
+
+* IntParameter: `withMin`, `withMax`, `withAccept`, `withReject`
+* FloatParameter: `withMin`, `withMax`, `withAccept`, `withReject`
+* StringParameter: `withRegex`
+* ArrayParameter: `withRequired`, `withOptional`, `withModify`, `withMakeOptional`, `withMakeRequired`, `without`, `withOptionalMinimum`
+* ObjectParameter: `withClassName`
+* IterableParameter: `withKey`, `withValue`
+
+### Invoke a Parameter
+
 When invoking a Parameter `$param($arg)` or `$param->__invoke($arg)` it will trigger validation against the passed argument. This method will fill-in any missing optional parameters with their default values. It will also exclude any extra unexpected parameters.
 
 ## String
