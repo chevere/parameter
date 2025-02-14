@@ -116,11 +116,7 @@ Non-type attributes provided.
 | [CallableAttr](#callableattr) | Forward parameter resolution to a callable |
 | [ReturnAttr](#returnattr)     | Return value validation                    |
 
-## How to use
-
-Parameter provides an API which can be used to create parameters using functions and/or attributes. Parameter objects can be used directly in the logic while attributes requires a read step.
-
-### Inline usage
+## Inline usage
 
 Inline usage refers to the direct use of functions to create parameters and validate arguments.
 
@@ -140,7 +136,12 @@ use function Chevere\Parameter\int;
 int(min: 1, max: 10)($var);
 ```
 
-### Attribute-based usage
+When invoking a Parameter `$param($arg)` or `$param->__invoke($arg)` it will trigger validation against the passed argument and return the validated argument:
+
+* Will fill-in any missing optional parameters with their default values.
+* Will exclude any extra unexpected parameters.
+
+## Attribute usage
 
 Attribute usage refers to the use of attributes to define parameters and return rules. You can use attribute notation for class properties, methods/functions parameters and return value.
 
@@ -172,7 +173,7 @@ use function Chevere\Parameter\validated;
     new StringAttr('/ok$/')
 )]
 function myFunction(
-    #[IntAttr(min: 1, max: 10)]
+    #[IntAttr(min: 1, max: 10,)]
     int $var
 ): string
 {
@@ -218,6 +219,20 @@ function myFunction(
 
     return returnAttr()($return); // valid $return
 }
+```
+
+### Native attributes support
+
+Parameter will understand/complement [native attribute](https://www.php.net/manual/reserved.attributes.php) annotations.
+
+`#[SensitiveParameter]`
+
+```php
+function myFunction(
+    #[SensitiveParameter]
+    #[IntAttr(min: 1)]
+    int $var
+): void;
 ```
 
 ### ReturnAttr
@@ -293,10 +308,6 @@ Methods unique to each parameter:
 * ArrayParameter: `withRequired`, `withOptional`, `withModify`, `withMakeOptional`, `withMakeRequired`, `without`, `withOptionalMinimum`
 * ObjectParameter: `withClassName`
 * IterableParameter: `withKey`, `withValue`
-
-### Invoke a Parameter
-
-When invoking a Parameter `$param($arg)` or `$param->__invoke($arg)` it will trigger validation against the passed argument. This method will fill-in any missing optional parameters with their default values. It will also exclude any extra unexpected parameters.
 
 ## String
 
