@@ -261,11 +261,11 @@ function myCallable(): ParameterInterface
 
 ## Types
 
-A Parameter is an object implementing `ParameterInterface`. Every Parameter can define a `description` and a `default` value, plus additional validation rules depending on the type.
+A Parameter is an object implementing `ParameterInterface`. Every Parameter can define a `description`, `default` value, `sensitive` flag, plus additional validation rules depending on the type.
 
-A Parameter can be defined using functions and/or attributes, it takes same arguments for both.
+A Parameter can be defined using functions or attributes, it takes same arguments for both.
 
-When invoking a Parameter `$param('value')` it will trigger validation against the passed argument.
+When invoking a Parameter `$param($arg)` or `$param->__invoke($arg)` it will trigger validation against the passed argument. This method will fill-in any missing optional parameters with their default values. It will also exclude any extra unexpected parameters.
 
 ## String
 
