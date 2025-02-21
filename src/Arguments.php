@@ -15,7 +15,7 @@ namespace Chevere\Parameter;
 
 use ArgumentCountError;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
-use Chevere\Parameter\Interfaces\ArrayParameterInterface;
+use Chevere\Parameter\Interfaces\ArrayTypeParameterInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
@@ -208,7 +208,7 @@ final class Arguments implements ArgumentsInterface
     private function handleDefaults(): void
     {
         foreach ($this->parameters as $id => $parameter) {
-            if ($parameter instanceof ArrayParameterInterface) {
+            if ($parameter instanceof ArrayTypeParameterInterface) {
                 $hasStock = array_key_exists($id, $this->arguments);
                 $this->handleDefaultNested($parameter, $id);
                 if (! $hasStock
@@ -246,7 +246,7 @@ final class Arguments implements ArgumentsInterface
         }
         // If union?
         foreach ($access->parameters() as $name => $parameter) {
-            if ($parameter instanceof ParametersAccessInterface) {
+            if ($parameter instanceof ArrayTypeParameterInterface) {
                 $args = $id;
                 $args[] = $name;
                 $this->handleDefaultNested($parameter, ...$args);
