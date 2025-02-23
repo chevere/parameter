@@ -280,19 +280,21 @@ final class Arguments implements ArgumentsInterface
             return;
         }
         $argumentKeys = array_keys($this->arguments);
-        $missingNamed = array_diff(
-            $this->parameters()->keys(),
-            $argumentKeys
-        );
-        $missingPositional = array_diff(
-            array_keys($this->parameters()->keys()),
-            $argumentKeys
-        );
-        $missingPositional = array_map(
-            fn (int $key) => $this->parameters()->keys()[$key],
-            $missingPositional
-        );
-        $missing = array_unique(array_merge($missingNamed, $missingPositional));
+        if ($this->isPositional) {
+            $missing = array_diff(
+                array_keys($this->parameters()->keys()),
+                $argumentKeys
+            );
+            $missing = array_map(
+                fn (int $key) => $this->parameters()->keys()[$key],
+                $missing
+            );
+        } else {
+            $missing = array_diff(
+                $this->parameters()->keys(),
+                $argumentKeys
+            );
+        }
 
         throw new ArgumentCountError(
             (string) message(
