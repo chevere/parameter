@@ -1,4 +1,4 @@
-name: SonarCloud
+name: SonarQube Cloud Scan
 on: [push]
 jobs:
   sonarcloud:
