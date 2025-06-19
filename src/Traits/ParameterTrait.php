@@ -22,7 +22,7 @@ trait ParameterTrait
 
     private bool $isSensitive = false;
 
-    final public function __construct(
+    public function __construct(
         private string $description = '',
         bool $isSensitive = false,
     ) {
@@ -39,17 +39,18 @@ trait ParameterTrait
     /**
      * @infection-ignore-all
      */
-    final public function type(): TypeInterface
+    public function type(): TypeInterface
     {
+        // @phpstan-ignore-next-line
         return $this->type ??= new Type($this->typeName());
     }
 
-    final public function description(): string
+    public function description(): string
     {
         return $this->description;
     }
 
-    final public function withDescription(string $description): static
+    public function withDescription(string $description): static
     {
         $new = clone $this;
         $new->description = $description;
@@ -57,7 +58,7 @@ trait ParameterTrait
         return $new;
     }
 
-    final public function withIsSensitive(bool $isSensitive = true): static
+    public function withIsSensitive(bool $isSensitive = true): static
     {
         $new = clone $this;
         $new->isSensitive = $isSensitive;
@@ -65,7 +66,7 @@ trait ParameterTrait
         return $new;
     }
 
-    final public function isSensitive(): bool
+    public function isSensitive(): bool
     {
         return $this->isSensitive;
     }

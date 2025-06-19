@@ -325,6 +325,7 @@ function reflectionToParameters(
             && $push->default() === null
         ) {
             try {
+                /** @var ParameterInterface $push */
                 $push = $push->withDefault($reflectionParameter->getDefaultValue());
             } catch (Throwable $e) {
                 $name = $reflectionParameter->getName();
