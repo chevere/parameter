@@ -371,4 +371,29 @@ final class ArrayParameterTest extends TestCase
         );
         $parameter([1, 'foo']);
     }
+
+    public function testExcludeExtraKeys(): void
+    {
+        $parameter = arrayp(
+            foo: arrayp(
+                bar: int(),
+            ),
+        );
+        $this->assertSame(
+            [
+                'foo' => [
+                    'bar' => 123,
+                ],
+            ],
+            $parameter([
+                'foo' => [
+                    'bar' => 123,
+                    'baz' => 123,
+                ],
+                'bar' => [
+                    'extra' => 'asdf',
+                ],
+            ])
+        );
+    }
 }

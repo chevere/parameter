@@ -22,6 +22,7 @@ use Chevere\Parameter\Interfaces\ParametersInterface;
 use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
 use OutOfBoundsException;
+use SensitiveParameterValue;
 use Throwable;
 use TypeError;
 use function Chevere\Message\message;
@@ -336,15 +337,17 @@ final class Arguments implements ArgumentsInterface
         if (
             version_compare(PHP_VERSION, '8.2.0', '>=')
             && class_exists('SensitiveParameterValue')
-            && $argument instanceof \SensitiveParameterValue
+            && $argument instanceof SensitiveParameterValue
         ) {
             $argument = $argument->getValue();
         }
 
         try {
-            $parameter->__invoke($argument);
+            $argument = $parameter->__invoke($argument);
             if (isset($key)) {
                 $this->arguments[$key] = $argument;
+            } elseif (array_key_exists($name, $this->arguments)) {
+                $this->arguments[$name] = $argument;
             }
         } catch (TypeError $e) {
             throw new $e(
