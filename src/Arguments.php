@@ -148,7 +148,9 @@ final class Arguments implements ArgumentsInterface
 
     public function optional(string $name): ?CastInterface
     {
-        if (! $this->parameters()->optionalKeys()->contains($name)) {
+        if ($this->parameters()->has($name)
+            && ! $this->parameters()->optionalKeys()->contains($name)
+        ) {
             throw new InvalidArgumentException(
                 (string) message(
                     'Argument `%name%` is required',
