@@ -125,6 +125,17 @@ function union(
     return new UnionParameter($parameters);
 }
 
+/**
+ * Same as `union()` but with a null parameter already included.
+ */
+function unionNull(
+    ParameterInterface ...$more
+): UnionParameterInterface {
+    $parameters = parameters(null(), ...$more);
+
+    return new UnionParameter($parameters);
+}
+
 function parameters(
     ParameterInterface ...$required,
 ): ParametersInterface {
