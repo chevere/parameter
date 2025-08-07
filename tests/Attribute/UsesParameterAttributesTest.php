@@ -74,7 +74,7 @@ final class UsesParameterAttributesTest extends TestCase
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'enum' => 'try',
-                'error' => "[enum]: Argument value provided `try` doesn't match the regex `/\btest|value\b/`",
+                'error' => "[enum]: Argument value provided `try` doesn't match the regex `#^test|value$#`",
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'union' => 0,

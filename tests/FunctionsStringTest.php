@@ -48,6 +48,11 @@ final class FunctionsStringTest extends TestCase
         $this->assertSame('', $parameter->description());
         $this->assertSame(null, $parameter->default());
         $this->assertSame('test', $parameter('test'));
+        $parameter = enum('/this', '/that');
+        $parameter('/this');
+        $parameter('/that');
+        $this->expectException(InvalidArgumentException::class);
+        $parameter('/other');
     }
 
     public function testAssertEnum(): void

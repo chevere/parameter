@@ -63,7 +63,7 @@ final class FunctionReturnAttrTest extends TestCase
         $this->expectExceptionMessage(
             <<<PLAIN
             [code]: Argument value provided is less than `1000`
-            [password]: Argument value provided doesn't match the regex `/\bsuper|safe\b/`
+            [password]: Argument value provided doesn't match the regex `#^super|safe$#`
             PLAIN
         );
         usesSensitiveParameterAttr(999, 'password');
