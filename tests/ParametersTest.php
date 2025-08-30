@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
+use ArgumentCountError;
 use BadMethodCallException;
 use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\BoolParameter;
@@ -108,6 +109,19 @@ final class ParametersTest extends TestCase
         $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('Key `foo` not found');
         $parameters->optional('foo');
+    }
+
+    public function testRequiredMissingNoOptional(): void
+    {
+        $parameters = (new Parameters(foo: string()))
+            ->withOptional('bar', string());
+        $this->expectException(ArgumentCountError::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Missing required argument(s): `foo`
+            PLAIN
+        );
+        $parameters();
     }
 
     public function testRequiredCasting(): void

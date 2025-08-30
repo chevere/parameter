@@ -279,24 +279,22 @@ final class Arguments implements ArgumentsInterface
 
     private function assertArgumentCount(): void
     {
-        if ($this->parameters()->requiredKeys()->count() <= $this->count) {
+        $requiredKeys = $this->parameters()->requiredKeys()->toArray();
+        if (count($requiredKeys) <= $this->count) {
             return;
         }
         $argumentKeys = array_keys($this->arguments);
         if ($this->isPositional) {
             $missing = array_diff(
-                array_keys($this->parameters()->keys()),
+                array_keys($requiredKeys),
                 $argumentKeys
             );
             $missing = array_map(
-                fn (int $key) => $this->parameters()->keys()[$key],
+                fn (int $key) => $requiredKeys[$key],
                 $missing
             );
         } else {
-            $missing = array_diff(
-                $this->parameters()->keys(),
-                $argumentKeys
-            );
+            $missing = array_diff($requiredKeys, $argumentKeys);
         }
 
         throw new ArgumentCountError(
