@@ -23,12 +23,15 @@ use SensitiveParameterValue;
 use Throwable;
 use TypeError;
 use function Chevere\Message\message;
+use function Chevere\Parameter\getParameters;
 
 /**
  * @template-covariant TValue
  */
 trait ArgumentsTrait
 {
+    private ParametersInterface $parameters;
+
     private ParametersInterface $iterable;
 
     /**
@@ -54,10 +57,11 @@ trait ArgumentsTrait
 
     // @phpstan-ignore-next-line
     public function __construct(
-        private ParametersInterface $parameters,
+        ParametersInterface|ParametersAccessInterface $parameters,
         array $arguments
     ) {
-        $this->isIterable = $parameters->keys() === ['K', 'V'];
+        $this->parameters = getParameters($parameters);
+        $this->isIterable = $this->parameters->keys() === ['K', 'V'];
         $this->isPositional = array_is_list($arguments) && ! $this->isIterable;
         if ($this->isIterable) {
             $this->iterable = new Parameters();
