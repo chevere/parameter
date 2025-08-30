@@ -13,8 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
-use Chevere\Parameter\Interfaces\ArgumentsInterface;
-use Chevere\Parameter\Interfaces\CastInterface;
+use Chevere\Parameter\Interfaces\ArgumentsStringInterface;
 use Chevere\Parameter\Traits\ArgumentsTrait;
 use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
@@ -22,17 +21,19 @@ use OutOfBoundsException;
 use TypeError;
 use function Chevere\Message\message;
 
-final class Arguments implements ArgumentsInterface
+final class ArgumentsString implements ArgumentsStringInterface
 {
     use ExceptionErrorMessageTrait;
 
     /**
-     * @template-use ArgumentsTrait<mixed>
+     * @template-use ArgumentsTrait<string>
      */
     use ArgumentsTrait;
 
-    // @phpstan-ignore-next-line
-    public function toArrayFill(mixed $fill): array
+    /**
+     * @return array<int|string, string>
+     */
+    public function toArrayFill(string $fill): array
     {
         $filler = array_fill_keys($this->null, $fill);
 
@@ -44,7 +45,7 @@ final class Arguments implements ArgumentsInterface
      * @throws TypeError
      * @throws InvalidArgumentException
      */
-    public function withPut(string $name, mixed $value): ArgumentsInterface
+    public function withPut(string $name, string $value): ArgumentsStringInterface
     {
         $new = clone $this;
         $new->assertSetArgument($name, $value);
@@ -53,7 +54,7 @@ final class Arguments implements ArgumentsInterface
         return $new;
     }
 
-    public function get(string $name): mixed
+    public function get(string $name): ?string
     {
         $this->parameters()->assertHas($name);
         if (! array_key_exists($name, $this->arguments)) {
@@ -63,7 +64,7 @@ final class Arguments implements ArgumentsInterface
         return $this->arguments[$name] ?? null;
     }
 
-    public function required(string $name): CastInterface
+    public function required(string $name): string
     {
         if ($this->parameters()->optionalKeys()->contains($name)) {
             throw new InvalidArgumentException(
@@ -74,10 +75,10 @@ final class Arguments implements ArgumentsInterface
             );
         }
 
-        return new Cast($this->arguments[$name]);
+        return $this->arguments[$name];
     }
 
-    public function optional(string $name): ?CastInterface
+    public function optional(string $name): ?string
     {
         if ($this->parameters()->has($name)
             && ! $this->parameters()->optionalKeys()->contains($name)
@@ -91,7 +92,7 @@ final class Arguments implements ArgumentsInterface
         }
 
         if ($this->has($name)) {
-            return new Cast($this->arguments[$name]);
+            return $this->arguments[$name];
         }
 
         return null;
