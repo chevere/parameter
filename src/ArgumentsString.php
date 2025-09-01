@@ -56,7 +56,9 @@ final class ArgumentsString implements ArgumentsStringInterface
 
     public function get(string $name): ?string
     {
-        $this->parameters()->assertHas($name);
+        if (! $this->has($name)) {
+            return null;
+        }
         if (! array_key_exists($name, $this->arguments)) {
             $name = array_search($name, $this->parameters()->keys(), true);
         }
