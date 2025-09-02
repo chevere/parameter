@@ -85,14 +85,18 @@ function time(
 }
 
 /**
- * Parameter for `YYYY-MM-DD hh:mm:ss` strings.
+ * Parameter for `YYYY-MM-DD hh:mm:ss.precision` strings.
  */
 function datetime(
     string $description = 'YYYY-MM-DD hh:mm:ss',
     ?string $default = null,
-    bool $sensitive = false
+    bool $sensitive = false,
+    int $precision = 0,
 ): StringParameterInterface {
     $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\s{1}\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
+    if ($precision > 0) {
+        $regex = str_replace('$/', '(\.\d{1,' . $precision . '})?$/', $regex);
+    }
 
     return string($regex, $description, $default, $sensitive);
 }
