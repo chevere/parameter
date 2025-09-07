@@ -16,7 +16,6 @@ namespace Chevere\Tests\Attribute;
 use Chevere\Tests\src\NoUsesAttr;
 use Chevere\Tests\src\UsesAttr;
 use InvalidArgumentException;
-use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -132,11 +131,9 @@ final class UsesParameterAttributesTest extends TestCase
         $object->run(6);
     }
 
-    public function testNoReturnRule(): void
+    public function testNoReturnRuleFallbackMixed(): void
     {
         $object = new NoUsesAttr();
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Callable `Chevere\Tests\src\NoUsesAttr::return` must return a `Chevere\Parameter\Interfaces\ParameterInterface` instance');
         $object->run();
     }
 }

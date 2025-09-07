@@ -15,7 +15,6 @@ namespace Chevere\Parameter\Attributes;
 
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use LogicException;
 use ReflectionFunction;
 use ReflectionMethod;
@@ -102,35 +101,14 @@ function returnAttr(): ReturnAttr
     $caller = $trace[1];
     $class = $caller['class'] ?? null;
     $method = $caller['function'];
-    $convention = "{$class}::return";
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
-    $attribute = $reflection->getAttributes(ReturnAttr::class)[0] ?? null;
-    if ($attribute === null) {
-        if (! is_callable($convention)) {
-            throw new LogicException(
-                (string) message(
-                    'No applicable return rules to validate',
-                )
-            );
-        }
-        $parameter = $convention();
-        if (! $parameter instanceof ParameterInterface) {
-            throw new LogicException(
-                (string) message(
-                    'Callable `%callable%` must return a `%type%` instance',
-                    callable: $convention,
-                    type: ParameterInterface::class
-                )
-            );
-        }
-    } else {
-        $attribute = $attribute->newInstance();
-    }
+    $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
+        ?? null;
 
-    /** @var ReturnAttr $attribute */
-    return $attribute;
+    return $attribute?->newInstance()
+        ?? new ReturnAttr(new MixedAttr());
 }
 
 /**

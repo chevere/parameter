@@ -61,6 +61,7 @@ final class NoUsesAttr
                 $e->getMessage()
             );
         }
+
         // Get attribute, validate and return
         try {
             $name = stringAttr('name')($name);

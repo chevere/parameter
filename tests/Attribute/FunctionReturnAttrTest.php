@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Tests\Attribute;
 
 use InvalidArgumentException;
-use LogicException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Tests\src\noUsesAttr;
 use function Chevere\Tests\src\usesAttr;
@@ -50,10 +49,9 @@ final class FunctionReturnAttrTest extends TestCase
         usesAttr($value);
     }
 
-    public function testNoUsesAttr(): void
+    public function testNoUsesAttrFallbackMixed(): void
     {
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('No applicable return rules to validate');
+        $this->expectNotToPerformAssertions();
         noUsesAttr([]);
     }
 
