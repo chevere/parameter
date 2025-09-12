@@ -139,7 +139,10 @@ function arrayArguments(string $name): ArgumentsInterface
         };
     }
 
-    return $array->parameters()->__invoke(...$arguments[$name]);
+    return $array->parameters()->__invoke(
+        // @phpstan-ignore-next-line
+        ...$arguments[$name]
+    );
 }
 
 /**
