@@ -15,6 +15,7 @@ namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\CastInterface;
+use Chevere\Parameter\Interfaces\ParametersAccessInterface;
 use Chevere\Parameter\Traits\ArgumentsTrait;
 use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
@@ -95,5 +96,66 @@ final class Arguments implements ArgumentsInterface
         }
 
         return null;
+    }
+
+    public function nested(string $key, string ...$lookup): ArgumentsInterface
+    {
+        $this->parameters()->assertHas($key);
+        $currentKey = $key;
+        $currentParameter = $this->parameters()->get($currentKey);
+        $currentArgument = $this->arguments[$currentKey] ?? null;
+        foreach ($lookup as $nestedKey) {
+            if (! ($currentParameter instanceof ParametersAccessInterface)) {
+                throw new TypeError(
+                    (string) message(
+                        'Parameter `%name%` is not a nested set of parameters',
+                        name: $currentKey
+                    )
+                );
+            }
+            $parameters = $currentParameter->parameters();
+            if (! $parameters->has($nestedKey)) {
+                throw new InvalidArgumentException(
+                    (string) message(
+                        'Key `%key%` not found in nested parameter `%parent%`',
+                        key: $nestedKey,
+                        parent: $currentKey
+                    )
+                );
+            }
+            if (! is_array($currentArgument) || ! array_key_exists($nestedKey, $currentArgument)) {
+                throw new InvalidArgumentException(
+                    (string) message(
+                        'Key `%key%` not found in nested argument `%parent%`',
+                        key: $nestedKey,
+                        parent: $currentKey
+                    )
+                );
+            }
+            $currentKey = $nestedKey;
+            $currentParameter = $parameters->get($nestedKey);
+            $currentArgument = $currentArgument[$nestedKey];
+        }
+        if (! is_array($currentArgument)) {
+            throw new TypeError(
+                (string) message(
+                    'Argument `%name%` is not a nested set of arguments',
+                    name: $currentKey
+                )
+            );
+        }
+        if ($currentParameter instanceof ParametersAccessInterface) {
+            return new self(
+                $currentParameter->parameters(),
+                $currentArgument
+            );
+        }
+
+        throw new TypeError(
+            (string) message(
+                'Parameter `%name%` is not a nested set of parameters',
+                name: $currentKey
+            )
+        );
     }
 }

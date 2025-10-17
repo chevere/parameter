@@ -24,6 +24,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use TypeError;
+use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\bool;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\parameters;
@@ -497,5 +498,49 @@ final class ArgumentsTest extends TestCase
         ];
         $this->expectException(InvalidArgumentException::class);
         new Arguments($parameters, $arguments);
+    }
+
+    public function testNested(): void
+    {
+        $parameters = parameters(
+            meta: arrayp(
+                event_name: string(),
+                webhook_id: string(),
+                custom_data: arrayp(
+                    product: string(),
+                    product_id_external: string(),
+                )
+            ),
+        )->withRequired('0', arrayp());
+        $values = [
+            0 => [
+                ['item1', 'item2'],
+            ],
+            'meta' => [
+                'event_name' => 'order.created',
+                'webhook_id' => 'wh_1234567890',
+                'custom_data' => [
+                    'product' => 'Book',
+                    'product_id_external' => 'book_987654321',
+                ],
+            ],
+        ];
+        $arguments = $parameters(...$values);
+        $this->assertSame(
+            ['item1', 'item2'],
+            $arguments->nested('0')->required('0')->array()
+        );
+        $this->assertSame(
+            'order.created',
+            $arguments->nested('meta')->required('event_name')->string()
+        );
+        $this->assertSame(
+            'book_987654321',
+            $arguments->nested('meta', 'custom_data')->required('product_id_external')->string()
+        );
+        $this->assertSame(
+            'book_987654321',
+            $arguments->nested('meta')->nested('custom_data')->required('product_id_external')->string()
+        );
     }
 }

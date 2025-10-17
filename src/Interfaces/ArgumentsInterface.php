@@ -58,4 +58,9 @@ interface ArgumentsInterface extends ParametersAccessInterface
      * Provides access to the optional argument for the parameter `$name`.
      */
     public function optional(string $name): ?CastInterface;
+
+    /**
+     * Provides access to a nested ArgumentsInterface for the parameter `$name`.
+     */
+    public function nested(string $key, string ...$lookup): self;
 }
