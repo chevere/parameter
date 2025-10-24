@@ -185,35 +185,112 @@ trait ArgumentsTrait
         if ($access->parameters()->keys() === ['K', 'V']) {
             return;
         }
-        // If union?
-        foreach ($access->parameters() as $name => $parameter) {
-            if ($parameter instanceof ArrayTypeParameterInterface) {
-                $args = $id;
-                $args[] = $name;
-                $this->handleDefaultNested($parameter, ...$args);
-
-                continue;
-            }
+        [$exists, $isArray, $existing] = $this->getNestedArrayIfExists($this->arguments, $id);
+        $applied = $this->computeNestedDefaults($access, $existing);
+        if (! $exists && $applied === []) {
+            return;
+        }
+        if ($exists && ! $isArray) {
+            return;
+        }
+        if ($applied !== $existing) {
             /** @var array<int|string, mixed> $current */
             $current = &$this->arguments;
-            foreach ($id as $key) {
-                if (! array_key_exists($key, $current ?? [])) {
-                    $current[$key] = [];
+            $last = array_key_last($id);
+            foreach ($id as $i => $segment) {
+                if ($i === $last) {
+                    $current[$segment] = $applied;
+
+                    break;
                 }
-                $current = &$current[$key];
+                if (! array_key_exists($segment, $current) || ! is_array($current[$segment])) {
+                    $current[$segment] = [];
+                }
+                $current = &$current[$segment];
             }
-            if (! is_array($current)) {
-                continue;
+        }
+    }
+
+    /**
+     * Traverses $source along $path and returns tuple [exists, isArray, valueArray].
+     * If path doesn't exist or value isn't an array, returns an empty array as value.
+     *
+     * @param array<int|string, mixed> $source
+     * @param string[] $path
+     * @return array{0: bool, 1: bool, 2: array<int|string, mixed>}
+     */
+    private function getNestedArrayIfExists(array $source, array $path): array
+    {
+        $current = $source;
+        $exists = true;
+        foreach ($path as $segment) {
+            if (! array_key_exists($segment, $current)) {
+                $exists = false;
+                $current = [];
+
+                break;
             }
-            if (array_key_exists($name, $current)) {
-                unset($current);
+            $value = $current[$segment];
+            if (! is_array($value)) {
+                return [true, false, []];
+            }
+            $current = $value;
+        }
+
+        return [$exists, true, $current];
+    }
+
+    /**
+     * Applies defaults for nested parameters over an existing argument array, producing a new array.
+     *
+     * - Recurse into provided child containers and apply deeper defaults.
+     * - For missing child containers, create them only if they have a non-null default
+     *   or if any descendant default applies.
+     * - For leaf parameters, set their default when missing and default is non-null.
+     *
+     * @param array<int|string, mixed> $current
+     * @return array<int|string, mixed>
+     */
+    private function computeNestedDefaults(ParametersAccessInterface $access, array $current): array
+    {
+        if ($access->parameters()->keys() === ['K', 'V']) {
+            return $current;
+        }
+
+        $result = $current;
+        foreach ($access->parameters() as $name => $parameter) {
+            if ($parameter instanceof ParametersAccessInterface) {
+                $childCurrent = [];
+                $childExists = array_key_exists($name, $result) && is_array($result[$name]);
+                if ($childExists) {
+                    $childCurrent = $result[$name];
+                }
+                $childApplied = $this->computeNestedDefaults($parameter, $childCurrent);
+                $childDefault = $parameter->default();
+                if ($childExists) {
+                    if ($childApplied !== $childCurrent) {
+                        $result[$name] = $childApplied;
+                    }
+
+                    continue;
+                }
+                if ($childDefault !== null) {
+                    $result[$name] = $childDefault;
+                } elseif ($childApplied !== []) {
+                    $result[$name] = $childApplied;
+                }
 
                 continue;
             }
-            if ($parameter->default() !== null) {
-                $current[$name] = $parameter->default();
+            if (! array_key_exists($name, $result)) {
+                $default = $parameter->default();
+                if ($default !== null) {
+                    $result[$name] = $default;
+                }
             }
         }
+
+        return $result;
     }
 
     private function assertArgumentCount(): void

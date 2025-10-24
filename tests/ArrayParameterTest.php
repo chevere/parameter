@@ -172,6 +172,64 @@ final class ArrayParameterTest extends TestCase
         );
     }
 
+    public function testWithOptionalNested(): void
+    {
+        $input = [
+            'customer' => [
+                'email' => 'user@mail.com',
+            ],
+        ];
+        $arrayp = arrayp(
+            customer: arrayp(
+                email: string(),
+                address: arrayp(
+                    street: string(),
+                ),
+            )->withMakeOptional('address'),
+        );
+        $array = assertArray($arrayp, $input);
+        $this->assertSame(
+            [
+                'customer' => [
+                    'email' => 'user@mail.com',
+                ],
+            ],
+            $array
+        );
+    }
+
+    public function testWithOptionalDefaultNested(): void
+    {
+        $input = [
+            'customer' => [
+                'email' => 'user@mail.com',
+            ],
+        ];
+        $arrayp = arrayp(
+            customer: arrayp(
+                email: string(),
+                address: arrayp(
+                    street: string(),
+                )
+                    ->withDefault([
+                        'street' => '123 Default St',
+                    ]),
+            )->withMakeOptional('address'),
+        );
+        $array = assertArray($arrayp, $input);
+        $this->assertSame(
+            [
+                'customer' => [
+                    'email' => 'user@mail.com',
+                    'address' => [
+                        'street' => '123 Default St',
+                    ],
+                ],
+            ],
+            $array
+        );
+    }
+
     public function testWithOut(): void
     {
         $string = string();
