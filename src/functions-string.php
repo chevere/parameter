@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\StringParameterInterface;
+use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use Chevere\Regex\Regex;
 
 function string(
@@ -34,6 +35,17 @@ function string(
     }
 
     return $parameter;
+}
+
+function nullString(
+    string $regex = '',
+    string $description = '',
+    ?string $default = null,
+    bool $sensitive = false
+): UnionParameterInterface {
+    return unionNull(
+        string(...get_defined_vars())
+    );
 }
 
 function intString(
