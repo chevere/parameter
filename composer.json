@@ -30,6 +30,7 @@
             "src/functions-bool.php",
             "src/functions-numeric.php",
             "src/functions-string.php",
+            "src/functions-null.php",
             "src/functions.php"
         ],
         "psr-4": {
