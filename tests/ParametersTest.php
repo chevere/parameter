@@ -436,13 +436,14 @@ final class ParametersTest extends TestCase
 
     public function testReadme(): void
     {
-        $parameters = new Parameters(
+        $parameters = (new Parameters(
             id: int(min: 1),
             name: string('/^[A-Z]{1}\w+$/'),
-        )->withOptional(
-            'email',
-            string(),
-        );
+        ))
+            ->withOptional(
+                'email',
+                string(),
+            );
         $data = [
             'id' => 1,
             'name' => 'Pepe',
