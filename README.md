@@ -141,6 +141,114 @@ When invoking a Parameter `$param($arg)` or `$param->__invoke($arg)` it will tri
 * Will fill-in any missing optional parameters with their default values.
 * Will exclude any extra unexpected parameters.
 
+## Arguments
+
+The Arguments object is the counterpart of Parameters. It holds the actual arguments validated against a Parameters instance, enabling type-safe interaction by parameter name or position. It supports nested data structures and optional parameters.
+
+```php
+use function Chevere\Parameter\parameters;
+use function Chevere\Parameter\arguments;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\string;
+
+$parameters = parameters(
+    id: int(min: 1),
+    name: string('/^[A-Z]{1}\w+$/'),
+)->withOptional(
+    email: string(),
+);
+$data = [
+    'id' => 1,
+    'name' => 'Pepe'
+];
+$arguments = arguments($parameters, $data);
+```
+
+## Put arguments
+
+Use method `withPut()` to create a new Arguments instance with an added or replaced argument by name or position.
+
+```php
+$arguments = $arguments->withPut('email', 'mail@chevere.org');
+```
+
+## Arguments array
+
+Use method `toArray()` to retrieve the arguments as an array.
+
+```php
+$array = $arguments->toArray();
+```
+
+Use method `toArrayFill()` to retrieve the arguments as an array including optional parameters with their default values.
+
+```php
+$array = $arguments->toArrayFill();
+```
+
+## Check if argument exists
+
+Use method `has()` to check if an argument exists by name or position.
+
+```php
+$arguments->has('id'); // true
+$arguments->has('poto'); // false
+```
+
+## Get argument value (mixed)
+
+Use method `get()` to retrieve argument value by name or position. Return type as `mixed`.
+
+```php
+$id = $arguments->get('id'); // 1
+```
+
+## Get argument value (typed)
+
+Use method `required()` to retrieve a explicit required argument value by name or position. It returns as `CastInterface`, enabling typed access to the value. The method `optional()` can be used to retrieve an optional argument value.
+
+```php
+$id = $arguments->required('id')->int(); // 1
+$email = $arguments->optional('email')?->string(); // null
+```
+
+## Nested arguments
+
+Use method `nested()` to retrieve nested Arguments instances, enabling type-safe access to nested data structures.
+
+```php
+use function Chevere\Parameter\parameters;
+use function Chevere\Parameter\arrayp;
+use function Chevere\Parameter\string;
+
+$parameters = parameters(
+    meta: arrayp(
+        custom_data: arrayp(
+            product: string(),
+            product_id_external: string(),
+        )
+    ),
+);
+$data = [
+    'meta' => [
+        'custom_data' => [
+            'product' => 'Book',
+            'product_id_external' => 'book_987654321',
+        ],
+    ],
+];
+$arguments = arguments($parameters, $data);
+$product = $arguments
+    ->nested('meta', 'custom_data')
+    ->required('product')->string(); // 'Book'
+```
+
+When working with objects implementing `ParametersAccessInterface` (for example, `ArrayParameterInterface`) you can use method `parameters()` to retrieve the Parameters instance used to validate the Arguments instance.
+
+```php
+$parameters = $arguments->parameters();
+```
+
 ## Attribute usage
 
 Attribute usage refers to the use of attributes to define parameters and return rules. You can use attribute notation for class properties, methods/functions parameters and return value.

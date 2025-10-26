@@ -33,6 +33,7 @@ use OverflowException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\reflectionToParameters;
 use function Chevere\Parameter\string;
@@ -431,5 +432,26 @@ final class ParametersTest extends TestCase
         $with = $parameters->withIsVariadic();
         $this->assertNotEquals($with, $parameters);
         $this->assertTrue($with->isVariadic());
+    }
+
+    public function testReadme(): void
+    {
+        $parameters = new Parameters(
+            id: int(min: 1),
+            name: string('/^[A-Z]{1}\w+$/'),
+        )->withOptional(
+            'email',
+            string(),
+        );
+        $data = [
+            'id' => 1,
+            'name' => 'Pepe',
+        ];
+        $arguments = arguments($parameters, $data);
+        $this->assertTrue($arguments->has('id'));
+        $this->assertFalse($arguments->has('poto'));
+        $this->assertSame(1, $arguments->get('id'));
+        $this->assertSame(1, $arguments->required('id')->int());
+        $this->assertNull($arguments->optional('email')?->string());
     }
 }
