@@ -11,17 +11,11 @@
 
 declare(strict_types=1);
 
+namespace Chevere\Parameter;
+
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
-use function Chevere\Parameter\arrayp;
-use function Chevere\Parameter\arrayString;
-use function Chevere\Parameter\bool;
-use function Chevere\Parameter\float;
-use function Chevere\Parameter\int;
-use function Chevere\Parameter\object;
-use function Chevere\Parameter\string;
-use function Chevere\Parameter\unionNull;
 
 /**
  * @param int[] $accept
