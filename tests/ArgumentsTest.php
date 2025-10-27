@@ -27,6 +27,7 @@ use TypeError;
 use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\bool;
 use function Chevere\Parameter\int;
+use function Chevere\Parameter\nullArray;
 use function Chevere\Parameter\parameters;
 use function Chevere\Parameter\string;
 
@@ -541,6 +542,25 @@ final class ArgumentsTest extends TestCase
         $this->assertSame(
             'book_987654321',
             $arguments->nested('meta')->nested('custom_data')->required('product_id_external')->string()
+        );
+    }
+
+    public function testUnionNull(): void
+    {
+        $parameters = parameters(
+            foo: nullArray()
+        );
+        $this->assertSame(
+            null,
+            $parameters(foo: null)->required('foo')->nullArray()
+        );
+        $this->assertSame(
+            [],
+            $parameters(foo: [])->required('foo')->nullArray()
+        );
+        $this->assertSame(
+            [],
+            $parameters(foo: [])->required('foo')->array()
         );
     }
 }
