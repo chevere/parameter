@@ -11,7 +11,11 @@
 
 declare(strict_types=1);
 
+use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
+use function Chevere\Parameter\arrayp;
+use function Chevere\Parameter\arrayString;
 use function Chevere\Parameter\bool;
 use function Chevere\Parameter\float;
 use function Chevere\Parameter\int;
@@ -73,6 +77,22 @@ function nullString(
 ): UnionParameterInterface {
     return unionNull(
         string(...get_defined_vars())
+    );
+}
+
+function nullArray(
+    ParameterInterface ...$required
+): UnionParameterInterface {
+    return unionNull(
+        arrayp(...get_defined_vars())
+    );
+}
+
+function nullArrayString(
+    StringParameterInterface ...$required
+): UnionParameterInterface {
+    return unionNull(
+        arrayString(...get_defined_vars())
     );
 }
 
