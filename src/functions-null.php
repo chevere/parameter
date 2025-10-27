@@ -84,6 +84,7 @@ function nullArray(
     ParameterInterface ...$required
 ): UnionParameterInterface {
     return unionNull(
+        // @phpstan-ignore-next-line
         arrayp(...get_defined_vars())
     );
 }
@@ -92,6 +93,7 @@ function nullArrayString(
     StringParameterInterface ...$required
 ): UnionParameterInterface {
     return unionNull(
+        // @phpstan-ignore-next-line
         arrayString(...get_defined_vars())
     );
 }
