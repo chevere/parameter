@@ -27,6 +27,7 @@ use Chevere\Parameter\Attributes\UnionAttr;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
+use function Chevere\Parameter\Attributes\assertArguments;
 use function Chevere\Parameter\Attributes\boolAttr;
 use function Chevere\Parameter\Attributes\enumAttr;
 use function Chevere\Parameter\Attributes\floatAttr;
@@ -36,7 +37,6 @@ use function Chevere\Parameter\Attributes\nullAttr;
 use function Chevere\Parameter\Attributes\returnAttr;
 use function Chevere\Parameter\Attributes\stringAttr;
 use function Chevere\Parameter\Attributes\unionAttr;
-use function Chevere\Parameter\Attributes\valid;
 use function Chevere\Parameter\int;
 
 final class UsesAttr
@@ -74,14 +74,13 @@ final class UsesAttr
         int|string $union = 1,
     ) {
         // Validate all
-        valid();
-        // Pick validation
-        valid('name');
-        valid('age');
-        valid('cols');
-        valid('tags');
-        valid('flag');
-        valid('amount');
+        assertArguments();
+        // Pick single
+        assertArguments('name');
+        assertArguments('age');
+        assertArguments('cols');
+        // Pick many
+        assertArguments('tags', 'flag', 'amount');
         // Get attribute, validate and return
         $name = stringAttr('name')($name);
         $age = intAttr('age')($age);

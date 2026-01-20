@@ -23,9 +23,9 @@ use Chevere\Parameter\Attributes\StringAttr;
 use SensitiveParameter;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
+use function Chevere\Parameter\Attributes\assertArguments;
 use function Chevere\Parameter\Attributes\returnAttr;
 use function Chevere\Parameter\Attributes\stringAttr;
-use function Chevere\Parameter\Attributes\valid;
 use function PHPUnit\Framework\assertSame;
 
 #[ReturnAttr(
@@ -44,8 +44,8 @@ function usesAttr(
     )]
     array $spooky
 ): bool {
-    valid();
-    valid('spooky');
+    assertArguments();
+    assertArguments('spooky');
     arrayAttr('spooky')($spooky);
     assertSame(
         $spooky['id'],
@@ -58,7 +58,7 @@ function usesAttr(
 function noUsesAttr(
     array $spooky
 ): bool {
-    valid('spooky');
+    assertArguments('spooky');
 
     return returnAttr()(true);
 }
@@ -90,5 +90,5 @@ function usesSensitiveParameterAttr(
     #[EnumAttr('super', 'safe')]
     string $password
 ): void {
-    valid();
+    assertArguments();
 }

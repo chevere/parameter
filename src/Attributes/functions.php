@@ -146,11 +146,11 @@ function arrayArguments(string $name): ArgumentsInterface
 }
 
 /**
- * Validates argument `$name` against parameter attribute rules.
+ * Assert argument(s) against parameter attribute rules.
  *
- * @param ?string $name Argument name or `null` to validate all arguments.
+ * @param string ...$name Argument name(s) or empty to validate all arguments.
  */
-function valid(?string $name = null): void
+function assertArguments(string ...$name): void
 {
     $trace = debug_backtrace(0, 2);
     $caller = $trace[1];
@@ -170,33 +170,35 @@ function valid(?string $name = null): void
         }
         $arguments[$named] = $args[$pos];
     }
-    if ($name === null) {
+    if ($name === []) {
         $parameters(...$arguments);
 
         return;
     }
-    if ($parameters->optionalKeys()->contains($name)
-        && ! array_key_exists($name, $arguments)
-    ) {
-        return;
-    }
-
-    try {
-        if (! $parameters->has($name)) {
-            throw new LogicException(
-                (string) message(
-                    'Parameter `%name%` not found',
-                    name: $name,
-                )
-            );
+    foreach ($name as $item) {
+        if ($parameters->optionalKeys()->contains($item)
+            && ! array_key_exists($item, $arguments)
+        ) {
+            continue;
         }
-        $parameter = $parameters->get($name);
-        $parameter->__invoke($arguments[$name]);
-    } catch (Throwable $e) {
-        $invoker = $trace[0];
-        $file = $invoker['file'] ?? 'na';
-        $line = $invoker['line'] ?? 0;
 
-        throw new ParameterException($e->getMessage(), $e, $file, $line);
+        try {
+            if (! $parameters->has($item)) {
+                throw new LogicException(
+                    (string) message(
+                        'Parameter `%name%` not found',
+                        name: $item,
+                    )
+                );
+            }
+            $parameter = $parameters->get($item);
+            $parameter->__invoke($arguments[$item]);
+        } catch (Throwable $e) {
+            $invoker = $trace[0];
+            $file = $invoker['file'] ?? 'na';
+            $line = $invoker['line'] ?? 0;
+
+            throw new ParameterException($e->getMessage(), $e, $file, $line);
+        }
     }
 }

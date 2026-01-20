@@ -311,8 +311,8 @@ Use [attribute inline validation](#attribute-inline-validation) for manual valid
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
-use function Chevere\Parameter\valid;
-use function Chevere\Parameter\returnAttr;
+use function Chevere\Parameter\Attributes\assertArguments;
+use function Chevere\Parameter\Attributes\returnAttr;
 
 #[ReturnAttr(
     new StringAttr('/ok$/')
@@ -322,7 +322,7 @@ function myFunction(
     int $var
 ): string
 {
-    valid(); // valid $var
+    assertArguments(); // valid $var
     $return = 'ok';
 
     return returnAttr()($return); // valid $return
@@ -1272,14 +1272,14 @@ $result = $return($result); // Validates result
 
 ### Attribute inline validation
 
-Use `valid()` on the function/method body to trigger validation for arguments.
+Use `assertArguments()` on the function/method body to trigger validation for arguments.
 
 * Validate an string enum for `Hugo`, `Paco`, `Luis`:
 * Validate a min float value of `1000`:
 
 ```php
 use Chevere\Parameter\Attributes\EnumAttr;
-use function Chevere\Parameter\validate;
+use function Chevere\Parameter\Attributes\assertArguments;
 
 function myEnum(
     #[EnumAttr('Hugo', 'Paco', 'Luis')]
@@ -1288,10 +1288,10 @@ function myEnum(
     float $money
 ): void
 {
-    valid();
+    assertArguments();
     // Or single...
-    valid('name');
-    valid('money');
+    assertArguments('name');
+    assertArguments('money');
 }
 $arg1 = 'Paco';
 $arg2 = 1000.50;
@@ -1302,14 +1302,14 @@ myEnum($arg1, $arg2);
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
-use function Chevere\Parameter\validate;
+use function Chevere\Parameter\Attributes\assertArguments;
 
 function myInt(
     #[IntAttr(reject: [0, 100])]
     int $id
 ): void
 {
-    valid();
+    assertArguments();
 }
 $value = 50;
 myInt($value);
@@ -1322,7 +1322,7 @@ use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\StringAttr;
 use Chevere\Parameter\Attributes\IterableAttr;
-use function Chevere\Parameter\validate;
+use function Chevere\Parameter\Attributes\assertArguments;
 
 function myArray(
     #[ArrayAttr(
@@ -1338,7 +1338,7 @@ function myArray(
     array $spooky
 ): void
 {
-    valid();
+    assertArguments();
 }
 $value = [
     'id' => 10,
@@ -1356,7 +1356,7 @@ myArray($value);
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\IterableAttr;
-use function Chevere\Parameter\validate;
+use function Chevere\Parameter\Attributes\assertArguments;
 
 function myIterable(
     #[IterableAttr(
@@ -1365,7 +1365,7 @@ function myIterable(
     array $list = [0,1,2]
 ): void
 {
-    valid();
+    assertArguments();
 }
 ```
 
