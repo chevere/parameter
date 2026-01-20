@@ -16,6 +16,8 @@ namespace Chevere\Tests;
 use BadMethodCallException;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
+use Chevere\Parameter\Interfaces\ParametersAccessInterface;
+use Chevere\Parameter\Interfaces\ParametersInterface;
 use InvalidArgumentException;
 use LogicException;
 use OutOfBoundsException;
@@ -29,10 +31,12 @@ use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\assertNamedArgument;
 use function Chevere\Parameter\bool;
+use function Chevere\Parameter\castArguments;
 use function Chevere\Parameter\float;
 use function Chevere\Parameter\getType;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\iterable;
+use function Chevere\Parameter\mixed;
 use function Chevere\Parameter\null;
 use function Chevere\Parameter\object;
 use function Chevere\Parameter\parameterAttr;
@@ -483,6 +487,68 @@ final class FunctionsTest extends TestCase
             [
                 [0, 1, 2],
                 ' `array ( 0 => 0, 1 => 1, 2 => 2, )`',
+            ],
+        ];
+    }
+
+    #[DataProvider('dataProviderCastArguments')]
+    public function testCastArguments(
+        array $expected,
+        array $arguments,
+        ParametersInterface|ParametersAccessInterface $parameters,
+    ): void {
+        $cast = castArguments($parameters, $arguments)->toArray();
+        $this->assertSame($expected, $cast);
+    }
+
+    public static function dataProviderCastArguments(): array
+    {
+        return [
+            [
+                [
+                    'foo' => 123,
+                    'bar' => '456',
+                    'baz' => 78.9,
+                ],
+                [
+                    'foo' => '123',
+                    'bar' => '456',
+                    'baz' => '78.9',
+                ],
+                parameters(
+                    foo: int(),
+                    bar: string(),
+                    baz: float()
+                ),
+            ],
+            [
+                [
+                    'a' => '1',
+                    'b' => 2,
+                    'c' => 3.0,
+                ],
+                [
+                    'a' => '1',
+                    'b' => 2,
+                    'c' => 3.0,
+                ],
+                parameters()->withIsVariadic(true),
+            ],
+            [
+                [
+                    'set' => 42,
+                    'extra' => 'value',
+                    'number' => '3.14',
+                ],
+                [
+                    'set' => '42',
+                    'extra' => 'value',
+                    'number' => '3.14',
+                ],
+                parameters(
+                    set: int(),
+                    pairs: mixed(),
+                )->withIsVariadic(true),
             ],
         ];
     }

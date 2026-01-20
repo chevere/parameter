@@ -198,8 +198,8 @@ final class ArgumentsTest extends TestCase
                 [
                     'super' => 300,
                     'taldo' => 'a',
-                    'b',
-                    'c',
+                    0 => 'b',
+                    1 => 'c',
                 ],
                 [
                     'super' => 300,

@@ -143,7 +143,7 @@ function parameters(
 }
 
 /**
- * @phpstan-ignore-next-line
+ * @param array<int|string, mixed> $arguments
  */
 function arguments(
     ParametersInterface|ParametersAccessInterface $parameters,
@@ -152,6 +152,42 @@ function arguments(
     $parameters = getParameters($parameters);
 
     return new Arguments($parameters, $arguments);
+}
+
+/**
+ * Same as `arguments()` but casting the provided arguments to the defined
+ * parameter types
+ *
+ * @param array<int|string, mixed> $arguments
+ */
+function castArguments(
+    ParametersInterface|ParametersAccessInterface $parameters,
+    array $arguments
+): ArgumentsInterface {
+    $return = [];
+    $parameters = getParameters($parameters);
+    $isVariadic = $parameters->isVariadic();
+    foreach ($arguments as $key => $value) {
+        $key = (string) $key;
+        if ($parameters->has($key) === false) {
+            if ($isVariadic) {
+                $return[$key] = $value;
+
+                continue;
+            }
+
+            throw new InvalidArgumentException("Unknown parameter: {$key}");
+        }
+        $parameter = $parameters->get($key);
+        $return[$key] = match ($parameter->type()->primitive()) {
+            TypeInterface::BOOL => (bool) $value,
+            TypeInterface::INT => (int) $value, // @phpstan-ignore-line
+            TypeInterface::FLOAT => (float) $value, // @phpstan-ignore-line
+            default => $value,
+        };
+    }
+
+    return arguments($parameters, $return);
 }
 
 function assertNamedArgument(
