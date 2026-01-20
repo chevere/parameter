@@ -121,7 +121,7 @@ final class UsesParameterAttributesTest extends TestCase
         new UsesAttr(...func_get_args());
     }
 
-    public function testReturnAttr(): void
+    public function testAssertReturn(): void
     {
         $arguments = $this->dataProviderWillSuccess()[0];
         $object = new UsesAttr(...$arguments);

@@ -95,22 +95,6 @@ function unionAttr(string $name): UnionAttr
     return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function returnAttr(): ReturnAttr
-{
-    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-    $caller = $trace[1];
-    $class = $caller['class'] ?? null;
-    $method = $caller['function'];
-    $reflection = $class
-        ? new ReflectionMethod($class, $method)
-        : new ReflectionFunction($method);
-    $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
-        ?? null;
-
-    return $attribute?->newInstance()
-        ?? new ReturnAttr(new MixedAttr());
-}
-
 /**
  * Get Arguments for an array parameter.
  */
@@ -201,4 +185,26 @@ function assertArguments(string ...$name): void
             throw new ParameterException($e->getMessage(), $e, $file, $line);
         }
     }
+}
+
+/**
+ * Assert return value against ReturnAttr rules.
+ *
+ * @param mixed $value Return value to assert
+ */
+function assertReturn(mixed $value = null): mixed
+{
+    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+    $caller = $trace[1];
+    $class = $caller['class'] ?? null;
+    $method = $caller['function'];
+    $reflection = $class
+        ? new ReflectionMethod($class, $method)
+        : new ReflectionFunction($method);
+    $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
+        ?? null;
+    $returnAttr = $attribute?->newInstance()
+        ?? new ReturnAttr(new MixedAttr());
+
+    return $returnAttr($value);
 }

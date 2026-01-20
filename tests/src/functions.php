@@ -24,7 +24,7 @@ use SensitiveParameter;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\assertArguments;
-use function Chevere\Parameter\Attributes\returnAttr;
+use function Chevere\Parameter\Attributes\assertReturn;
 use function Chevere\Parameter\Attributes\stringAttr;
 use function PHPUnit\Framework\assertSame;
 
@@ -52,7 +52,7 @@ function usesAttr(
         arrayArguments('spooky')->required('id')->int()
     );
 
-    return returnAttr()(true);
+    return assertReturn(true);
 }
 
 function noUsesAttr(
@@ -60,7 +60,7 @@ function noUsesAttr(
 ): bool {
     assertArguments('spooky');
 
-    return returnAttr()(true);
+    return assertReturn(true);
 }
 
 function withDefaultError(

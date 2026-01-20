@@ -28,6 +28,7 @@ use Chevere\Parameter\Interfaces\ParameterInterface;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\assertArguments;
+use function Chevere\Parameter\Attributes\assertReturn;
 use function Chevere\Parameter\Attributes\boolAttr;
 use function Chevere\Parameter\Attributes\enumAttr;
 use function Chevere\Parameter\Attributes\floatAttr;
@@ -92,8 +93,8 @@ final class UsesAttr
         $null = nullAttr('null')($null);
         $enum = enumAttr('enum')($enum);
         $union = unionAttr('union')($union);
-        // Validate return attr
-        returnAttr()($id);
+        // Assert return
+        assertReturn($id);
     }
 
     public static function callable(): ParameterInterface
@@ -111,6 +112,6 @@ final class UsesAttr
     )]
     public function run(int $int): int
     {
-        return returnAttr()($int);
+        return assertReturn($int);
     }
 }

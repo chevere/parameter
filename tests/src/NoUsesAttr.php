@@ -19,13 +19,13 @@ use Throwable;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\assertArguments;
+use function Chevere\Parameter\Attributes\assertReturn;
 use function Chevere\Parameter\Attributes\boolAttr;
 use function Chevere\Parameter\Attributes\enumAttr;
 use function Chevere\Parameter\Attributes\floatAttr;
 use function Chevere\Parameter\Attributes\intAttr;
 use function Chevere\Parameter\Attributes\iteratorAttr;
 use function Chevere\Parameter\Attributes\nullAttr;
-use function Chevere\Parameter\Attributes\returnAttr;
 use function Chevere\Parameter\Attributes\stringAttr;
 use function PHPUnit\Framework\assertSame;
 
@@ -79,13 +79,13 @@ final class NoUsesAttr
         // $amount = floatAttr('amount')($amount);
         // $null = nullAttr('null')($null);
         // $enum = enumAttr('enum')($enum);
-        // Validate return attr
-        // returnAttr()($id);
+        // Assert return attr
+        // assertReturn($id);
     }
 
     public function run(): int
     {
-        return returnAttr()(1);
+        return assertReturn(1);
     }
 
     public static function return(): int

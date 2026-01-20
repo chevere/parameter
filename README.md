@@ -312,7 +312,7 @@ use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
 use Chevere\Parameter\Attributes\StringAttr;
 use function Chevere\Parameter\Attributes\assertArguments;
-use function Chevere\Parameter\Attributes\returnAttr;
+use function Chevere\Parameter\Attributes\assertReturn;
 
 #[ReturnAttr(
     new StringAttr('/ok$/')
@@ -324,8 +324,9 @@ function myFunction(
 {
     assertArguments(); // valid $var
     $return = 'ok';
+    assertReturn($return);
 
-    return returnAttr()($return); // valid $return
+    return $return;
 }
 ```
 
@@ -1369,14 +1370,14 @@ function myIterable(
 }
 ```
 
-Use function `returnAttr()` on the function/method body.
+Use function `assertReturn($value)` on the function/method body.
 
 * Validate int `min: 0, max: 5` return:
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
-use function Chevere\Parameter\returnAttr;
+use function Chevere\Parameter\Attributes\assertReturn;
 
 #[ReturnAttr(
     new IntAttr(min: 0, max: 5)
@@ -1384,8 +1385,9 @@ use function Chevere\Parameter\returnAttr;
 public function myReturnInt(): int
 {
     $result = 1;
+    assertReturn($result);
 
-    return returnAttr()($result);
+    return $result;
 }
 ```
 
@@ -1396,7 +1398,7 @@ use Chevere\Parameter\Attributes\ArrayAttr;
 use Chevere\Parameter\Attributes\IntAttr;
 use Chevere\Parameter\Attributes\StringAttr;
 use Chevere\Parameter\Attributes\ReturnAttr;
-use function Chevere\Parameter\returnAttr;
+use function Chevere\Parameter\Attributes\assertReturn;
 
 #[ReturnAttr(
     new ArrayAttr(
@@ -1411,7 +1413,7 @@ public function myReturnArray(): array
         'name' => 'Peoples Hernandez'
     ];
 
-    return returnAttr()($result);
+    return assertReturn($result);
 }
 ```
 
