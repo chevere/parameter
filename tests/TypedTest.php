@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
-use Chevere\Parameter\Cast;
+use Chevere\Parameter\Typed;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-final class CastTest extends TestCase
+final class TypedTest extends TestCase
 {
-    public static function dataProviderCast(): array
+    public static function dataProviderTyped(): array
     {
         return [
             [null, 'mixed'],
@@ -28,7 +28,7 @@ final class CastTest extends TestCase
             [true, 'bool'],
             ['string', 'string'],
             [[], 'array'],
-            [new Cast(''), 'object'],
+            [new Typed(''), 'object'],
             [
                 fn () => null,
                 'callable',
@@ -44,7 +44,7 @@ final class CastTest extends TestCase
             [null, 'nullString'],
             [[], 'nullArray'],
             [null, 'nullArray'],
-            [new Cast(''), 'nullObject'],
+            [new Typed(''), 'nullObject'],
             [null, 'nullObject'],
             [
                 fn () => null,
@@ -59,10 +59,10 @@ final class CastTest extends TestCase
         ];
     }
 
-    #[DataProvider('dataProviderCast')]
-    public function testCast($expected, string $method): void
+    #[DataProvider('dataProviderTyped')]
+    public function testTyped($expected, string $method): void
     {
-        $cast = new Cast($expected);
-        $this->assertSame($expected, $cast->{$method}());
+        $typed = new Typed($expected);
+        $this->assertSame($expected, $typed->{$method}());
     }
 }

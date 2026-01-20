@@ -20,11 +20,11 @@ use Chevere\Parameter\Interfaces\IntParameterInterface;
 use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
-use Chevere\Parameter\Interfaces\ParameterCastInterface;
+use Chevere\Parameter\Interfaces\ParameterTypedInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
 
-final class ParameterCast implements ParameterCastInterface
+final class ParameterTyped implements ParameterTypedInterface
 {
     // @phpstan-ignore-next-line
     public function __construct(

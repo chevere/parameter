@@ -124,22 +124,22 @@ interface ParametersInterface extends StringMappedInterface
     public function get(string $name): ParameterInterface;
 
     /**
-     * Provides cast access to the required parameter by name.
+     * Provides type-safe access to the required parameter by name.
      *
      * ```php
      * $parameters->required('name')->string();
      * ```
      */
-    public function required(string $name): ParameterCastInterface;
+    public function required(string $name): ParameterTypedInterface;
 
     /**
-     * Provides cast access to the optional parameter by name.
+     * Provides type-safe access to the optional parameter by name.
      *
      * ```php
      * $parameters->optional('name')->string();
      * ```
      */
-    public function optional(string $name): ParameterCastInterface;
+    public function optional(string $name): ParameterTypedInterface;
 
     /**
      * Return an instance with the specified $isVariadic.

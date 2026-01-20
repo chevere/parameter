@@ -19,9 +19,9 @@ use Chevere\DataStructure\Map;
 use Chevere\DataStructure\Traits\MapTrait;
 use Chevere\DataStructure\Vector;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
-use Chevere\Parameter\Interfaces\ParameterCastInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
+use Chevere\Parameter\Interfaces\ParameterTypedInterface;
 use InvalidArgumentException;
 use OverflowException;
 use function Chevere\Message\message;
@@ -216,7 +216,7 @@ final class Parameters implements ParametersInterface
         return $this->map->get($name);
     }
 
-    public function required(string $name): ParameterCastInterface
+    public function required(string $name): ParameterTypedInterface
     {
         $parameter = $this->get($name);
         if ($this->optionalKeys()->contains($name)) {
@@ -228,10 +228,10 @@ final class Parameters implements ParametersInterface
             );
         }
 
-        return new ParameterCast($parameter);
+        return new ParameterTyped($parameter);
     }
 
-    public function optional(string $name): ParameterCastInterface
+    public function optional(string $name): ParameterTypedInterface
     {
         $parameter = $this->get($name);
         if (! $this->optionalKeys()->contains($name)) {
@@ -243,7 +243,7 @@ final class Parameters implements ParametersInterface
             );
         }
 
-        return new ParameterCast($parameter);
+        return new ParameterTyped($parameter);
     }
 
     private function remove(string ...$name): void

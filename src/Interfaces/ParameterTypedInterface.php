@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Interfaces;
 
 /**
- * Describes the component in charge of casting a parameter.
+ * Describes the component providing type-safe access to a parameter.
  */
-interface ParameterCastInterface
+interface ParameterTypedInterface
 {
     public function array(): ArrayParameterInterface;
 

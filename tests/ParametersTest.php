@@ -125,7 +125,7 @@ final class ParametersTest extends TestCase
         $parameters();
     }
 
-    public function testRequiredCasting(): void
+    public function testRequiredTyped(): void
     {
         $parameter = string();
         $parameters = new Parameters(foo: $parameter);
@@ -136,7 +136,7 @@ final class ParametersTest extends TestCase
         $parameters->optional('foo');
     }
 
-    public function testRequiredCastingPositional(): void
+    public function testRequiredTypedPositional(): void
     {
         $parameter = string();
         $parameters = new Parameters($parameter);
@@ -147,7 +147,7 @@ final class ParametersTest extends TestCase
         $parameters->optional('0');
     }
 
-    public function testOptionalCasting(): void
+    public function testOptionalTyped(): void
     {
         $parameter = string();
         $parameters = (new Parameters())
@@ -260,7 +260,7 @@ final class ParametersTest extends TestCase
         );
     }
 
-    public static function dataProviderGetCast(): array
+    public static function dataProviderGetTyped(): array
     {
         return [
             [new StringParameter(), 'string'],
@@ -273,8 +273,8 @@ final class ParametersTest extends TestCase
         ];
     }
 
-    #[DataProvider('dataProviderGetCast')]
-    public function testGetCast(
+    #[DataProvider('dataProviderGetTyped')]
+    public function testGetTyped(
         ParameterInterface $parameter,
         string $type,
         string $error = 'null'

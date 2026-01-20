@@ -52,12 +52,12 @@ interface ArgumentsInterface extends ParametersAccessInterface
     /**
      * Provides access to the required argument for the parameter `$name`.
      */
-    public function required(string $name): CastInterface;
+    public function required(string $name): TypedInterface;
 
     /**
      * Provides access to the optional argument for the parameter `$name`.
      */
-    public function optional(string $name): ?CastInterface;
+    public function optional(string $name): ?TypedInterface;
 
     /**
      * Provides access to a nested ArgumentsInterface specific to the parameter `$name`

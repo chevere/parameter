@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
-use Chevere\Parameter\Interfaces\CastInterface;
+use Chevere\Parameter\Interfaces\TypedInterface;
 
-final class Cast implements CastInterface
+final class Typed implements TypedInterface
 {
     // @phpstan-ignore-next-line
     public function __construct(

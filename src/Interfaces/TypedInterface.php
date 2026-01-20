@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Interfaces;
 
 /**
- * Describes the component in charge of casting an argument.
+ * Describes the component in charge of providing a type-safe accessor.
  */
-interface CastInterface
+interface TypedInterface
 {
     public function int(): int;
 

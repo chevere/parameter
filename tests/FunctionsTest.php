@@ -29,7 +29,6 @@ use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\assertNamedArgument;
 use function Chevere\Parameter\bool;
-use function Chevere\Parameter\cast;
 use function Chevere\Parameter\float;
 use function Chevere\Parameter\getType;
 use function Chevere\Parameter\int;
@@ -42,6 +41,7 @@ use function Chevere\Parameter\parametersFrom;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
+use function Chevere\Parameter\typed;
 use function Chevere\Parameter\validated;
 use function Chevere\Parameter\valMd;
 
@@ -376,23 +376,23 @@ final class FunctionsTest extends TestCase
         }
     }
 
-    public function testCast(): void
+    public function testTyped(): void
     {
         $value = 'string';
-        $cast = cast($value);
-        $this->assertSame($value, $cast->string());
+        $typed = typed($value);
+        $this->assertSame($value, $typed->string());
     }
 
-    public function testCastArray(): void
+    public function testTypedArray(): void
     {
         $value = [
             'foo' => 'bar',
         ];
-        $cast = cast($value, 'foo');
-        $this->assertSame('bar', $cast->string());
+        $typed = typed($value, 'foo');
+        $this->assertSame('bar', $typed->string());
     }
 
-    public function testCastNested(): void
+    public function testTypedNested(): void
     {
         $value = [
             'super' => [
@@ -401,21 +401,21 @@ final class FunctionsTest extends TestCase
             3 => 'co',
             'agac',
         ];
-        $cast = cast($value);
-        $this->assertSame($value, $cast->array());
-        $cast = cast($value, 'super');
+        $typed = typed($value);
+        $this->assertSame($value, $typed->array());
+        $typed = typed($value, 'super');
         $this->assertSame([
             'taldo' => null,
-        ], $cast->array());
-        $cast = cast($value, 'super', 'taldo');
-        $this->assertSame(null, $cast->mixed());
-        $cast = cast($value, 3);
-        $this->assertSame('co', $cast->string());
-        $cast = cast($value, 4);
-        $this->assertSame('agac', $cast->string());
+        ], $typed->array());
+        $typed = typed($value, 'super', 'taldo');
+        $this->assertSame(null, $typed->mixed());
+        $typed = typed($value, 3);
+        $this->assertSame('co', $typed->string());
+        $typed = typed($value, 4);
+        $this->assertSame('agac', $typed->string());
     }
 
-    public static function dataProviderCastNestedError(): array
+    public static function dataProviderTypedNestedError(): array
     {
         return [
             [1, BadMethodCallException::class],
@@ -423,11 +423,11 @@ final class FunctionsTest extends TestCase
         ];
     }
 
-    #[DataProvider('dataProviderCastNestedError')]
-    public function testCastNestedError(mixed $value, string $exception): void
+    #[DataProvider('dataProviderTypedNestedError')]
+    public function testTypedNestedError(mixed $value, string $exception): void
     {
         $this->expectException($exception);
-        $cast = cast($value, 'foo');
+        typed($value, 'foo');
     }
 
     public function testParameterAttr(): void

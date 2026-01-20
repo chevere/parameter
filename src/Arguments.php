@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
-use Chevere\Parameter\Interfaces\CastInterface;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
+use Chevere\Parameter\Interfaces\TypedInterface;
 use Chevere\Parameter\Traits\ArgumentsTrait;
 use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
@@ -64,7 +64,7 @@ final class Arguments implements ArgumentsInterface
         return $this->arguments[$name] ?? null;
     }
 
-    public function required(string $name): CastInterface
+    public function required(string $name): TypedInterface
     {
         if ($this->parameters()->optionalKeys()->contains($name)) {
             throw new InvalidArgumentException(
@@ -75,10 +75,10 @@ final class Arguments implements ArgumentsInterface
             );
         }
 
-        return new Cast($this->arguments[$name]);
+        return new Typed($this->arguments[$name]);
     }
 
-    public function optional(string $name): ?CastInterface
+    public function optional(string $name): ?TypedInterface
     {
         if ($this->parameters()->has($name)
             && ! $this->parameters()->optionalKeys()->contains($name)
@@ -92,7 +92,7 @@ final class Arguments implements ArgumentsInterface
         }
 
         if ($this->has($name)) {
-            return new Cast($this->arguments[$name]);
+            return new Typed($this->arguments[$name]);
         }
 
         return null;

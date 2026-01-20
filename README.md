@@ -205,7 +205,7 @@ $id = $arguments->get('id'); // 1
 
 ## Get argument value (typed)
 
-Use method `required()` to retrieve a explicit required argument value by name or position. It returns as `CastInterface`, enabling typed access to the value. The method `optional()` can be used to retrieve an optional argument value.
+Use method `required()` to retrieve a explicit required argument value by name or position. It returns as `TypedInterface`, enabling type-safe access to the value. The method `optional()` can be used to retrieve an optional argument value.
 
 ```php
 $id = $arguments->required('id')->int(); // 1

@@ -20,7 +20,6 @@ use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
-use Chevere\Parameter\Interfaces\CastInterface;
 use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\MixedParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
@@ -29,6 +28,7 @@ use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
+use Chevere\Parameter\Interfaces\TypedInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use InvalidArgumentException;
@@ -43,12 +43,12 @@ use Throwable;
 use function Chevere\Message\message;
 
 /**
- * Cast a variable to a CastInterface instance.
+ * Type-safe access for a variable.
  *
- * @param mixed $variable The variable to cast.
+ * @param mixed $variable The variable to type-safe access.
  * @param string|int ...$key The key to access in the array (array reduce)
  */
-function cast(mixed $variable, string|int ...$key): CastInterface
+function typed(mixed $variable, string|int ...$key): TypedInterface
 {
     if ($key !== []) {
         if (! is_array($variable)) {
@@ -74,7 +74,7 @@ function cast(mixed $variable, string|int ...$key): CastInterface
         $variable = array_reduce($key, $fn, $variable);
     }
 
-    return new Cast($variable);
+    return new Typed($variable);
 }
 
 function null(

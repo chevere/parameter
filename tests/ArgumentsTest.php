@@ -433,7 +433,7 @@ final class ArgumentsTest extends TestCase
         $this->assertSame($expected, $arguments->toArray());
     }
 
-    public function testCast(): void
+    public function testTyped(): void
     {
         $foo = 'foo';
         $var = true;
@@ -451,7 +451,7 @@ final class ArgumentsTest extends TestCase
         $arguments->optional($foo);
     }
 
-    public function testCastOptional(): void
+    public function testTypedOptional(): void
     {
         $foo = 'foo';
         $var = true;
