@@ -164,10 +164,23 @@ function castArguments(
     ParametersInterface|ParametersAccessInterface $parameters,
     array $arguments
 ): ArgumentsInterface {
+    return arguments($parameters, castValues($parameters, $arguments));
+}
+
+/**
+ * Returns the provided values casted to the defined parameter types.
+ *
+ * @param array<int|string, mixed> $values
+ * @return array<int|string, mixed>
+ */
+function castValues(
+    ParametersInterface|ParametersAccessInterface $parameters,
+    array $values
+): array {
     $return = [];
     $parameters = getParameters($parameters);
     $isVariadic = $parameters->isVariadic();
-    foreach ($arguments as $key => $value) {
+    foreach ($values as $key => $value) {
         $key = (string) $key;
         if ($parameters->has($key) === false) {
             if ($isVariadic) {
@@ -187,7 +200,7 @@ function castArguments(
         };
     }
 
-    return arguments($parameters, $return);
+    return $return;
 }
 
 function assertNamedArgument(
