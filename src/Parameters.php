@@ -127,7 +127,8 @@ final class Parameters implements ParametersInterface
         }
         $index = $new->index;
         foreach ($name as $key) {
-            if (! $new->requiredKeys->contains($key)) {
+            $pos = $new->requiredKeys->find($key);
+            if ($pos === null) {
                 throw new InvalidArgumentException(
                     (string) message(
                         'Parameter `%name%` is not required',
@@ -135,9 +136,8 @@ final class Parameters implements ParametersInterface
                     )
                 );
             }
-            $parameter = $new->get($key);
-            $new->remove($key);
-            $new->addProperty('optionalKeys', $key, $parameter);
+            $new->requiredKeys = $new->requiredKeys->withRemove($pos);
+            $new->optionalKeys = $new->optionalKeys->withPush($key);
         }
         $new->index = $index;
 
@@ -152,7 +152,8 @@ final class Parameters implements ParametersInterface
         }
         $index = $new->index;
         foreach ($name as $key) {
-            if (! $new->optionalKeys()->contains($key)) {
+            $pos = $new->optionalKeys->find($key);
+            if ($pos === null) {
                 throw new InvalidArgumentException(
                     (string) message(
                         'Parameter `%name%` is not optional',
@@ -160,9 +161,8 @@ final class Parameters implements ParametersInterface
                     )
                 );
             }
-            $parameter = $new->get($key);
-            $new->remove($key);
-            $new->addProperty('requiredKeys', $key, $parameter);
+            $new->optionalKeys = $new->optionalKeys->withRemove($pos);
+            $new->requiredKeys = $new->requiredKeys->withPush($key);
         }
         $new->index = $index;
 
