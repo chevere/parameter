@@ -23,6 +23,7 @@ use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
 use Chevere\Parameter\Interfaces\ParameterTypedInterface;
 use InvalidArgumentException;
+use Iterator;
 use OverflowException;
 use function Chevere\Message\message;
 
@@ -39,12 +40,12 @@ final class Parameters implements ParametersInterface
     private Map $map;
 
     /**
-     * @var Vector<string>
+     * @var VectorInterface<string>
      */
     private VectorInterface $requiredKeys;
 
     /**
-     * @var Vector<string>
+     * @var VectorInterface<string>
      */
     private VectorInterface $optionalKeys;
 
@@ -53,11 +54,17 @@ final class Parameters implements ParametersInterface
     private bool $isVariadic = false;
 
     /**
+     * @var VectorInterface<string>
+     */
+    private VectorInterface $index;
+
+    /**
      * @param ParameterInterface $parameter Required parameters
      */
     public function __construct(ParameterInterface ...$parameter)
     {
         $this->map = new Map();
+        $this->index = new Vector();
         $this->requiredKeys = new Vector();
         $this->optionalKeys = new Vector();
         foreach ($parameter as $name => $item) {
@@ -69,6 +76,18 @@ final class Parameters implements ParametersInterface
     public function __invoke(mixed ...$argument): ArgumentsInterface
     {
         return new Arguments($this, $argument);
+    }
+
+    public function keys(): array
+    {
+        return $this->index->toArray();
+    }
+
+    public function getIterator(): Iterator
+    {
+        foreach ($this->index as $key) {
+            yield $key => $this->map->get($key);
+        }
     }
 
     public function withIsVariadic(bool $flag = true): ParametersInterface
@@ -116,8 +135,10 @@ final class Parameters implements ParametersInterface
                 );
             }
             $parameter = $new->get($key);
+            $index = $new->index;
             $new->remove($key);
             $new->addProperty('optionalKeys', $key, $parameter);
+            $new->index = $index;
         }
 
         return $new;
@@ -248,12 +269,23 @@ final class Parameters implements ParametersInterface
 
     private function remove(string ...$name): void
     {
+        if ($name === []) {
+            return;
+        }
         $this->map = $this->map->without(...$name);
         $requiredDiff = array_diff($this->requiredKeys->toArray(), $name);
         $optionalDiff = array_diff($this->optionalKeys->toArray(), $name);
         $this->requiredKeys = new Vector(...$requiredDiff);
         $this->optionalKeys = new Vector(...$optionalDiff);
         $this->assertMinimumOptional();
+        $positions = [];
+        foreach ($name as $key) {
+            $pos = $this->index->find($key);
+            if ($pos !== null) {
+                $positions[] = $pos;
+            }
+        }
+        $this->index = $this->index->withRemove(...$positions);
     }
 
     private function assertMinimumOptional(): void
@@ -280,5 +312,6 @@ final class Parameters implements ParametersInterface
         }
         $this->{$property} = $this->{$property}->withPush($name);
         $this->map = $this->map->withPut($name, $parameter);
+        $this->index = $this->index->withPush($name);
     }
 }

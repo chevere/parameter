@@ -382,15 +382,15 @@ final class ParametersTest extends TestCase
             foo: string(),
             bar: int()
         );
-        $parametersWith = $parameters->withMakeOptional('foo');
-        $this->assertNotSame($parameters, $parametersWith);
-        $this->assertCount(2, $parametersWith);
-        $this->assertCount(1, $parametersWith->optionalKeys());
-        $this->assertCount(1, $parametersWith->requiredKeys());
-        $this->assertTrue($parametersWith->optionalKeys()->contains('foo'));
-        $this->assertTrue($parametersWith->requiredKeys()->contains('bar'));
+        $with = $parameters->withMakeOptional('foo');
+        $this->assertNotSame($parameters, $with);
+        $this->assertCount(2, $with);
+        $this->assertSame(['foo'], $with->optionalKeys()->toArray());
+        $this->assertSame(['bar'], $with->requiredKeys()->toArray());
+        $this->assertSame(['foo', 'bar'], $with->keys());
+        $this->assertSame(['foo', 'bar'], array_keys(iterator_to_array($with)));
         $this->expectException(InvalidArgumentException::class);
-        $parametersWith->withMakeOptional('foo');
+        $with->withMakeOptional('foo');
     }
 
     public function testWithMakeRequired(): void
@@ -398,15 +398,15 @@ final class ParametersTest extends TestCase
         $parameters = (new Parameters())
             ->withOptional('foo', string())
             ->withOptional('bar', int());
-        $parametersWith = $parameters->withMakeRequired('bar');
-        $this->assertNotSame($parameters, $parametersWith);
-        $this->assertCount(2, $parametersWith);
-        $this->assertCount(1, $parametersWith->optionalKeys());
-        $this->assertCount(1, $parametersWith->requiredKeys());
-        $this->assertTrue($parametersWith->optionalKeys()->contains('foo'));
-        $this->assertTrue($parametersWith->requiredKeys()->contains('bar'));
+        $with = $parameters->withMakeRequired('bar');
+        $this->assertNotSame($parameters, $with);
+        $this->assertCount(2, $with);
+        $this->assertSame(['foo'], $with->optionalKeys()->toArray());
+        $this->assertSame(['bar'], $with->requiredKeys()->toArray());
+        $this->assertSame(['foo', 'bar'], $with->keys());
+        $this->assertSame(['foo', 'bar'], array_keys(iterator_to_array($with)));
         $this->expectException(InvalidArgumentException::class);
-        $parametersWith->withMakeRequired('bar');
+        $with->withMakeRequired('bar');
     }
 
     public function testWithMerge(): void
