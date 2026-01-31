@@ -125,6 +125,7 @@ final class Parameters implements ParametersInterface
         if ($name === []) {
             $name = $this->requiredKeys->toArray();
         }
+        $index = $new->index;
         foreach ($name as $key) {
             if (! $new->requiredKeys->contains($key)) {
                 throw new InvalidArgumentException(
@@ -135,11 +136,10 @@ final class Parameters implements ParametersInterface
                 );
             }
             $parameter = $new->get($key);
-            $index = $new->index;
             $new->remove($key);
             $new->addProperty('optionalKeys', $key, $parameter);
-            $new->index = $index;
         }
+        $new->index = $index;
 
         return $new;
     }
@@ -150,6 +150,7 @@ final class Parameters implements ParametersInterface
         if ($name === []) {
             $name = $this->optionalKeys->toArray();
         }
+        $index = $new->index;
         foreach ($name as $key) {
             if (! $new->optionalKeys()->contains($key)) {
                 throw new InvalidArgumentException(
@@ -163,6 +164,7 @@ final class Parameters implements ParametersInterface
             $new->remove($key);
             $new->addProperty('requiredKeys', $key, $parameter);
         }
+        $new->index = $index;
 
         return $new;
     }
