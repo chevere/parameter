@@ -382,6 +382,9 @@ function reflectionToReturn(
     $attributes = $reflection->getAttributes(ReturnAttr::class);
     if ($attributes === []) {
         $returnType = (string) $reflection->getReturnType();
+        if ($returnType === '') {
+            return mixed();
+        }
 
         return toParameter($returnType);
     }

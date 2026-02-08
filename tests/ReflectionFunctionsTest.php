@@ -27,7 +27,7 @@ use function Chevere\Parameter\reflectionToReturn;
 
 final class ReflectionFunctionsTest extends TestCase
 {
-    public function testAnonClassReturn(): void
+    public function testReflectionToReturnAnonClass(): void
     {
         $class = new class() {
             #[ReturnAttr(
@@ -47,7 +47,7 @@ final class ReflectionFunctionsTest extends TestCase
         $return($object->wea(1));
     }
 
-    public function testAnonClassParameters(): void
+    public function testReflectionToParametersAnonClass(): void
     {
         $class = new class() {
             public function wea(
@@ -67,7 +67,7 @@ final class ReflectionFunctionsTest extends TestCase
         ]);
     }
 
-    public function testAnonFunctionReturn(): void
+    public function testReflectionToReturnAnon(): void
     {
         $function =
             #[ReturnAttr(
@@ -84,7 +84,7 @@ final class ReflectionFunctionsTest extends TestCase
         $return($function(10));
     }
 
-    public static function dataProviderFunctionToReturnUses(): array
+    public static function dataProviderReflectionToReturnUses(): array
     {
         return [
             ['Chevere\Tests\src\usesAttr'],
@@ -92,8 +92,8 @@ final class ReflectionFunctionsTest extends TestCase
         ];
     }
 
-    #[DataProvider('dataProviderFunctionToReturnUses')]
-    public function testFunctionToReturnUses(string $function): void
+    #[DataProvider('dataProviderReflectionToReturnUses')]
+    public function testReflectionToReturnUses(string $function): void
     {
         $this->expectNotToPerformAssertions();
         $reflection = new ReflectionFunction($function);
@@ -101,7 +101,7 @@ final class ReflectionFunctionsTest extends TestCase
         $return->assertCompatible(bool());
     }
 
-    public function testWithDefaultError(): void
+    public function testReflectionToParametersWithDefaultError(): void
     {
         $function = 'Chevere\Tests\src\withDefaultError';
         $reflection = new ReflectionFunction($function);
@@ -112,5 +112,15 @@ final class ReflectionFunctionsTest extends TestCase
             PLAIN
         );
         reflectionToParameters($reflection);
+    }
+
+    public function testReflectionToReturnDefaultMixed(): void
+    {
+        $closure = function () {
+            return 'foo';
+        };
+        $reflection = new ReflectionFunction($closure);
+        $return = reflectionToReturn($reflection);
+        $this->assertSame('foo', $return($closure()));
     }
 }
