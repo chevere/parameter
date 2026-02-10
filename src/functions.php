@@ -432,7 +432,11 @@ function reflectionToReturn(
     if ($attributes === []) {
         $returnType = (string) $reflection->getReturnType();
 
-        return toParameter($returnType);
+        return match ($returnType) {
+            '' => mixed(),
+            'void' => null(),
+            default => toParameter($returnType),
+        };
     }
     /** @var ReflectionAttribute<ReturnAttr> $attribute */
     $attribute = $attributes[0];
