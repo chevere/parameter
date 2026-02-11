@@ -18,7 +18,9 @@
 
 ## Summary
 
-Parameter is a library for building dynamic, validated parameters with type-safe rules and schema introspection. It enables you to define rich validation constraints for any PHP type — from simple scalars to deeply nested arrays — using either helper functions or PHP 8 attributes, eliminating boilerplate validation logic across your codebase. See [chevere/action](https://github.com/chevere/action) for our object-oriented convention around this package.
+**Chevere Parameter** is a library for building dynamic, validated parameters with type-safe rules and schema introspection. It enables you to define rich validation constraints for any PHP type, from simple scalars to deeply nested arrays, using either helper functions or attributes, eliminating boilerplate validation logic across your codebase.
+
+See [chevere/action](https://github.com/chevere/action) for our object-oriented convention around this package.
 
 ## Installing
 
@@ -88,9 +90,9 @@ $wage = validated('wageWeekWA', 1628, 40.0);
 
 ## Why Parameter?
 
-**Replace scattered validation with declarative rules.** Instead of writing `if`/`throw` blocks for every function, define constraints once using expressive helpers or native PHP attributes. Parameter turns validation into a first-class concern.
+**Replace scattered validation with declarative rules.** Instead of writing `if`/`throw` blocks for every function, define constraints once using expressive helpers or attributes. Parameter turns validation into a first-class concern.
 
-**Type safety beyond PHP's type system.** PHP enforces types, but not ranges, patterns, or allowed values. Parameter bridges that gap — an `int(min: 1, max: 100)` is more than `int`.
+**Type safety beyond PHP's type system.** PHP enforces types, but not ranges, patterns, or allowed values. Parameter bridges that gap, an `int(min: 1, max: 100)` is more than `int`.
 
 **Schema introspection.** Every parameter exposes its rules via `schema()`, enabling you to generate documentation, API contracts, or UI form definitions from the same source of truth.
 
@@ -190,7 +192,7 @@ $maybeId(null); // null
 
 A Parameter is an object implementing `ParameterInterface`. Every parameter can define a `description`, `default` value, and `sensitive` flag, plus additional validation rules depending on the type.
 
-Parameters can be created using either helper functions or PHP attributes — both accept the same arguments.
+Parameters can be created using either helper functions or PHP attributes, both accept the same arguments.
 
 ### Immutability
 
@@ -768,7 +770,7 @@ use Chevere\Parameter\Attributes\IterableAttr;
 
 ## Inline validation
 
-Inline validation is the direct use of parameter functions to validate values. Create the parameter, invoke it with the value — done.
+Inline validation is the direct use of parameter functions to validate values. Create the parameter and then invoke it with the value.
 
 ```php
 use function Chevere\Parameter\string;
@@ -813,7 +815,7 @@ Use PHP 8 attributes to declare validation rules directly on function/method sig
 
 ### Attribute delegated validation
 
-Call `validated()` to validate both arguments and return value against attribute rules. The function is called and its result is validated — all in one step.
+Call `validated()` to validate both arguments and return value against attribute rules.
 
 ```php
 use Chevere\Parameter\Attributes\IntAttr;
