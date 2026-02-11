@@ -1412,7 +1412,7 @@ $parameters(base: 10); // validates
 
 ## Documentation
 
-Documentation is available at [chevere.org](https://chevere.org/packages/parameter).
+Documentation is available at [chevere.org/packages/parameter](https://chevere.org/packages/parameter).
 
 ## License
 

@@ -1,6 +1,6 @@
 {
     "name": "chevere/parameter",
-    "description": "Library around parameter-argument",
+    "description": "Dynamic parameter-argument validation for PHP with rich type constraints, attributes, and schema introspection.",
     "homepage": "https://chevere.org",
     "type": "library",
     "license": "Apache-2.0",
