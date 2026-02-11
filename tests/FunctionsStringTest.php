@@ -114,6 +114,14 @@ final class FunctionsStringTest extends TestCase
         $parameter('9999-99-99 999:99:99');
     }
 
+    public function testAssertDatetimeFSP(): void
+    {
+        $parameter = datetime(precision: 2);
+        $parameter('1000-01-01 23:59:59.100');
+        $this->expectException(InvalidArgumentException::class);
+        $parameter('1000-01-01 23:59:59.100');
+    }
+
     public function testBoolString(): void
     {
         $string = boolString();
