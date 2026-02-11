@@ -87,17 +87,12 @@ final class Type implements TypeInterface
 
     private function setPrimitive(): void
     {
-        if (in_array($this->type, self::TYPE_ARGUMENTS, true)) {
-            $this->primitive = $this->type;
-
-            return;
-        }
-
-        if (class_exists($this->type)) {
-            $this->primitive = self::PRIMITIVE_CLASS_NAME;
-        } elseif (interface_exists($this->type)) {
-            $this->primitive = self::PRIMITIVE_INTERFACE_NAME;
-        }
+        $this->primitive = match (true) {
+            in_array($this->type, self::TYPE_ARGUMENTS, true) => $this->type,
+            class_exists($this->type) => self::PRIMITIVE_CLASS_NAME,
+            interface_exists($this->type) => self::PRIMITIVE_INTERFACE_NAME,
+            default => '',
+        };
     }
 
     private function assertHasPrimitive(): void

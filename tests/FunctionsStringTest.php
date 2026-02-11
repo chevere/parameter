@@ -117,7 +117,7 @@ final class FunctionsStringTest extends TestCase
     public function testAssertDatetimeFSP(): void
     {
         $parameter = datetime(precision: 2);
-        $parameter('1000-01-01 23:59:59.100');
+        $parameter('1000-01-01 23:59:59.10');
         $this->expectException(InvalidArgumentException::class);
         $parameter('1000-01-01 23:59:59.100');
     }

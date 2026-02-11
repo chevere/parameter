@@ -100,16 +100,14 @@ final class Arguments implements ArgumentsInterface
 
     public function nested(string $key, string ...$lookup): ArgumentsInterface
     {
-        $this->parameters()->assertHas($key);
-        $currentKey = $key;
-        $currentParameter = $this->parameters()->get($currentKey);
-        $currentArgument = $this->arguments[$currentKey] ?? null;
+        $currentParameter = $this->parameters()->get($key);
+        $currentArgument = $this->arguments[$key] ?? null;
         foreach ($lookup as $nestedKey) {
             if (! ($currentParameter instanceof ParametersAccessInterface)) {
                 throw new TypeError(
                     (string) message(
                         'Parameter `%name%` is not a nested set of parameters',
-                        name: $currentKey
+                        name: $key
                     )
                 );
             }
@@ -119,7 +117,7 @@ final class Arguments implements ArgumentsInterface
                     (string) message(
                         'Key `%key%` not found in nested parameter `%parent%`',
                         key: $nestedKey,
-                        parent: $currentKey
+                        parent: $key
                     )
                 );
             }
@@ -128,11 +126,11 @@ final class Arguments implements ArgumentsInterface
                     (string) message(
                         'Key `%key%` not found in nested argument `%parent%`',
                         key: $nestedKey,
-                        parent: $currentKey
+                        parent: $key
                     )
                 );
             }
-            $currentKey = $nestedKey;
+            $key = $nestedKey;
             $currentParameter = $parameters->get($nestedKey);
             $currentArgument = $currentArgument[$nestedKey];
         }
@@ -140,7 +138,7 @@ final class Arguments implements ArgumentsInterface
             throw new TypeError(
                 (string) message(
                     'Argument `%name%` is not a nested set of arguments',
-                    name: $currentKey
+                    name: $key
                 )
             );
         }
@@ -154,7 +152,7 @@ final class Arguments implements ArgumentsInterface
         throw new TypeError(
             (string) message(
                 'Parameter `%name%` is not a nested set of parameters',
-                name: $currentKey
+                name: $key
             )
         );
     }

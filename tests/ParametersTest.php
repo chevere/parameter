@@ -192,6 +192,14 @@ final class ParametersTest extends TestCase
             ->withOptional('x', string())
             ->withOptional('y', string())
             ->withOptional('z', string());
+        $index = $parameters->keys();
+        $requiredKeys = $parameters->requiredKeys();
+        $optionalKeys = $parameters->optionalKeys();
+        $without = $parameters->without();
+        $this->assertNotSame($parameters, $without);
+        $this->assertSame($index, $without->keys());
+        $this->assertSame($requiredKeys, $without->requiredKeys());
+        $this->assertSame($optionalKeys, $without->optionalKeys());
         $parametersWith = $parameters->without('a', 'y');
         $this->assertNotSame($parameters, $parametersWith);
         $this->assertCount(4, $parametersWith);
