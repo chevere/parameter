@@ -20,79 +20,79 @@ use ReflectionFunction;
 use ReflectionMethod;
 use Throwable;
 use function Chevere\Message\message;
-use function Chevere\Parameter\parameterAttr;
+use function Chevere\Parameter\parameterAttribute;
 use function Chevere\Parameter\reflectionToParameters;
 
-function stringAttr(string $name): StringAttr
+function PString(string $name): PString
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function enumAttr(string $name): EnumAttr
+function PEnum(string $name): PEnum
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function intAttr(string $name): IntAttr
+function PInt(string $name): PInt
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function floatAttr(string $name): FloatAttr
+function PFloat(string $name): PFloat
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function boolAttr(string $name): BoolAttr
+function PBool(string $name): PBool
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function nullAttr(string $name): NullAttr
+function PNull(string $name): PNull
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function arrayAttr(string $name): ArrayAttr
+function PArray(string $name): PArray
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function iteratorAttr(string $name): IterableAttr
+function PIterator(string $name): PIterable
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
-function unionAttr(string $name): UnionAttr
+function PUnion(string $name): PUnion
 {
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
 
     // @phpstan-ignore-next-line
-    return parameterAttr($name, $caller['function'], $caller['class'] ?? '');
+    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
 }
 
 /**
@@ -188,7 +188,7 @@ function assertArguments(string ...$name): void
 }
 
 /**
- * Assert return value against ReturnAttr rules.
+ * Assert return value against ReturnT rules.
  *
  * @param mixed $value Return value to assert
  */
@@ -201,10 +201,10 @@ function assertReturn(mixed $value = null): mixed
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
-    $attribute = $reflection->getAttributes(ReturnAttr::class)[0]
+    $attribute = $reflection->getAttributes(PReturn::class)[0]
         ?? null;
-    $returnAttr = $attribute?->newInstance()
-        ?? new ReturnAttr(new MixedAttr());
+    $ReturnT = $attribute?->newInstance()
+        ?? new PReturn(new PMixed());
 
-    return $returnAttr($value);
+    return $ReturnT($value);
 }

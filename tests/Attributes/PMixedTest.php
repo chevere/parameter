@@ -13,25 +13,16 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\ArrayAttr;
-use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\PMixed;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\arrayp;
-use function Chevere\Parameter\int;
+use function Chevere\Parameter\mixed;
 
-final class ArrayAttrTest extends TestCase
+final class PMixedTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = arrayp(
-            key: int()
-        );
-        $attr = new ArrayAttr(
-            key: new IntAttr()
-        );
+        $parameter = mixed();
+        $attr = new PMixed();
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke([
-            'key' => 0,
-        ]);
     }
 }

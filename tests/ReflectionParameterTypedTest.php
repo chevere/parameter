@@ -78,9 +78,9 @@ final class ReflectionParameterTypedTest extends TestCase
         $this->assertInstanceOf(UnionParameterInterface::class, $reflected);
     }
 
-    public function testUnionAttributeError(): void
+    public function testTUnionibuteError(): void
     {
-        $parameter = $this->getReflection('useWrongUnionAttr');
+        $parameter = $this->getReflection('useWrongTUnion');
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage(
             <<<PLAIN

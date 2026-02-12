@@ -14,38 +14,29 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\ArrayParameter;
-use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
+use function Chevere\Parameter\enum;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class ArrayAttr implements ParameterAttributeInterface
+class PEnum implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private ArrayParameterInterface $parameter;
+    private StringParameterInterface $parameter;
 
     public function __construct(
-        ParameterAttributeInterface ...$parameterAttribute,
+        string $string,
+        string ...$strings,
     ) {
-        $parameter = new ArrayParameter();
-        foreach ($parameterAttribute as $name => $attribute) {
-            $parameter = $parameter
-                ->withRequired(
-                    ...[
-                        $name => $attribute->parameter(),
-                    ]
-                );
-        }
-        $this->parameter = $parameter;
+        $this->parameter = enum($string, ...$strings);
     }
 
-    // @phpstan-ignore-next-line
-    public function __invoke(array $array): array
+    public function __invoke(string $string): string
     {
-        return $this->parameter->__invoke($array);
+        return $this->parameter->__invoke($string);
     }
 
     public function parameter(): ParameterInterface

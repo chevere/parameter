@@ -13,19 +13,23 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\NullAttr;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\PIterable;
 use PHPUnit\Framework\TestCase;
-use TypeError;
-use function Chevere\Parameter\null;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\iterable;
 
-final class NullAttrTest extends TestCase
+final class PIterableTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = null();
-        $attr = new NullAttr();
+        $parameter = iterable(
+            int()
+        );
+        $attr = new PIterable(
+            new PInt()
+        );
         $this->assertEquals($parameter, $attr->parameter());
-        $this->expectException(TypeError::class);
-        $attr->__invoke(true);
+        $attr->__invoke([0]);
     }
 }

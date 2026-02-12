@@ -14,46 +14,36 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\FloatParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\float;
+use function Chevere\Parameter\string;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class FloatAttr implements ParameterAttributeInterface
+class PString implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private FloatParameterInterface $parameter;
+    private StringParameterInterface $parameter;
 
-    /**
-     * @param float[] $accept
-     * @param float[] $reject
-     */
     public function __construct(
+        string $pattern = '',
         string $description = '',
-        ?float $default = null,
-        ?float $min = null,
-        ?float $max = null,
-        array $accept = [],
-        array $reject = [],
+        ?string $default = null,
         bool $sensitive = false
     ) {
-        $this->parameter = float(
+        $this->parameter = string(
+            regex: $pattern,
             description: $description,
             default: $default,
-            min: $min,
-            max: $max,
-            accept: $accept,
-            reject: $reject,
             sensitive: $sensitive
         );
     }
 
-    public function __invoke(float $float): float
+    public function __invoke(string $string): string
     {
-        return $this->parameter->__invoke($float);
+        return $this->parameter->__invoke($string);
     }
 
     public function parameter(): ParameterInterface

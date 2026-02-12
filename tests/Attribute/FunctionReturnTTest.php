@@ -19,7 +19,7 @@ use function Chevere\Tests\src\noUsesAttr;
 use function Chevere\Tests\src\usesAttr;
 use function Chevere\Tests\src\usesSensitiveParameterAttr;
 
-final class FunctionReturnAttrTest extends TestCase
+final class FunctionReturnTTest extends TestCase
 {
     public function testUsesAttr(): void
     {

@@ -39,7 +39,7 @@ use function Chevere\Parameter\iterable;
 use function Chevere\Parameter\mixed;
 use function Chevere\Parameter\null;
 use function Chevere\Parameter\object;
-use function Chevere\Parameter\parameterAttr;
+use function Chevere\Parameter\parameterAttribute;
 use function Chevere\Parameter\parameters;
 use function Chevere\Parameter\parametersFrom;
 use function Chevere\Parameter\string;
@@ -439,7 +439,7 @@ final class FunctionsTest extends TestCase
         $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage("Parameter `foo` doesn't exists");
-        parameterAttr('foo', $caller['function'], $caller['class'] ?? '');
+        parameterAttribute('foo', $caller['function'], $caller['class'] ?? '');
     }
 
     public function testValidatedParameterError(): void

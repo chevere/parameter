@@ -14,34 +14,37 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\BoolParameterInterface;
+use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\bool;
+use function Chevere\Parameter\iterable;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class BoolAttr implements ParameterAttributeInterface
+class PIterable implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private BoolParameterInterface $parameter;
+    private IterableParameterInterface $parameter;
 
     public function __construct(
+        ParameterAttributeInterface $V,
+        ?ParameterAttributeInterface $K = null,
         string $description = '',
-        ?bool $default = null,
         bool $sensitive = false
     ) {
-        $this->parameter = bool(
+        $this->parameter = iterable(
+            V: $V->parameter(),
+            K: $K?->parameter(),
             description: $description,
-            default: $default,
             sensitive: $sensitive
         );
     }
 
-    public function __invoke(bool $bool): bool
+    // @phpstan-ignore-next-line
+    public function __invoke(iterable $array): iterable
     {
-        return $this->parameter->__invoke($bool);
+        return $this->parameter->__invoke($array);
     }
 
     public function parameter(): ParameterInterface

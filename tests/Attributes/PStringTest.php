@@ -13,17 +13,17 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\FloatAttr;
+use Chevere\Parameter\Attributes\PString;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\float;
+use function Chevere\Parameter\string;
 
-final class FloatAttrTest extends TestCase
+final class PStringTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = float();
-        $attr = new FloatAttr();
+        $parameter = string();
+        $attr = new PString();
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke(1.5);
+        $attr->__invoke('2');
     }
 }

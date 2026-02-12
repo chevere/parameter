@@ -13,23 +13,28 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\IterableAttr;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\PNull;
+use Chevere\Parameter\Attributes\PUnion;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\int;
-use function Chevere\Parameter\iterable;
+use function Chevere\Parameter\null;
+use function Chevere\Parameter\union;
 
-final class IterableAttrTest extends TestCase
+final class PUnionTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = iterable(
-            int()
+        $parameter = union(
+            int(),
+            null()
         );
-        $attr = new IterableAttr(
-            new IntAttr()
+        $attr = new PUnion(
+            new PInt(),
+            new PNull()
         );
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke([0]);
+        $attr->__invoke(null);
+        $attr->__invoke(1);
     }
 }

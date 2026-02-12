@@ -13,23 +13,23 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\BoolAttr;
+use Chevere\Parameter\Attributes\PBool;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\bool;
 
-final class BoolAttrTest extends TestCase
+final class PBoolTest extends TestCase
 {
     public function testConstruct(): void
     {
         $parameter = bool();
-        $attr = new BoolAttr();
+        $attr = new PBool();
         $this->assertEquals($parameter, $attr->parameter());
     }
 
     public function testWithSensitive(): void
     {
         $parameter = bool(sensitive: true);
-        $attr = new BoolAttr();
+        $attr = new PBool();
         $with = $attr->withIsSensitive();
         $this->assertNotEquals($attr, $with);
         $this->assertEquals($parameter, $with->parameter());

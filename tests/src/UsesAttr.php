@@ -13,64 +13,63 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\src;
 
-use Chevere\Parameter\Attributes\ArrayAttr;
-use Chevere\Parameter\Attributes\BoolAttr;
-use Chevere\Parameter\Attributes\CallableAttr;
-use Chevere\Parameter\Attributes\EnumAttr;
-use Chevere\Parameter\Attributes\FloatAttr;
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\IterableAttr;
-use Chevere\Parameter\Attributes\NullAttr;
-use Chevere\Parameter\Attributes\ReturnAttr;
-use Chevere\Parameter\Attributes\StringAttr;
-use Chevere\Parameter\Attributes\UnionAttr;
+use Chevere\Parameter\Attributes\PArray;
+use Chevere\Parameter\Attributes\PBool;
+use Chevere\Parameter\Attributes\PCallable;
+use Chevere\Parameter\Attributes\PEnum;
+use Chevere\Parameter\Attributes\PFloat;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\PIterable;
+use Chevere\Parameter\Attributes\PNull;
+use Chevere\Parameter\Attributes\PReturn;
+use Chevere\Parameter\Attributes\PString;
+use Chevere\Parameter\Attributes\PUnion;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use function Chevere\Parameter\Attributes\arrayArguments;
-use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\assertArguments;
 use function Chevere\Parameter\Attributes\assertReturn;
-use function Chevere\Parameter\Attributes\boolAttr;
-use function Chevere\Parameter\Attributes\enumAttr;
-use function Chevere\Parameter\Attributes\floatAttr;
-use function Chevere\Parameter\Attributes\intAttr;
-use function Chevere\Parameter\Attributes\iteratorAttr;
-use function Chevere\Parameter\Attributes\nullAttr;
-use function Chevere\Parameter\Attributes\returnAttr;
-use function Chevere\Parameter\Attributes\stringAttr;
-use function Chevere\Parameter\Attributes\unionAttr;
+use function Chevere\Parameter\Attributes\PArray;
+use function Chevere\Parameter\Attributes\PBool;
+use function Chevere\Parameter\Attributes\PEnum;
+use function Chevere\Parameter\Attributes\PFloat;
+use function Chevere\Parameter\Attributes\PInt;
+use function Chevere\Parameter\Attributes\PIterator;
+use function Chevere\Parameter\Attributes\PNull;
+use function Chevere\Parameter\Attributes\PString;
+use function Chevere\Parameter\Attributes\PUnion;
 use function Chevere\Parameter\int;
 
 final class UsesAttr
 {
-    #[ReturnAttr(
-        new CallableAttr(__CLASS__ . '::return')
+    #[PReturn(
+        new PCallable(__CLASS__ . '::return')
     )]
     public function __construct(
-        #[StringAttr('/^[A-Za-z]+$/')]
+        #[PString('/^[A-Za-z]+$/')]
         string $name = 'Test',
-        #[IntAttr(min: 1, max: 100)]
+        #[PInt(min: 1, max: 100)]
         int $age = 12,
-        #[ArrayAttr(
-            id: new CallableAttr(__CLASS__ . '::callable'),
+        #[PArray(
+            id: new PCallable(__CLASS__ . '::callable'),
         )]
         array $cols = [
             'id' => 1,
         ],
-        #[IterableAttr(
-            new StringAttr('/^[A-Za-z]+$/'),
+        #[PIterable(
+            new PString('/^[A-Za-z]+$/'),
         )]
         iterable $tags = ['Chevere', 'Chevere', 'Chevere', 'Uh'],
-        #[BoolAttr()]
+        #[PBool()]
         bool $flag = false,
-        #[FloatAttr(min: 0)]
+        #[PFloat(min: 0)]
         float $amount = 0,
-        #[NullAttr()]
+        #[PNull()]
         mixed $null = null,
-        #[EnumAttr('test', 'value')]
+        #[PEnum('test', 'value')]
         string $enum = 'value',
-        #[UnionAttr(
-            new IntAttr(min: 1),
-            new StringAttr('/^[A-Za-z]+$/'),
+        #[PUnion(
+            new PInt(min: 1),
+            new PString('/^[A-Za-z]+$/'),
         )]
         int|string $union = 1,
     ) {
@@ -83,16 +82,16 @@ final class UsesAttr
         // Pick many
         assertArguments('tags', 'flag', 'amount');
         // Get attribute, validate and return
-        $name = stringAttr('name')($name);
-        $age = intAttr('age')($age);
-        $cols = arrayAttr('cols')($cols);
+        $name = PString('name')($name);
+        $age = PInt('age')($age);
+        $cols = PArray('cols')($cols);
         $id = arrayArguments('cols')->required('id')->int();
-        $tags = iteratorAttr('tags')($tags);
-        $flag = boolAttr('flag')($flag);
-        $amount = floatAttr('amount')($amount);
-        $null = nullAttr('null')($null);
-        $enum = enumAttr('enum')($enum);
-        $union = unionAttr('union')($union);
+        $tags = PIterator('tags')($tags);
+        $flag = PBool('flag')($flag);
+        $amount = PFloat('amount')($amount);
+        $null = PNull('null')($null);
+        $enum = PEnum('enum')($enum);
+        $union = PUnion('union')($union);
         // Assert return
         assertReturn($id);
     }
@@ -107,8 +106,8 @@ final class UsesAttr
         return int();
     }
 
-    #[ReturnAttr(
-        new IntAttr(min: 0, max: 5)
+    #[PReturn(
+        new PInt(min: 0, max: 5)
     )]
     public function run(int $int): int
     {

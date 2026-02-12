@@ -13,19 +13,17 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Attributes\PInt;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\int;
 
-final class ReturnAttrTest extends TestCase
+final class PIntTest extends TestCase
 {
     public function testConstruct(): void
     {
         $parameter = int();
-        $attr = new ReturnAttr(
-            new IntAttr()
-        );
+        $attr = new PInt();
         $this->assertEquals($parameter, $attr->parameter());
+        $attr->__invoke(0);
     }
 }

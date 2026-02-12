@@ -14,29 +14,34 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
+use Chevere\Parameter\Interfaces\BoolParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\enum;
+use function Chevere\Parameter\bool;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class EnumAttr implements ParameterAttributeInterface
+class PBool implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private StringParameterInterface $parameter;
+    private BoolParameterInterface $parameter;
 
     public function __construct(
-        string $string,
-        string ...$strings,
+        string $description = '',
+        ?bool $default = null,
+        bool $sensitive = false
     ) {
-        $this->parameter = enum($string, ...$strings);
+        $this->parameter = bool(
+            description: $description,
+            default: $default,
+            sensitive: $sensitive
+        );
     }
 
-    public function __invoke(string $string): string
+    public function __invoke(bool $bool): bool
     {
-        return $this->parameter->__invoke($string);
+        return $this->parameter->__invoke($bool);
     }
 
     public function parameter(): ParameterInterface

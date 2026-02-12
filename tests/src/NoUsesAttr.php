@@ -17,16 +17,9 @@ use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Throwable;
 use function Chevere\Parameter\Attributes\arrayArguments;
-use function Chevere\Parameter\Attributes\arrayAttr;
 use function Chevere\Parameter\Attributes\assertArguments;
 use function Chevere\Parameter\Attributes\assertReturn;
-use function Chevere\Parameter\Attributes\boolAttr;
-use function Chevere\Parameter\Attributes\enumAttr;
-use function Chevere\Parameter\Attributes\floatAttr;
-use function Chevere\Parameter\Attributes\intAttr;
-use function Chevere\Parameter\Attributes\iteratorAttr;
-use function Chevere\Parameter\Attributes\nullAttr;
-use function Chevere\Parameter\Attributes\stringAttr;
+use function Chevere\Parameter\Attributes\PString;
 use function PHPUnit\Framework\assertSame;
 
 final class NoUsesAttr
@@ -64,21 +57,21 @@ final class NoUsesAttr
 
         // Get attribute, validate and return
         try {
-            $name = stringAttr('name')($name);
+            $name = PString('name')($name);
         } catch (Throwable $e) {
             assertSame(
                 'No `' . ParameterAttributeInterface::class . '` attribute for parameter `name`',
                 $e->getMessage()
             );
         }
-        // $age = intAttr('age')($age);
-        // $cols = arrayAttr('cols')($cols);
+        // $age = PInt('age')($age);
+        // $cols = PArray('cols')($cols);
         // $id = arrayArguments('cols')->required('id')->int();
-        // $tags = iteratorAttr('tags')($tags);
-        // $flag = boolAttr('flag')($flag);
-        // $amount = floatAttr('amount')($amount);
-        // $null = nullAttr('null')($null);
-        // $enum = enumAttr('enum')($enum);
+        // $tags = PIterator('tags')($tags);
+        // $flag = PBool('flag')($flag);
+        // $amount = PFloat('amount')($amount);
+        // $null = PNull('null')($null);
+        // $enum = PEnum('enum')($enum);
         // Assert return attr
         // assertReturn($id);
     }

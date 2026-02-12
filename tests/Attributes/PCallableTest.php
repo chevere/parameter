@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\CallableAttr;
+use Chevere\Parameter\Attributes\PCallable;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\string;
 
-final class CallableAttrTest extends TestCase
+final class PCallableTest extends TestCase
 {
     public function testCallableNoReturn(): void
     {
@@ -31,7 +31,7 @@ final class CallableAttrTest extends TestCase
             Callable must return a `Chevere\Parameter\Interfaces\ParameterInterface` instance
             PLAIN
         );
-        new CallableAttr($callable);
+        new PCallable($callable);
     }
 
     public function testCallableWrongReturn(): void
@@ -45,7 +45,7 @@ final class CallableAttrTest extends TestCase
             Callable must return a `Chevere\Parameter\Interfaces\ParameterInterface` instance
             PLAIN
         );
-        new CallableAttr($callable);
+        new PCallable($callable);
     }
 
     public function testConstruct(): void
@@ -54,7 +54,7 @@ final class CallableAttrTest extends TestCase
         $callable = function () use ($parameter): StringParameterInterface {
             return $parameter;
         };
-        $attr = new CallableAttr($callable);
+        $attr = new PCallable($callable);
         $this->assertSame($parameter, $attr->parameter());
         $attr('foo');
     }

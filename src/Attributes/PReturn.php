@@ -19,7 +19,7 @@ use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION)]
-class ReturnAttr implements ParameterAttributeInterface
+class PReturn implements ParameterAttributeInterface
 {
     use AttrTrait;
 

@@ -13,28 +13,19 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\NullAttr;
-use Chevere\Parameter\Attributes\UnionAttr;
+use Chevere\Parameter\Attributes\PNull;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\int;
+use TypeError;
 use function Chevere\Parameter\null;
-use function Chevere\Parameter\union;
 
-final class UnionAttrTest extends TestCase
+final class PNullTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = union(
-            int(),
-            null()
-        );
-        $attr = new UnionAttr(
-            new IntAttr(),
-            new NullAttr()
-        );
+        $parameter = null();
+        $attr = new PNull();
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke(null);
-        $attr->__invoke(1);
+        $this->expectException(TypeError::class);
+        $attr->__invoke(true);
     }
 }

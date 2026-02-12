@@ -13,17 +13,25 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\EnumAttr;
+use Chevere\Parameter\Attributes\PArray;
+use Chevere\Parameter\Attributes\PInt;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\enum;
+use function Chevere\Parameter\arrayp;
+use function Chevere\Parameter\int;
 
-final class EnumAttrTest extends TestCase
+final class PArrayTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = enum('super');
-        $attr = new EnumAttr('super');
+        $parameter = arrayp(
+            key: int()
+        );
+        $attr = new PArray(
+            key: new PInt()
+        );
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke('super');
+        $attr->__invoke([
+            'key' => 0,
+        ]);
     }
 }

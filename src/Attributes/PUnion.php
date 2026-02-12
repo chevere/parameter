@@ -14,37 +14,35 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
+use Chevere\Parameter\Interfaces\UnionParameterInterface;
+use Chevere\Parameter\Parameters;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\iterable;
+use Chevere\Parameter\UnionParameter;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class IterableAttr implements ParameterAttributeInterface
+class PUnion implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private IterableParameterInterface $parameter;
+    private UnionParameterInterface $parameter;
 
     public function __construct(
-        ParameterAttributeInterface $V,
-        ?ParameterAttributeInterface $K = null,
-        string $description = '',
-        bool $sensitive = false
+        ParameterAttributeInterface ...$parameterAttribute,
     ) {
-        $this->parameter = iterable(
-            V: $V->parameter(),
-            K: $K?->parameter(),
-            description: $description,
-            sensitive: $sensitive
-        );
+        $parameters = new Parameters();
+        foreach ($parameterAttribute as $name => $attribute) {
+            $name = (string) $name;
+            $parameters = $parameters
+                ->withRequired($name, $attribute->parameter());
+        }
+        $this->parameter = new UnionParameter($parameters);
     }
 
-    // @phpstan-ignore-next-line
-    public function __invoke(iterable $array): iterable
+    public function __invoke(mixed $mixed): mixed
     {
-        return $this->parameter->__invoke($array);
+        return $this->parameter->__invoke($mixed);
     }
 
     public function parameter(): ParameterInterface

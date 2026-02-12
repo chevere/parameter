@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\src;
 
-use Chevere\Parameter\Attributes\BoolAttr;
-use Chevere\Parameter\Attributes\NullAttr;
-use Chevere\Parameter\Attributes\StringAttr;
-use Chevere\Parameter\Attributes\UnionAttr;
+use Chevere\Parameter\Attributes\PBool;
+use Chevere\Parameter\Attributes\PNull;
+use Chevere\Parameter\Attributes\PString;
+use Chevere\Parameter\Attributes\PUnion;
 use stdClass;
 
 final class Depends
@@ -34,7 +34,7 @@ final class Depends
     }
 
     public function useString(
-        #[StringAttr('/^[a-z]+$/', description: 'A string')]
+        #[PString('/^[a-z]+$/', description: 'A string')]
         string $string = 'default'
     ) {
     }
@@ -47,10 +47,10 @@ final class Depends
     {
     }
 
-    public function useWrongUnionAttr(
-        #[UnionAttr(
-            new BoolAttr(),
-            new NullAttr(),
+    public function useWrongTUnion(
+        #[PUnion(
+            new PBool(),
+            new PNull(),
         )]
         string|int $union
     ) {
@@ -61,7 +61,7 @@ final class Depends
     }
 
     public function useInvalidAttribute(
-        #[StringAttr()]
+        #[PString()]
         int $int
     ) {
     }

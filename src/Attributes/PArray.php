@@ -14,35 +14,38 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
+use Chevere\Parameter\ArrayParameter;
+use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use Chevere\Parameter\Interfaces\UnionParameterInterface;
-use Chevere\Parameter\Parameters;
 use Chevere\Parameter\Traits\AttrTrait;
-use Chevere\Parameter\UnionParameter;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class UnionAttr implements ParameterAttributeInterface
+class PArray implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private UnionParameterInterface $parameter;
+    private ArrayParameterInterface $parameter;
 
     public function __construct(
         ParameterAttributeInterface ...$parameterAttribute,
     ) {
-        $parameters = new Parameters();
+        $parameter = new ArrayParameter();
         foreach ($parameterAttribute as $name => $attribute) {
-            $name = (string) $name;
-            $parameters = $parameters
-                ->withRequired($name, $attribute->parameter());
+            $parameter = $parameter
+                ->withRequired(
+                    ...[
+                        $name => $attribute->parameter(),
+                    ]
+                );
         }
-        $this->parameter = new UnionParameter($parameters);
+        $this->parameter = $parameter;
     }
 
-    public function __invoke(mixed $mixed): mixed
+    // @phpstan-ignore-next-line
+    public function __invoke(array $array): array
     {
-        return $this->parameter->__invoke($mixed);
+        return $this->parameter->__invoke($array);
     }
 
     public function parameter(): ParameterInterface

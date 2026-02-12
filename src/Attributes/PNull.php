@@ -14,36 +14,30 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
+use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\string;
+use function Chevere\Parameter\null;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class StringAttr implements ParameterAttributeInterface
+class PNull implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private StringParameterInterface $parameter;
+    private NullParameterInterface $parameter;
 
     public function __construct(
-        string $pattern = '',
         string $description = '',
-        ?string $default = null,
-        bool $sensitive = false
     ) {
-        $this->parameter = string(
-            regex: $pattern,
+        $this->parameter = null(
             description: $description,
-            default: $default,
-            sensitive: $sensitive
         );
     }
 
-    public function __invoke(string $string): string
+    public function __invoke(mixed $null): mixed
     {
-        return $this->parameter->__invoke($string);
+        return $this->parameter->__invoke($null);
     }
 
     public function parameter(): ParameterInterface

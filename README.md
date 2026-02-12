@@ -68,18 +68,18 @@ $userSchema([
 Decorate functions with attributes and call `validated()` to enforce rules on both arguments and return values automatically.
 
 ```php
-use Chevere\Parameter\Attributes\FloatAttr;
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Attributes\PFloat;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\ReturnT;
 use function Chevere\Parameter\validated;
 
-#[ReturnAttr(
-    new FloatAttr(min: 0, max: 2400)
+#[ReturnT(
+    new PFloat(min: 0, max: 2400)
 )]
 function wageWeekWA(
-    #[IntAttr(min: 1628)]
+    #[PInt(min: 1628)]
     int $cents,
-    #[FloatAttr(min: 0, max: 40)]
+    #[PFloat(min: 0, max: 40)]
     float $hours,
 ): float {
     return $cents * $hours / 100;
@@ -118,18 +118,18 @@ $param->schema();
 
 ### Core types
 
-| Type                  | Helper     | Attribute      | Description                               |
-| --------------------- | ---------- | -------------- | ----------------------------------------- |
-| [String](#string)     | `string`   | `StringAttr`   | String, optionally matching a regex       |
-| [Int](#int)           | `int`      | `IntAttr`      | Integer with optional range/accept/reject |
-| [Float](#float)       | `float`    | `FloatAttr`    | Float with optional range/accept/reject   |
-| [Bool](#bool)         | `bool`     | `BoolAttr`     | Boolean                                   |
-| [Null](#null)         | `null`     | `NullAttr`     | Null                                      |
-| [Object](#object)     | `object`   | —              | Object of a given class                   |
-| [Mixed](#mixed)       | `mixed`    | `MixedAttr`    | Any type                                  |
-| [Array](#array)       | `arrayp`   | `ArrayAttr`    | Array with named parameters               |
-| [Iterable](#iterable) | `iterable` | `IterableAttr` | Iterable with generic key/value           |
-| [Union](#union)       | `union`    | `UnionAttr`    | Value matching at least one parameter     |
+| Type                  | Helper     | Attribute   | Description                               |
+| --------------------- | ---------- | ----------- | ----------------------------------------- |
+| [String](#string)     | `string`   | `PString`   | String, optionally matching a regex       |
+| [Int](#int)           | `int`      | `PInt`      | Integer with optional range/accept/reject |
+| [Float](#float)       | `float`    | `PFloat`    | Float with optional range/accept/reject   |
+| [Bool](#bool)         | `bool`     | `PBool`     | Boolean                                   |
+| [Null](#null)         | `null`     | `PNull`     | Null                                      |
+| [Object](#object)     | `object`   | —           | Object of a given class                   |
+| [Mixed](#mixed)       | `mixed`    | `PMixed`    | Any type                                  |
+| [Array](#array)       | `arrayp`   | `PArray`    | Array with named parameters               |
+| [Iterable](#iterable) | `iterable` | `PIterable` | Iterable with generic key/value           |
+| [Union](#union)       | `union`    | `PUnion`    | Value matching at least one parameter     |
 
 ### Derived types
 
@@ -183,10 +183,10 @@ $maybeId(null); // null
 
 ### Special attributes
 
-| Attribute                     | Description                                |
-| ----------------------------- | ------------------------------------------ |
-| [CallableAttr](#callableattr) | Forward parameter resolution to a callable |
-| [ReturnAttr](#returnattr)     | Return value validation                    |
+| Attribute               | Description                                |
+| ----------------------- | ------------------------------------------ |
+| [PCallable](#PCallable) | Forward parameter resolution to a callable |
+| [ReturnT](#ReturnT)     | Return value validation                    |
 
 ## Types
 
@@ -262,9 +262,9 @@ $string = string(default: 'hello');
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\StringAttr;
+use Chevere\Parameter\Attributes\PString;
 
-#[StringAttr('/^bin-[\d]+$/')]
+#[PString('/^bin-[\d]+$/')]
 ```
 
 ### String-based derived types
@@ -284,9 +284,9 @@ $status('deleted'); // throws
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\EnumAttr;
+use Chevere\Parameter\Attributes\PEnum;
 
-#[EnumAttr('active', 'inactive', 'pending')]
+#[PEnum('active', 'inactive', 'pending')]
 ```
 
 #### Int string
@@ -380,9 +380,9 @@ $int(0);  // throws
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\PInt;
 
-#[IntAttr(min: 0, max: 100)]
+#[PInt(min: 0, max: 100)]
 ```
 
 ### Int-based derived types
@@ -423,9 +423,9 @@ $score(3.14); // 3.14
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\FloatAttr;
+use Chevere\Parameter\Attributes\PFloat;
 
-#[FloatAttr(min: 0, max: 100)]
+#[PFloat(min: 0, max: 100)]
 ```
 
 ## Bool
@@ -443,9 +443,9 @@ $flag(false); // false
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\BoolAttr;
+use Chevere\Parameter\Attributes\PBool;
 
-#[BoolAttr]
+#[PBool]
 ```
 
 ## Null
@@ -462,9 +462,9 @@ $null(null); // null
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\NullAttr;
+use Chevere\Parameter\Attributes\PNull;
 
-#[NullAttr]
+#[PNull]
 ```
 
 ## Object
@@ -494,9 +494,9 @@ $any(null);
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\MixedAttr;
+use Chevere\Parameter\Attributes\PMixed;
 
-#[MixedAttr]
+#[PMixed]
 ```
 
 ## Union
@@ -535,13 +535,13 @@ $maybeInt(null); // null
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\UnionAttr;
-use Chevere\Parameter\Attributes\FloatAttr;
-use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\PUnion;
+use Chevere\Parameter\Attributes\PFloat;
+use Chevere\Parameter\Attributes\PInt;
 
-#[UnionAttr(
-    new IntAttr(),
-    new FloatAttr()
+#[PUnion(
+    new PInt(),
+    new PFloat()
 )]
 ```
 
@@ -594,15 +594,15 @@ $order([
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\ArrayAttr;
-use Chevere\Parameter\Attributes\FloatAttr;
-use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\PArray;
+use Chevere\Parameter\Attributes\PFloat;
+use Chevere\Parameter\Attributes\PInt;
 
-#[ArrayAttr(
-    id: new IntAttr(),
-    item: new ArrayAttr(
-        sku: new IntAttr(),
-        price: new FloatAttr(),
+#[PArray(
+    id: new PInt(),
+    item: new PArray(
+        sku: new PInt(),
+        price: new PFloat(),
     ),
 )]
 ```
@@ -760,11 +760,11 @@ $roster([
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\IterableAttr;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\PIterable;
 
-#[IterableAttr(
-    new IntAttr(min: 0),
+#[PIterable(
+    new PInt(min: 0),
 )]
 ```
 
@@ -818,16 +818,16 @@ Use PHP 8 attributes to declare validation rules directly on function/method sig
 Call `validated()` to validate both arguments and return value against attribute rules.
 
 ```php
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\ReturnAttr;
-use Chevere\Parameter\Attributes\StringAttr;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\ReturnT;
+use Chevere\Parameter\Attributes\PString;
 use function Chevere\Parameter\validated;
 
-#[ReturnAttr(
-    new StringAttr('/ok$/')
+#[ReturnT(
+    new PString('/ok$/')
 )]
 function process(
-    #[IntAttr(min: 1, max: 10)]
+    #[PInt(min: 1, max: 10)]
     int $var,
 ): string {
     return 'done ok';
@@ -857,14 +857,14 @@ $return($result);                     // validate return
 Use `assertArguments()` inside the function body for granular control over when validation runs.
 
 ```php
-use Chevere\Parameter\Attributes\EnumAttr;
-use Chevere\Parameter\Attributes\FloatAttr;
+use Chevere\Parameter\Attributes\PEnum;
+use Chevere\Parameter\Attributes\PFloat;
 use function Chevere\Parameter\Attributes\assertArguments;
 
 function myEnum(
-    #[EnumAttr('Hugo', 'Paco', 'Luis')]
+    #[PEnum('Hugo', 'Paco', 'Luis')]
     string $name,
-    #[FloatAttr(min: 1000)]
+    #[PFloat(min: 1000)]
     float $money,
 ): void {
     // Validate all arguments
@@ -880,12 +880,12 @@ myEnum('Paco', 1000.50);
 Use `assertReturn()` to validate the return value inline:
 
 ```php
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\ReturnT;
 use function Chevere\Parameter\Attributes\assertReturn;
 
-#[ReturnAttr(
-    new IntAttr(min: 0, max: 5)
+#[ReturnT(
+    new PInt(min: 0, max: 5)
 )]
 function clamp(): int
 {
@@ -895,16 +895,16 @@ function clamp(): int
 }
 ```
 
-### ReturnAttr
+### ReturnT
 
 Defines a validation rule for the return value of a function or method.
 
 ```php
-use Chevere\Parameter\Attributes\ReturnAttr;
-use Chevere\Parameter\Attributes\StringAttr;
+use Chevere\Parameter\Attributes\ReturnT;
+use Chevere\Parameter\Attributes\PString;
 
-#[ReturnAttr(
-    new StringAttr('/ok$/')
+#[ReturnT(
+    new PString('/ok$/')
 )]
 function myFunction(): string
 {
@@ -912,15 +912,15 @@ function myFunction(): string
 }
 ```
 
-> By convention, when `ReturnAttr` is omitted the method `public static function return(): ParameterInterface` (if any) will be used to determine return validation rules.
+> By convention, when `ReturnT` is omitted the method `public static function return(): ParameterInterface` (if any) will be used to determine return validation rules.
 
-### CallableAttr
+### PCallable
 
-PHP attributes only support constant expressions. To define dynamic parameters (e.g., nested arrays with optional keys), use `CallableAttr` to delegate parameter resolution to a callable.
+PHP attributes only support constant expressions. To define dynamic parameters (e.g., nested arrays with optional keys), use `PCallable` to delegate parameter resolution to a callable.
 
 ```php
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use Chevere\Parameter\Attributes\CallableAttr;
+use Chevere\Parameter\Attributes\PCallable;
 use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\string;
 
@@ -934,7 +934,7 @@ function contactSchema(): ParameterInterface
 }
 
 function saveContact(
-    #[CallableAttr('contactSchema')]
+    #[PCallable('contactSchema')]
     array $contact,
 ): void {
     // ...
@@ -947,11 +947,11 @@ Parameter recognizes native PHP attribute annotations and works alongside them.
 
 ```php
 use SensitiveParameter;
-use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\PInt;
 
 function authenticate(
     #[SensitiveParameter]
-    #[IntAttr(min: 1)]
+    #[PInt(min: 1)]
     int $token,
 ): void {
     // $token value will be omitted from error messages
@@ -1278,22 +1278,22 @@ getType(1.5);   // 'float'
 getType(null);  // 'null'
 ```
 
-### parameterAttr
+### parameterAttribute
 
 Retrieve a `ParameterAttributeInterface` from a function or method parameter by name.
 
 ```php
-use function Chevere\Parameter\parameterAttr;
-use Chevere\Parameter\Attributes\StringAttr;
+use function Chevere\Parameter\parameterAttribute;
+use Chevere\Parameter\Attributes\PString;
 
 function myFunction(
-    #[StringAttr('/^bin-[\d]+$/')]
+    #[PString('/^bin-[\d]+$/')]
     string $foo,
 ): void {
     // ...
 }
 
-$attr = parameterAttr('foo', 'myFunction');
+$attr = parameterAttribute('foo', 'myFunction');
 $attr('bin-123'); // validates
 ```
 
@@ -1332,20 +1332,20 @@ $result = validated('myFunction', $arg1, $arg2);
 ### Nested array with attribute validation
 
 ```php
-use Chevere\Parameter\Attributes\ArrayAttr;
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\StringAttr;
-use Chevere\Parameter\Attributes\IterableAttr;
+use Chevere\Parameter\Attributes\PArray;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\PString;
+use Chevere\Parameter\Attributes\PIterable;
 use function Chevere\Parameter\Attributes\assertArguments;
 
 function createUser(
-    #[ArrayAttr(
-        id: new IntAttr(min: 1),
-        role: new ArrayAttr(
-            mask: new IntAttr(accept: [64, 128, 256]),
-            name: new StringAttr('/[a-z]+/'),
-            tenants: new IterableAttr(
-                new IntAttr(min: 1)
+    #[PArray(
+        id: new PInt(min: 1),
+        role: new PArray(
+            mask: new PInt(accept: [64, 128, 256]),
+            name: new PString('/[a-z]+/'),
+            tenants: new PIterable(
+                new PInt(min: 1)
             ),
         ),
     )]
@@ -1367,16 +1367,16 @@ createUser([
 ### Validating a return array
 
 ```php
-use Chevere\Parameter\Attributes\ArrayAttr;
-use Chevere\Parameter\Attributes\IntAttr;
-use Chevere\Parameter\Attributes\StringAttr;
-use Chevere\Parameter\Attributes\ReturnAttr;
+use Chevere\Parameter\Attributes\PArray;
+use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\PString;
+use Chevere\Parameter\Attributes\ReturnT;
 use function Chevere\Parameter\Attributes\assertReturn;
 
-#[ReturnAttr(
-    new ArrayAttr(
-        id: new IntAttr(min: 0),
-        name: new StringAttr(),
+#[ReturnT(
+    new PArray(
+        id: new PInt(min: 0),
+        name: new PString(),
     )
 )]
 function fetchUser(): array
@@ -1394,12 +1394,12 @@ function fetchUser(): array
 
 ```php
 use ReflectionMethod;
-use Chevere\Parameter\Attributes\IntAttr;
+use Chevere\Parameter\Attributes\PInt;
 use function Chevere\Parameter\reflectionToParameters;
 
 $class = new class() {
     public function score(
-        #[IntAttr(accept: [1, 10, 100])]
+        #[PInt(accept: [1, 10, 100])]
         int $base,
     ): void {
     }
