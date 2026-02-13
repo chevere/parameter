@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
+use BackedEnum;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
+use Stringable;
 use function Chevere\Parameter\string;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
@@ -28,7 +30,7 @@ class _string implements ParameterAttributeInterface
     private StringParameterInterface $parameter;
 
     public function __construct(
-        string $pattern = '',
+        string|Stringable|BackedEnum $pattern = '',
         string $description = '',
         ?string $default = null,
         bool $sensitive = false
