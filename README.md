@@ -284,9 +284,9 @@ $status('deleted'); // throws
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\PEnum;
+use Chevere\Parameter\Attributes\_enum;
 
-#[PEnum('active', 'inactive', 'pending')]
+#[_enum('active', 'inactive', 'pending')]
 ```
 
 #### Int string
@@ -857,12 +857,12 @@ $return($result);                     // validate return
 Use `assertArguments()` inside the function body for granular control over when validation runs.
 
 ```php
-use Chevere\Parameter\Attributes\PEnum;
+use Chevere\Parameter\Attributes\_enum;
 use Chevere\Parameter\Attributes\_float;
 use function Chevere\Parameter\Attributes\assertArguments;
 
 function myEnum(
-    #[PEnum('Hugo', 'Paco', 'Luis')]
+    #[_enum('Hugo', 'Paco', 'Luis')]
     string $name,
     #[_float(min: 1000)]
     float $money,
