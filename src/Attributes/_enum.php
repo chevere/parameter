@@ -18,27 +18,20 @@ use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\string;
+use function Chevere\Parameter\enum;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class PString implements ParameterAttributeInterface
+class _enum implements ParameterAttributeInterface
 {
     use AttrTrait;
 
     private StringParameterInterface $parameter;
 
     public function __construct(
-        string $pattern = '',
-        string $description = '',
-        ?string $default = null,
-        bool $sensitive = false
+        string $string,
+        string ...$strings,
     ) {
-        $this->parameter = string(
-            regex: $pattern,
-            description: $description,
-            default: $default,
-            sensitive: $sensitive
-        );
+        $this->parameter = enum($string, ...$strings);
     }
 
     public function __invoke(string $string): string

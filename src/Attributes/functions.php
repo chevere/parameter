@@ -20,80 +20,7 @@ use ReflectionFunction;
 use ReflectionMethod;
 use Throwable;
 use function Chevere\Message\message;
-use function Chevere\Parameter\parameterAttribute;
 use function Chevere\Parameter\reflectionToParameters;
-
-function PString(string $name): PString
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
-
-function PEnum(string $name): PEnum
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
-
-function PInt(string $name): PInt
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
-
-function PFloat(string $name): PFloat
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
-
-function PBool(string $name): PBool
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
-
-function PNull(string $name): PNull
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
-
-function PArray(string $name): PArray
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
-
-function PIterator(string $name): PIterable
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
-
-function PUnion(string $name): PUnion
-{
-    $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
-
-    // @phpstan-ignore-next-line
-    return parameterAttribute($name, $caller['function'], $caller['class'] ?? '');
-}
 
 /**
  * Get Arguments for an array parameter.
@@ -188,7 +115,7 @@ function assertArguments(string ...$name): void
 }
 
 /**
- * Assert return value against ReturnT rules.
+ * Assert return value against _return rules.
  *
  * @param mixed $value Return value to assert
  */
@@ -201,10 +128,10 @@ function assertReturn(mixed $value = null): mixed
     $reflection = $class
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
-    $attribute = $reflection->getAttributes(PReturn::class)[0]
+    $attribute = $reflection->getAttributes(_return::class)[0]
         ?? null;
     $ReturnT = $attribute?->newInstance()
-        ?? new PReturn(new PMixed());
+        ?? new _return(new _mixed());
 
     return $ReturnT($value);
 }

@@ -13,17 +13,17 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PString;
+use Chevere\Parameter\Attributes\_int;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\string;
+use function Chevere\Parameter\int;
 
-final class PStringTest extends TestCase
+final class _intTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = string();
-        $attr = new PString();
+        $parameter = int();
+        $attr = new _int();
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke('2');
+        $attr->__invoke(0);
     }
 }

@@ -13,17 +13,23 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PEnum;
+use Chevere\Parameter\Attributes\_int;
+use Chevere\Parameter\Attributes\_iterable;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\enum;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\iterable;
 
-final class PEnumTest extends TestCase
+final class _iterableTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = enum('super');
-        $attr = new PEnum('super');
+        $parameter = iterable(
+            int()
+        );
+        $attr = new _iterable(
+            new _int()
+        );
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke('super');
+        $attr->__invoke([0]);
     }
 }

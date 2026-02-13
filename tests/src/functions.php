@@ -13,31 +13,30 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\src;
 
-use Chevere\Parameter\Attributes\PArray;
-use Chevere\Parameter\Attributes\PBool;
-use Chevere\Parameter\Attributes\PEnum;
-use Chevere\Parameter\Attributes\PInt;
-use Chevere\Parameter\Attributes\PIterable;
-use Chevere\Parameter\Attributes\PReturn;
-use Chevere\Parameter\Attributes\PString;
+use Chevere\Parameter\Attributes\_arrayp;
+use Chevere\Parameter\Attributes\_bool;
+use Chevere\Parameter\Attributes\_enum;
+use Chevere\Parameter\Attributes\_int;
+use Chevere\Parameter\Attributes\_iterable;
+use Chevere\Parameter\Attributes\_return;
+use Chevere\Parameter\Attributes\_string;
 use SensitiveParameter;
 use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\assertArguments;
 use function Chevere\Parameter\Attributes\assertReturn;
-use function Chevere\Parameter\Attributes\PArray;
 use function PHPUnit\Framework\assertSame;
 
-#[PReturn(
-    new PBool()
+#[_return(
+    new _bool()
 )]
 function usesAttr(
-    #[PArray(
-        id: new PInt(min: 1),
-        role: new PArray(
-            mask: new PInt(min: 64),
-            name: new PString(),
-            tenants: new PIterable(
-                new PInt(min: 1, max: 5)
+    #[_arrayp(
+        id: new _int(min: 1),
+        role: new _arrayp(
+            mask: new _int(min: 64),
+            name: new _string(),
+            tenants: new _iterable(
+                new _int(min: 1, max: 5)
             )
         ),
     )]
@@ -45,7 +44,6 @@ function usesAttr(
 ): bool {
     assertArguments();
     assertArguments('spooky');
-    PArray('spooky')($spooky);
     assertSame(
         $spooky['id'],
         arrayArguments('spooky')->required('id')->int()
@@ -63,18 +61,18 @@ function noUsesAttr(
 }
 
 function withDefaultError(
-    #[PInt(min: 2)]
+    #[_int(min: 2)]
     int $int = 1
 ): void {
 }
 
-#[PReturn(
-    new PInt(min: 100, max: 200)
+#[_return(
+    new _int(min: 100, max: 200)
 )]
 function validates(
-    #[PInt(min: 1, max: 100)]
+    #[_int(min: 1, max: 100)]
     int $base,
-    #[PInt(min: 1, max: 5)]
+    #[_int(min: 1, max: 5)]
     int $times = 1,
     string $name = '',
 ): int {
@@ -83,10 +81,10 @@ function validates(
 
 function usesSensitiveParameterAttr(
     #[SensitiveParameter]
-    #[PInt(min: 1000)]
+    #[_int(min: 1000)]
     int $code,
     #[SensitiveParameter]
-    #[PEnum('super', 'safe')]
+    #[_enum('super', 'safe')]
     string $password
 ): void {
     assertArguments();

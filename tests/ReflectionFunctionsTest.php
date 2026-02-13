@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
-use Chevere\Parameter\Attributes\PInt;
-use Chevere\Parameter\Attributes\PReturn;
+use Chevere\Parameter\Attributes\_int;
+use Chevere\Parameter\Attributes\_return;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -30,8 +30,8 @@ final class ReflectionFunctionsTest extends TestCase
     public function testAnonClassReturn(): void
     {
         $class = new class() {
-            #[PReturn(
-                new PInt(min: 100)
+            #[_return(
+                new _int(min: 100)
             )]
             public function wea(int $base): int
             {
@@ -51,7 +51,7 @@ final class ReflectionFunctionsTest extends TestCase
     {
         $class = new class() {
             public function wea(
-                #[PInt(accept: [1, 10, 100])]
+                #[_int(accept: [1, 10, 100])]
                 int $base = 1
             ): void {
             }
@@ -70,8 +70,8 @@ final class ReflectionFunctionsTest extends TestCase
     public function testAnonFunctionReturn(): void
     {
         $function =
-            #[PReturn(
-                new PInt(min: 1000)
+            #[_return(
+                new _int(min: 1000)
             )]
             function (int $base): int {
                 return 10 * $base;

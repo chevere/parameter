@@ -14,46 +14,32 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\FloatParameterInterface;
+use Chevere\Parameter\Interfaces\MixedParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\float;
+use function Chevere\Parameter\mixed;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class PFloat implements ParameterAttributeInterface
+class _mixed implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private FloatParameterInterface $parameter;
+    private MixedParameterInterface $parameter;
 
-    /**
-     * @param float[] $accept
-     * @param float[] $reject
-     */
     public function __construct(
         string $description = '',
-        ?float $default = null,
-        ?float $min = null,
-        ?float $max = null,
-        array $accept = [],
-        array $reject = [],
         bool $sensitive = false
     ) {
-        $this->parameter = float(
+        $this->parameter = mixed(
             description: $description,
-            default: $default,
-            min: $min,
-            max: $max,
-            accept: $accept,
-            reject: $reject,
             sensitive: $sensitive
         );
     }
 
-    public function __invoke(float $float): float
+    public function __invoke(mixed $mixed): mixed
     {
-        return $this->parameter->__invoke($float);
+        return $this->parameter->__invoke($mixed);
     }
 
     public function parameter(): ParameterInterface

@@ -13,17 +13,19 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PFloat;
+use Chevere\Parameter\Attributes\_null;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\float;
+use TypeError;
+use function Chevere\Parameter\null;
 
-final class PFloatTest extends TestCase
+final class _nullTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = float();
-        $attr = new PFloat();
+        $parameter = null();
+        $attr = new _null();
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke(1.5);
+        $this->expectException(TypeError::class);
+        $attr->__invoke(true);
     }
 }

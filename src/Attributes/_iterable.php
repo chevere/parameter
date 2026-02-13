@@ -14,46 +14,37 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\IntParameterInterface;
+use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\int;
+use function Chevere\Parameter\iterable;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class PInt implements ParameterAttributeInterface
+class _iterable implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private IntParameterInterface $parameter;
+    private IterableParameterInterface $parameter;
 
-    /**
-     * @param int[] $accept
-     * @param int[] $reject
-     */
     public function __construct(
+        ParameterAttributeInterface $V,
+        ?ParameterAttributeInterface $K = null,
         string $description = '',
-        ?int $default = null,
-        ?int $min = null,
-        ?int $max = null,
-        array $accept = [],
-        array $reject = [],
         bool $sensitive = false
     ) {
-        $this->parameter = int(
+        $this->parameter = iterable(
+            V: $V->parameter(),
+            K: $K?->parameter(),
             description: $description,
-            default: $default,
-            min: $min,
-            max: $max,
-            accept: $accept,
-            reject: $reject,
             sensitive: $sensitive
         );
     }
 
-    public function __invoke(int $int): int
+    // @phpstan-ignore-next-line
+    public function __invoke(iterable $array): iterable
     {
-        return $this->parameter->__invoke($int);
+        return $this->parameter->__invoke($array);
     }
 
     public function parameter(): ParameterInterface

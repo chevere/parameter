@@ -13,16 +13,19 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PMixed;
+use Chevere\Parameter\Attributes\_int;
+use Chevere\Parameter\Attributes\_return;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\mixed;
+use function Chevere\Parameter\int;
 
-final class PMixedTest extends TestCase
+final class _returnTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = mixed();
-        $attr = new PMixed();
+        $parameter = int();
+        $attr = new _return(
+            new _int()
+        );
         $this->assertEquals($parameter, $attr->parameter());
     }
 }

@@ -17,28 +17,17 @@ use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use InvalidArgumentException;
-use function Chevere\Message\message;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION)]
-class PCallable implements ParameterAttributeInterface
+class _return implements ParameterAttributeInterface
 {
     use AttrTrait;
 
     private ParameterInterface $parameter;
 
-    public function __construct(callable $callable)
+    public function __construct(ParameterAttributeInterface $attribute)
     {
-        $return = $callable();
-        if ($return === null || ! $return instanceof ParameterInterface) {
-            throw new InvalidArgumentException(
-                (string) message(
-                    'Callable must return a `%interface%` instance',
-                    interface: ParameterInterface::class
-                )
-            );
-        }
-        $this->parameter = $return;
+        $this->parameter = $attribute->parameter();
     }
 
     public function __invoke(mixed $mixed): mixed

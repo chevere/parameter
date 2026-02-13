@@ -13,25 +13,17 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PArray;
-use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\_float;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\arrayp;
-use function Chevere\Parameter\int;
+use function Chevere\Parameter\float;
 
-final class PArrayTest extends TestCase
+final class _floatTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = arrayp(
-            key: int()
-        );
-        $attr = new PArray(
-            key: new PInt()
-        );
+        $parameter = float();
+        $attr = new _float();
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke([
-            'key' => 0,
-        ]);
+        $attr->__invoke(1.5);
     }
 }

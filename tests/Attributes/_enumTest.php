@@ -13,17 +13,17 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PInt;
+use Chevere\Parameter\Attributes\_enum;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\int;
+use function Chevere\Parameter\enum;
 
-final class PIntTest extends TestCase
+final class _enumTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = int();
-        $attr = new PInt();
+        $parameter = enum('super');
+        $attr = new _enum('super');
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke(0);
+        $attr->__invoke('super');
     }
 }

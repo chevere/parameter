@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Parameter;
 
 use BadMethodCallException;
-use Chevere\Parameter\Attributes\PReturn;
+use Chevere\Parameter\Attributes\_return;
 use Chevere\Parameter\Exceptions\AttributeNotFoundException;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
@@ -428,7 +428,7 @@ function reflectionToParameters(
 function reflectionToReturn(
     ReflectionFunction|ReflectionMethod $reflection
 ): ParameterInterface {
-    $attributes = $reflection->getAttributes(PReturn::class);
+    $attributes = $reflection->getAttributes(_return::class);
     if ($attributes === []) {
         $returnType = (string) $reflection->getReturnType();
 
@@ -438,7 +438,7 @@ function reflectionToReturn(
             default => toParameter($returnType),
         };
     }
-    /** @var ReflectionAttribute<PReturn> $attribute */
+    /** @var ReflectionAttribute<_return> $attribute */
     $attribute = $attributes[0];
 
     return $attribute->newInstance()->parameter();

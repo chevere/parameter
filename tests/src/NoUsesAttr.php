@@ -14,12 +14,8 @@ declare(strict_types=1);
 namespace Chevere\Tests\src;
 
 use Chevere\Parameter\Exceptions\ParameterException;
-use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Throwable;
-use function Chevere\Parameter\Attributes\arrayArguments;
 use function Chevere\Parameter\Attributes\assertArguments;
 use function Chevere\Parameter\Attributes\assertReturn;
-use function Chevere\Parameter\Attributes\PString;
 use function PHPUnit\Framework\assertSame;
 
 final class NoUsesAttr
@@ -54,26 +50,6 @@ final class NoUsesAttr
                 $e->getMessage()
             );
         }
-
-        // Get attribute, validate and return
-        try {
-            $name = PString('name')($name);
-        } catch (Throwable $e) {
-            assertSame(
-                'No `' . ParameterAttributeInterface::class . '` attribute for parameter `name`',
-                $e->getMessage()
-            );
-        }
-        // $age = PInt('age')($age);
-        // $cols = PArray('cols')($cols);
-        // $id = arrayArguments('cols')->required('id')->int();
-        // $tags = PIterator('tags')($tags);
-        // $flag = PBool('flag')($flag);
-        // $amount = PFloat('amount')($amount);
-        // $null = PNull('null')($null);
-        // $enum = PEnum('enum')($enum);
-        // Assert return attr
-        // assertReturn($id);
     }
 
     public function run(): int

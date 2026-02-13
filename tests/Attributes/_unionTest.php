@@ -13,19 +13,28 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PInt;
-use Chevere\Parameter\Attributes\PReturn;
+use Chevere\Parameter\Attributes\_int;
+use Chevere\Parameter\Attributes\_null;
+use Chevere\Parameter\Attributes\_union;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\int;
+use function Chevere\Parameter\null;
+use function Chevere\Parameter\union;
 
-final class PReturnTest extends TestCase
+final class _unionTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = int();
-        $attr = new PReturn(
-            new PInt()
+        $parameter = union(
+            int(),
+            null()
+        );
+        $attr = new _union(
+            new _int(),
+            new _null()
         );
         $this->assertEquals($parameter, $attr->parameter());
+        $attr->__invoke(null);
+        $attr->__invoke(1);
     }
 }

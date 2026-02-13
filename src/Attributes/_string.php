@@ -16,33 +16,34 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
-use Chevere\Parameter\Interfaces\UnionParameterInterface;
-use Chevere\Parameter\Parameters;
+use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use Chevere\Parameter\UnionParameter;
+use function Chevere\Parameter\string;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class PUnion implements ParameterAttributeInterface
+class _string implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private UnionParameterInterface $parameter;
+    private StringParameterInterface $parameter;
 
     public function __construct(
-        ParameterAttributeInterface ...$parameterAttribute,
+        string $pattern = '',
+        string $description = '',
+        ?string $default = null,
+        bool $sensitive = false
     ) {
-        $parameters = new Parameters();
-        foreach ($parameterAttribute as $name => $attribute) {
-            $name = (string) $name;
-            $parameters = $parameters
-                ->withRequired($name, $attribute->parameter());
-        }
-        $this->parameter = new UnionParameter($parameters);
+        $this->parameter = string(
+            regex: $pattern,
+            description: $description,
+            default: $default,
+            sensitive: $sensitive
+        );
     }
 
-    public function __invoke(mixed $mixed): mixed
+    public function __invoke(string $string): string
     {
-        return $this->parameter->__invoke($mixed);
+        return $this->parameter->__invoke($string);
     }
 
     public function parameter(): ParameterInterface

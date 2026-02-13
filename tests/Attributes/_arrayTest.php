@@ -13,28 +13,25 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PInt;
-use Chevere\Parameter\Attributes\PNull;
-use Chevere\Parameter\Attributes\PUnion;
+use Chevere\Parameter\Attributes\_arrayp;
+use Chevere\Parameter\Attributes\_int;
 use PHPUnit\Framework\TestCase;
+use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\int;
-use function Chevere\Parameter\null;
-use function Chevere\Parameter\union;
 
-final class PUnionTest extends TestCase
+final class _arrayTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = union(
-            int(),
-            null()
+        $parameter = arrayp(
+            key: int()
         );
-        $attr = new PUnion(
-            new PInt(),
-            new PNull()
+        $attr = new _arrayp(
+            key: new _int()
         );
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke(null);
-        $attr->__invoke(1);
+        $attr->__invoke([
+            'key' => 0,
+        ]);
     }
 }

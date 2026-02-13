@@ -13,19 +13,17 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PNull;
+use Chevere\Parameter\Attributes\_string;
 use PHPUnit\Framework\TestCase;
-use TypeError;
-use function Chevere\Parameter\null;
+use function Chevere\Parameter\string;
 
-final class PNullTest extends TestCase
+final class _stringTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = null();
-        $attr = new PNull();
+        $parameter = string();
+        $attr = new _string();
         $this->assertEquals($parameter, $attr->parameter());
-        $this->expectException(TypeError::class);
-        $attr->__invoke(true);
+        $attr->__invoke('2');
     }
 }

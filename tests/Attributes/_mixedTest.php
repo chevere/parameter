@@ -13,23 +13,16 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attributes;
 
-use Chevere\Parameter\Attributes\PInt;
-use Chevere\Parameter\Attributes\PIterable;
+use Chevere\Parameter\Attributes\_mixed;
 use PHPUnit\Framework\TestCase;
-use function Chevere\Parameter\int;
-use function Chevere\Parameter\iterable;
+use function Chevere\Parameter\mixed;
 
-final class PIterableTest extends TestCase
+final class _mixedTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $parameter = iterable(
-            int()
-        );
-        $attr = new PIterable(
-            new PInt()
-        );
+        $parameter = mixed();
+        $attr = new _mixed();
         $this->assertEquals($parameter, $attr->parameter());
-        $attr->__invoke([0]);
     }
 }

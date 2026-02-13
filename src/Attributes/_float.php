@@ -14,30 +14,46 @@ declare(strict_types=1);
 namespace Chevere\Parameter\Attributes;
 
 use Attribute;
-use Chevere\Parameter\Interfaces\NullParameterInterface;
+use Chevere\Parameter\Interfaces\FloatParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
-use function Chevere\Parameter\null;
+use function Chevere\Parameter\float;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
-class PNull implements ParameterAttributeInterface
+class _float implements ParameterAttributeInterface
 {
     use AttrTrait;
 
-    private NullParameterInterface $parameter;
+    private FloatParameterInterface $parameter;
 
+    /**
+     * @param float[] $accept
+     * @param float[] $reject
+     */
     public function __construct(
         string $description = '',
+        ?float $default = null,
+        ?float $min = null,
+        ?float $max = null,
+        array $accept = [],
+        array $reject = [],
+        bool $sensitive = false
     ) {
-        $this->parameter = null(
+        $this->parameter = float(
             description: $description,
+            default: $default,
+            min: $min,
+            max: $max,
+            accept: $accept,
+            reject: $reject,
+            sensitive: $sensitive
         );
     }
 
-    public function __invoke(mixed $null): mixed
+    public function __invoke(float $float): float
     {
-        return $this->parameter->__invoke($null);
+        return $this->parameter->__invoke($float);
     }
 
     public function parameter(): ParameterInterface
