@@ -13,9 +13,12 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
+use BackedEnum;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
+use InvalidArgumentException;
+use Stringable;
 
 /**
  * @param int[] $accept
@@ -64,11 +67,20 @@ function nullBool(
 }
 
 function nullString(
-    string $regex = '',
+    string|Stringable|BackedEnum $regex = '',
     string $description = '',
     ?string $default = null,
     bool $sensitive = false
 ): UnionParameterInterface {
+    $regex = match (true) {
+        is_string($regex) => $regex,
+        $regex instanceof Stringable => (string) $regex,
+        is_string($regex->value) => $regex->value,
+        default => throw new InvalidArgumentException(
+            'Regex must be a `string`, `Stringable`, or `BackedEnum` with string value.'
+        )
+    };
+
     return unionNull(
         string(...get_defined_vars())
     );
