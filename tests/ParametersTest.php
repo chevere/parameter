@@ -205,6 +205,7 @@ final class ParametersTest extends TestCase
         $this->assertCount(4, $parametersWith);
         $this->assertSame(['b', 'c'], $parametersWith->requiredKeys()->toArray());
         $this->assertSame(['x', 'z'], $parametersWith->optionalKeys()->toArray());
+        $this->assertSame(['b', 'c', 'x', 'z'], $parametersWith->keys());
     }
 
     public function testWithRequiredOptional(): void
