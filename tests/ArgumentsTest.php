@@ -148,6 +148,23 @@ final class ArgumentsTest extends TestCase
                     'try' => 'abc',
                 ],
             ],
+            // Edge case: many extra arguments to ensure all are excluded
+            [
+                [
+                    'test' => 'value',
+                    'try' => 'default',
+                ],
+                [
+                    'test' => 'value',
+                    'extra1' => 'ignore',
+                    'extra2' => 'ignore',
+                    'extra3' => 'ignore',
+                    'extra4' => 'ignore',
+                    'extra5' => 'ignore',
+                    'extra6' => 'ignore',
+                    'extra7' => 'ignore',
+                ],
+            ],
         ];
     }
 
