@@ -545,6 +545,31 @@ final class ArgumentsTest extends TestCase
         );
     }
 
+    public function testNestedMissingKey(): void
+    {
+        $parameters = parameters(
+            meta: arrayp(
+                event_name: string(),
+                custom_data: arrayp(
+                    product: string(),
+                    optional: string(),
+                )->withMakeOptional('optional'),
+            ),
+        );
+        $values = [
+            'meta' => [
+                'event_name' => 'order.created',
+                'custom_data' => [
+                    'product' => 'Book',
+                ],
+            ],
+        ];
+        $arguments = $parameters(...$values);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Key `optional` not found in nested argument `custom_data`');
+        $arguments->nested('meta', 'custom_data', 'optional');
+    }
+
     public function testUnionNull(): void
     {
         $parameters = parameters(
