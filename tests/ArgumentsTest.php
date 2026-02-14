@@ -86,6 +86,24 @@ final class ArgumentsTest extends TestCase
         new Arguments($parameters, ['123']);
     }
 
+    public function testProvidedEmptyArrayIsPreserved(): void
+    {
+        $parameters = parameters(
+            data: arrayp(
+                item: string(),
+            )->withMakeOptional('item')
+        );
+
+        $arguments = new Arguments($parameters, [
+            'data' => [],
+        ]);
+
+        $this->assertTrue($arguments->has('data'));
+        $this->assertSame([
+            'data' => [],
+        ], $arguments->toArray());
+    }
+
     #[DataProvider('dataProviderExcludeExtraArguments')]
     public function testExcludeExtraArguments(
         array $expect,
