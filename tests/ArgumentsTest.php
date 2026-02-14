@@ -74,6 +74,18 @@ final class ArgumentsTest extends TestCase
         new Arguments($parameters, []);
     }
 
+    public function testMissingPositionalArgumentsMessage(): void
+    {
+        $parameters = parameters(
+            id: string(),
+            name: string(),
+            email: string()
+        );
+        $this->expectException(ArgumentCountError::class);
+        $this->expectExceptionMessage('Missing required argument(s): `name, email`');
+        new Arguments($parameters, ['123']);
+    }
+
     #[DataProvider('dataProviderExcludeExtraArguments')]
     public function testExcludeExtraArguments(
         array $expect,
