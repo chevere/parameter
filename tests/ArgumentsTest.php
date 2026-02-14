@@ -104,6 +104,25 @@ final class ArgumentsTest extends TestCase
         ], $arguments->toArray());
     }
 
+    public function testDefaultsAppliedAfterArrayParameter(): void
+    {
+        $parameters = parameters(
+            meta: arrayp(
+                item: string(),
+            ),
+            next: string(default: 'next-default'),
+            again: int(default: 42),
+        );
+        $arguments = new Arguments($parameters, [
+            'meta' => [
+                'item' => 'x',
+            ],
+        ]);
+        $this->assertTrue($arguments->has('next', 'again'));
+        $this->assertSame('next-default', $arguments->get('next'));
+        $this->assertSame(42, $arguments->get('again'));
+    }
+
     #[DataProvider('dataProviderExcludeExtraArguments')]
     public function testExcludeExtraArguments(
         array $expect,
