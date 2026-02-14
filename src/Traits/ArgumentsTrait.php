@@ -61,7 +61,7 @@ trait ArgumentsTrait
         array $arguments
     ) {
         $this->parameters = getParameters($parameters);
-        $this->isIterable = $this->parameters->keys() === ['K', 'V'];
+        $this->isIterable = $this->parameters->isIterable();
         $this->isPositional = array_is_list($arguments) && ! $this->isIterable;
         if ($this->isIterable) {
             $this->iterable = new Parameters();
@@ -182,7 +182,7 @@ trait ArgumentsTrait
         ParametersAccessInterface $access,
         string ...$id
     ): void {
-        if ($access->parameters()->keys() === ['K', 'V']) {
+        if ($access->parameters()->isIterable()) {
             return;
         }
         [$exists, $isArray, $existing] = $this->getNestedArrayIfExists($this->arguments, $id);
@@ -253,7 +253,7 @@ trait ArgumentsTrait
      */
     private function computeNestedDefaults(ParametersAccessInterface $access, array $current): array
     {
-        if ($access->parameters()->keys() === ['K', 'V']) {
+        if ($access->parameters()->isIterable()) {
             return $current;
         }
 

@@ -150,4 +150,6 @@ interface ParametersInterface extends StringMappedInterface
     public function withIsVariadic(bool $isVariadic = true): self;
 
     public function isVariadic(): bool;
+
+    public function isIterable(): bool;
 }

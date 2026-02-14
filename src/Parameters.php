@@ -83,6 +83,11 @@ final class Parameters implements ParametersInterface
         return $this->index->toArray();
     }
 
+    public function isIterable(): bool
+    {
+        return $this->keys() === ['K', 'V'];
+    }
+
     public function getIterator(): Iterator
     {
         foreach ($this->index as $key) {

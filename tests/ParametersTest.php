@@ -464,4 +464,13 @@ final class ParametersTest extends TestCase
         $this->assertSame(1, $arguments->required('id')->int());
         $this->assertNull($arguments->optional('email')?->string());
     }
+
+    public function testIterable(): void
+    {
+        $parameters = new Parameters(
+            K: int(),
+            V: string(),
+        );
+        $this->assertTrue($parameters->isIterable());
+    }
 }
