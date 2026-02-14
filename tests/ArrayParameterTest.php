@@ -26,6 +26,7 @@ use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\assertArray;
 use function Chevere\Parameter\float;
 use function Chevere\Parameter\int;
+use function Chevere\Parameter\iterable;
 use function Chevere\Parameter\null;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\union;
@@ -228,6 +229,71 @@ final class ArrayParameterTest extends TestCase
             ],
             $array
         );
+    }
+
+    public function testWithOptionalDefaultNestedIterableDoesNotApplyDefaults(): void
+    {
+        $input = [
+            'customer' => [
+                'email' => 'user@mail.com',
+            ],
+        ];
+        $arrayp = arrayp(
+            customer: arrayp(
+                email: string(),
+                tenants: iterable(
+                    V: arrayp(
+                        street: string(),
+                    )->withDefault([
+                        'street' => '123 Default St',
+                    ]),
+                    K: string()
+                )
+            )->withMakeOptional('tenants'),
+        );
+        $array = assertArray($arrayp, $input);
+        // Iterable child defaults should NOT be applied for missing `tenants`
+        $this->assertSame(
+            [
+                'customer' => [
+                    'email' => 'user@mail.com',
+                ],
+            ],
+            $array
+        );
+    }
+
+    public function testWithOptionalDefaultNestedIterablePreservesExistingValues(): void
+    {
+        $input = [
+            'customer' => [
+                'email' => 'user@mail.com',
+                'tenants' => [
+                    [
+                        'street' => 'First St',
+                    ],
+                    [
+                        'street' => 'Second St',
+                    ],
+                ],
+            ],
+        ];
+        $arrayp = arrayp(
+            customer: arrayp(
+                email: string(),
+                tenants: iterable(
+                    V: arrayp(
+                        street: string(),
+                    )->withDefault([
+                        'street' => '123 Default St',
+                    ]),
+                    K: int()
+                )
+            )->withMakeOptional('tenants'),
+        );
+        $array = assertArray($arrayp, $input);
+        // Existing iterable child values must remain unchanged (no slicing, no injected defaults)
+        $this->assertSame($input, $array);
     }
 
     public function testWithOut(): void
