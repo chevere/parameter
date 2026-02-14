@@ -17,6 +17,7 @@ use Chevere\Parameter\IterableParameter;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\arguments;
+use function Chevere\Parameter\arrayp;
 use function Chevere\Parameter\int;
 use function Chevere\Parameter\iterable;
 use function Chevere\Parameter\string;
@@ -203,5 +204,14 @@ final class IterableParameterTest extends TestCase
         $this->assertSame($value, $with->default());
         $this->expectException(InvalidArgumentException::class);
         $parameter->withDefault([null, false]);
+    }
+
+    public function testDisallowEmptyWhenArrayParameterHasRequiredKeys(): void
+    {
+        $value = arrayp(string());
+        $key = string();
+        $parameter = new IterableParameter($value, $key);
+        $this->expectException(InvalidArgumentException::class);
+        $parameter([]);
     }
 }
