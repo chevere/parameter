@@ -54,7 +54,7 @@ final class NullParameterTest extends TestCase
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Argument value provided is not of type null
+            Argument value provided is not of type `null`
             PLAIN
         );
         $parameter(1);

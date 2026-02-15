@@ -57,27 +57,6 @@ interface TypeInterface
     public const PRIMITIVE_INTERFACE_NAME = 'interfaceName';
 
     /**
-     * Type validators [primitive => validator callable]
-     * taken from https://www.php.net/manual/en/ref.var.php.
-     */
-    public const TYPE_VALIDATORS = [
-        self::ARRAY => 'is_array',
-        self::BOOL => 'is_bool',
-        self::CALLABLE => 'is_callable',
-        self::FLOAT => 'is_float',
-        self::INT => 'is_int',
-        self::ITERABLE => 'is_iterable',
-        self::NULL => 'is_null',
-        self::MIXED => 'is_mixed',
-        self::OBJECT => 'is_object',
-        self::RESOURCE => 'is_resource',
-        self::STRING => 'is_string',
-        self::PRIMITIVE_CLASS_NAME => 'is_object',
-        self::PRIMITIVE_INTERFACE_NAME => 'is_object',
-        self::UNION => 'is_array',
-    ];
-
-    /**
      * Type arguments accepted.
      */
     public const TYPE_ARGUMENTS = [
@@ -125,16 +104,6 @@ interface TypeInterface
      * It will return either the class name, interface, or the primitive.
      */
     public function typeHinting(): string;
-
-    /**
-     * Indicates if `$variable` validates against the type.
-     */
-    public function validate(mixed $variable): bool;
-
-    /**
-     * Returns the validator callable.
-     */
-    public function validator(): callable;
 
     /**
      * Indicates if type is scalar.

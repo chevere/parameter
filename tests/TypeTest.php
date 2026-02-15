@@ -17,6 +17,7 @@ use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Type;
 use Exception;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -28,33 +29,36 @@ final class TypeTest extends TestCase
         new Type('TypeSome');
     }
 
-    public function testTypes(): void
+    #[DataProvider('typesProvider')]
+    public function testTypes(
+        string $primitive,
+        array $constructorArgs,
+        string $typeHinting,
+        bool $isScalar
+    ): void {
+        $type = new Type(...$constructorArgs);
+
+        $this->assertSame($primitive, $type->primitive());
+        $this->assertSame($typeHinting, $type->typeHinting());
+        $this->assertSame($isScalar, $type->isScalar());
+    }
+
+    public static function typesProvider(): array
     {
-        $resource = fopen(__FILE__, 'r');
-        if (! is_resource($resource)) {
-            $this->markTestIncomplete('Unable to open ' . __FILE__);
-        }
-        $scalars = ['bool', 'int', 'float', 'string'];
-        foreach ([
-            Type::BOOL => true,
-            Type::INT => 1,
-            Type::FLOAT => 13.13,
-            Type::STRING => 'test',
-            Type::ARRAY => ['test'],
-            Type::OBJECT => new stdClass(),
-            Type::CALLABLE => 'phpinfo',
-            Type::ITERABLE => [4, 2, 1, 3],
-            Type::NULL => null,
-            Type::RESOURCE => $resource,
-        ] as $key => $val) {
-            $type = new Type($key);
-            $this->assertSame($key, $type->primitive());
-            $this->assertSame($key, $type->typeHinting());
-            $this->assertTrue($type->validate($val));
-            $this->assertSame(in_array($key, $scalars, true), $type->isScalar());
-        }
-        /** @var resource $resource */
-        fclose($resource);
+        return [
+            'bool' => [Type::BOOL, ['bool'], 'bool', true],
+            'int' => [Type::INT, ['int'], 'int', true],
+            'float' => [Type::FLOAT, ['float'], 'float', true],
+            'string' => [Type::STRING, ['string'], 'string', true],
+            'array' => [Type::ARRAY, ['array'], 'array', false],
+            'object' => [Type::OBJECT, ['object'], 'object', false],
+            'className' => [Type::PRIMITIVE_CLASS_NAME, [stdClass::class], 'stdClass', false],
+            'callable' => [Type::CALLABLE, ['callable'], 'callable', false],
+            'iterable' => [Type::ITERABLE, ['iterable'], 'iterable', false],
+            'null' => [Type::NULL, ['null'], 'null', false],
+            'resource' => [Type::RESOURCE, ['resource'], 'resource', false],
+            'union' => [Type::UNION, ['union', Type::INT, Type::STRING], 'int|string', false],
+        ];
     }
 
     public function testClassName(): void
@@ -62,7 +66,6 @@ final class TypeTest extends TestCase
         $type = new Type(Exception::class);
         $this->assertSame(Type::PRIMITIVE_CLASS_NAME, $type->primitive());
         $this->assertSame(Exception::class, $type->typeHinting());
-        $this->assertTrue($type->validate(new Exception()));
         $this->assertFalse($type->isScalar());
     }
 
@@ -71,7 +74,5 @@ final class TypeTest extends TestCase
         $type = new Type(TypeInterface::class);
         $this->assertSame(Type::PRIMITIVE_INTERFACE_NAME, $type->primitive());
         $this->assertSame(TypeInterface::class, $type->typeHinting());
-        $this->assertTrue($type->validate(new Type(Type::STRING)));
-        $this->assertFalse($type->validate(new Exception()));
     }
 }

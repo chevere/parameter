@@ -24,8 +24,6 @@ final class Type implements TypeInterface
         self::PRIMITIVE_INTERFACE_NAME,
     ];
 
-    private string $validator;
-
     private string $primitive = '';
 
     private string $typeHinting = '';
@@ -34,21 +32,21 @@ final class Type implements TypeInterface
      * @param string $type A debug type
      */
     public function __construct(
-        private string $type
+        private string $type,
+        string ...$more
     ) {
         $this->setPrimitive();
         $this->assertHasPrimitive();
-        $this->validator = self::TYPE_VALIDATORS[$this->primitive];
         $this->typeHinting = $this->primitive;
         if (in_array($this->primitive, self::CLASS_TYPES, true)) {
             $this->typeHinting = $this->type;
         }
-    }
-
-    public function validator(): callable
-    {
-        /** @var callable */
-        return $this->validator; // @phpstan-ignore-line
+        if ($type === self::UNION) {
+            $this->typeHinting = implode('|', array_map(
+                static fn (string $type) => (new Type($type))->typeHinting(),
+                $more
+            ));
+        }
     }
 
     public function primitive(): string
@@ -61,28 +59,9 @@ final class Type implements TypeInterface
         return $this->typeHinting;
     }
 
-    public function validate(mixed $variable): bool
-    {
-        if (is_object($variable) && $this->isAbleToValidateObjects()) {
-            return $this->validateObject($variable);
-        }
-
-        return $this->validator()($variable);
-    }
-
     public function isScalar(): bool
     {
         return in_array($this->primitive, ['bool', 'int', 'float', 'string'], true);
-    }
-
-    private function isAbleToValidateObjects(): bool
-    {
-        return in_array($this->primitive, self::CLASS_TYPES, true);
-    }
-
-    private function validateObject(object $object): bool
-    {
-        return $object instanceof $this->type;
     }
 
     private function setPrimitive(): void

@@ -35,7 +35,7 @@ final class NullParameter implements NullParameterInterface
         }
 
         throw new TypeError(
-            (string) message('Argument value provided is not of type null')
+            (string) message('Argument value provided is not of type `null`')
         );
     }
 
