@@ -45,6 +45,7 @@ final class UnionParameterTest extends TestCase
             bar: int()
         );
         $parameter = new UnionParameter($parameters);
+        $this->assertSame('string|int', $parameter->type()->typeHinting());
         $this->assertSame(
             TypeInterface::UNION,
             $parameter->type()->primitive()

@@ -39,7 +39,6 @@ final class UnionParameter implements UnionParameterInterface
         private ParametersInterface $parameters,
         private string $description = '',
     ) {
-        $this->type = $this->type();
         if ($parameters->count() < 2) {
             throw new LogicException(
                 (string) message(
@@ -47,7 +46,11 @@ final class UnionParameter implements UnionParameterInterface
                 )
             );
         }
-
+        $types = array_map(
+            fn (ParameterInterface $parameter): string => $parameter->type()->typeHinting(),
+            iterator_to_array($this->parameters)
+        );
+        $this->type = new Type(TypeInterface::UNION, ...$types);
         $this->parameters = $parameters;
     }
 
