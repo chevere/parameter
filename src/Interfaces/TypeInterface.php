@@ -94,7 +94,7 @@ interface TypeInterface
     ];
 
     /**
-     * Returns the type primitive (array, bool, object, ..., className, interfaceName).
+     * Returns the type primitive (union, array, bool, object, ..., className, interfaceName).
      */
     public function primitive(): string;
 
