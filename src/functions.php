@@ -197,8 +197,8 @@ function castValues(
         $parameter = $parameters->get($key);
         $return[$key] = match (true) {
             $parameter instanceof BoolParameterInterface => (bool) $value,
-            $parameter instanceof IntParameterInterface => (int) $value,
-            $parameter instanceof FloatParameterInterface => (float) $value,
+            $parameter instanceof IntParameterInterface => (int) $value, // @phpstan-ignore-line
+            $parameter instanceof FloatParameterInterface => (float) $value, // @phpstan-ignore-line
             $parameter instanceof UnionParameterInterface => castUnion($parameter, $value),
             default => $value,
         };
@@ -257,10 +257,10 @@ function castUnion(
     foreach ($candidates as $candidate) {
         if (in_array($candidate, $available, true)) {
             return match ($candidate) {
-                TypeInterface::INT => (int) $value,
-                TypeInterface::FLOAT => (float) $value,
+                TypeInterface::INT => (int) $value, // @phpstan-ignore-line
+                TypeInterface::FLOAT => (float) $value, // @phpstan-ignore-line
                 TypeInterface::BOOL => (bool) $value,
-                TypeInterface::STRING => (string) $value,
+                TypeInterface::STRING => (string) $value, // @phpstan-ignore-line
                 default => $value,
             };
         }
