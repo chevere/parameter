@@ -20,6 +20,9 @@ use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
+use Chevere\Parameter\Interfaces\BoolParameterInterface;
+use Chevere\Parameter\Interfaces\FloatParameterInterface;
+use Chevere\Parameter\Interfaces\IntParameterInterface;
 use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\MixedParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
@@ -192,15 +195,78 @@ function castValues(
             throw new InvalidArgumentException("Unknown parameter: {$key}");
         }
         $parameter = $parameters->get($key);
-        $return[$key] = match ($parameter->type()->primitive()) {
-            TypeInterface::BOOL => (bool) $value,
-            TypeInterface::INT => (int) $value, // @phpstan-ignore-line
-            TypeInterface::FLOAT => (float) $value, // @phpstan-ignore-line
+        $return[$key] = match (true) {
+            $parameter instanceof BoolParameterInterface => (bool) $value,
+            $parameter instanceof IntParameterInterface => (int) $value,
+            $parameter instanceof FloatParameterInterface => (float) $value,
+            $parameter instanceof UnionParameterInterface => castUnion($parameter, $value),
             default => $value,
         };
     }
 
     return $return;
+}
+
+/**
+ * Attempt to cast a value to the most appropriate member type declared
+ * in a union parameter.
+ *
+ * Behavior summary:
+ * - For string inputs that "look like" numbers, prefer numeric casts
+ *   (integer-like strings → int, non-integer numeric strings → float)
+ *   when those primitives are present in the union. If numeric members
+ *   are not present, `string` is used if available.
+ * - For non-string inputs, the value's runtime type is matched against
+ *   the union members and cast to the first matching primitive if found.
+ * - If no matching primitive is present in the union, the original
+ *   value is returned unchanged.
+ *
+ * This allows `castValues()` to convert e.g. `"123"` → `123` or
+ * `"12.3"` → `12.3` when the union contains `int`/`float` accordingly.
+ *
+ * @param UnionParameterInterface $union The union parameter definition
+ * @param mixed $value The value to cast
+ * @return mixed Cast value or original value if no suitable member found
+ */
+function castUnion(
+    UnionParameterInterface $union,
+    mixed $value
+): mixed {
+    $available = [];
+    foreach ($union->parameters() as $parameter) {
+        $available[] = $parameter->type()->primitive();
+    }
+    $available = array_unique($available);
+    $candidates = [];
+    if (is_string($value)) {
+        $candidates = match (true) {
+            preg_match('/^-?\d+$/', $value) === 1 => [TypeInterface::INT, TypeInterface::FLOAT, TypeInterface::STRING],
+            is_numeric($value) => [TypeInterface::FLOAT, TypeInterface::STRING, TypeInterface::INT],
+            default => [TypeInterface::STRING],
+        };
+    } else {
+        $runtime = getType($value);
+        $candidates = [$runtime];
+        if ($runtime === TypeInterface::INT && in_array(TypeInterface::FLOAT, $available, true)) {
+            $candidates[] = TypeInterface::FLOAT;
+        }
+        if (in_array(TypeInterface::STRING, $available, true)) {
+            $candidates[] = TypeInterface::STRING;
+        }
+    }
+    foreach ($candidates as $candidate) {
+        if (in_array($candidate, $available, true)) {
+            return match ($candidate) {
+                TypeInterface::INT => (int) $value,
+                TypeInterface::FLOAT => (float) $value,
+                TypeInterface::BOOL => (bool) $value,
+                TypeInterface::STRING => (string) $value,
+                default => $value,
+            };
+        }
+    }
+
+    return $value;
 }
 
 function assertNamedArgument(
