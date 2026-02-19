@@ -32,13 +32,11 @@ class _string implements ParameterAttributeInterface
     public function __construct(
         string|Stringable|BackedEnum $pattern = '',
         string $description = '',
-        ?string $default = null,
         bool $sensitive = false
     ) {
         $this->parameter = string(
             regex: $pattern,
             description: $description,
-            default: $default,
             sensitive: $sensitive
         );
     }

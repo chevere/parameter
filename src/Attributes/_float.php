@@ -33,7 +33,6 @@ class _float implements ParameterAttributeInterface
      */
     public function __construct(
         string $description = '',
-        ?float $default = null,
         ?float $min = null,
         ?float $max = null,
         array $accept = [],
@@ -42,7 +41,6 @@ class _float implements ParameterAttributeInterface
     ) {
         $this->parameter = float(
             description: $description,
-            default: $default,
             min: $min,
             max: $max,
             accept: $accept,

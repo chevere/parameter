@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
+use Chevere\Parameter\Attributes\_int;
 use Chevere\Parameter\Interfaces\MixedParameterInterface;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
@@ -112,6 +113,13 @@ final class ReflectionParameterTypedTest extends TestCase
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage('Parameter $int of type int is not compatible with Chevere\Parameter\StringParameter attribute');
         new ReflectionParameterTyped($parameter);
+    }
+
+    public function testAttributeInheritsDefault(): void
+    {
+        $function = function (#[_int(min: 1)] int $param = 100) {};
+        $reflection = new ReflectionParameterTyped(new ReflectionParameter($function, 'param'));
+        $this->assertSame(100, $reflection->parameter()->default());
     }
 
     private function getReflection(string $method, int $pos = 0): ReflectionParameter
