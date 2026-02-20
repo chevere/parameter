@@ -213,20 +213,19 @@ Common methods available on all parameters:
 
 ```php
 $parameter->withDescription('A human-readable label');
-$parameter->withIsSensitive(); // marks value as sensitive (omitted from error messages)
+$parameter->withIsSensitive(true); // marks value as sensitive (omitted from error messages)
+$parameter->withDefault($defaultValue); // sets a default value used when the parameter is optional and not provided
 ```
 
 Methods specific to each parameter type:
 
-| Parameter           | Immutable methods                                                                                                      |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `IntParameter`      | `withMin`, `withMax`, `withAccept`, `withReject`, `withDefault`                                                        |
-| `FloatParameter`    | `withMin`, `withMax`, `withAccept`, `withReject`, `withDefault`                                                        |
-| `StringParameter`   | `withRegex`, `withDefault`                                                                                             |
-| `BoolParameter`     | `withDefault`                                                                                                          |
-| `ArrayParameter`    | `withRequired`, `withOptional`, `withModify`, `withMakeOptional`, `withMakeRequired`, `without`, `withOptionalMinimum` |
-| `ObjectParameter`   | `withClassName`                                                                                                        |
-| `IterableParameter` | `withKey`, `withValue`                                                                                                 |
+| Parameter         | Immutable methods                                                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `IntParameter`    | `withMin`, `withMax`, `withAccept`, `withReject`                                                                       |
+| `FloatParameter`  | `withMin`, `withMax`, `withAccept`, `withReject`                                                                       |
+| `StringParameter` | `withRegex`                                                                                                            |
+| `ArrayParameter`  | `withRequired`, `withOptional`, `withModify`, `withMakeOptional`, `withMakeRequired`, `without`, `withOptionalMinimum` |
+| `ObjectParameter` | `withClassName`,                                                                                                       |
 
 ### Schema introspection
 
