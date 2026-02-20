@@ -437,7 +437,6 @@ function parameterAttribute(
 function reflectionToParameters(
     ReflectionFunction|ReflectionMethod $reflection
 ): ParametersInterface {
-    $hasVariadic = false;
     $parameters = parameters();
     foreach ($reflection->getParameters() as $reflectionParameter) {
         try {

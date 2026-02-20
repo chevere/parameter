@@ -130,8 +130,8 @@ function assertReturn(mixed $value = null): mixed
         : new ReflectionFunction($method);
     $attribute = $reflection->getAttributes(_return::class)[0]
         ?? null;
-    $ReturnT = $attribute?->newInstance()
+    $return = $attribute?->newInstance()
         ?? new _return(new _mixed());
 
-    return $ReturnT($value);
+    return $return($value);
 }
