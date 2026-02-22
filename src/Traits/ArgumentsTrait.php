@@ -312,10 +312,17 @@ trait ArgumentsTrait
         } else {
             $missing = array_diff($requiredKeys, $argumentKeys);
         }
+        foreach ($missing as &$key) {
+            $label = $this->parameters()->get($key)->label();
+            if ($label !== '') {
+                $key = $label;
+            }
+            $key = "`{$key}`";
+        }
 
         throw new ArgumentCountError(
             (string) message(
-                'Missing required argument(s): `%missing%`',
+                'Missing required argument(s): %missing%',
                 missing: implode(', ', $missing)
             )
         );
@@ -346,9 +353,13 @@ trait ArgumentsTrait
     private function assertSetArgument(string $name, mixed $argument, null|int|string $key = null): void
     {
         $parameter = $this->parameters()->get($name);
-        $property = $name;
+        $label = $parameter->label();
+        if ($label === '') {
+            $label = $name;
+        }
+        $property = $label;
         if ($key !== null) {
-            $property = $key . '...' . $name;
+            $property = $key . '...' . $label;
         }
         if (
             version_compare(PHP_VERSION, '8.2.0', '>=')
@@ -377,11 +388,11 @@ trait ArgumentsTrait
         }
     }
 
-    private function getExceptionPropertyMessage(string $name, Throwable $e): string
+    private function getExceptionPropertyMessage(string $property, Throwable $e): string
     {
         $message = $this->getExceptionMessage($e);
 
-        return "[{$name}]: {$message}";
+        return "[{$property}]: {$message}";
     }
 
     private function assertValues(): void

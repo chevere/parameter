@@ -82,23 +82,40 @@ function typed(mixed $variable, string|int ...$key): TypedInterface
 
 function null(
     string $description = '',
+    bool $sensitive = false,
+    string $label = '',
 ): NullParameterInterface {
-    return new NullParameter($description);
+    $parameter = new NullParameter($description, $sensitive);
+    if ($label !== '') {
+        $parameter = $parameter->withLabel($label);
+    }
+
+    return $parameter;
 }
 
 function mixed(
     string $description = '',
     bool $sensitive = false,
+    string $label = '',
 ): MixedParameterInterface {
-    return new MixedParameter($description, $sensitive);
+    $parameter = new MixedParameter($description, $sensitive);
+    if ($label !== '') {
+        $parameter = $parameter->withLabel($label);
+    }
+
+    return $parameter;
 }
 
 function object(
     string $className,
     string $description = '',
     bool $sensitive = false,
+    string $label = '',
 ): ObjectParameterInterface {
     $parameter = new ObjectParameter($description, $sensitive);
+    if ($label !== '') {
+        $parameter = $parameter->withLabel($label);
+    }
 
     return $parameter->withClassName($className);
 }
@@ -112,10 +129,18 @@ function iterable(
     ?ParameterInterface $K = null,
     string $description = '',
     bool $sensitive = false,
+    string $label = '',
 ): IterableParameterInterface {
     $K ??= int();
+    $parameter = new IterableParameter($V, $K, $description);
+    if ($sensitive) {
+        $parameter = $parameter->withIsSensitive($sensitive);
+    }
+    if ($label !== '') {
+        $parameter = $parameter->withLabel($label);
+    }
 
-    return (new IterableParameter($V, $K, $description))->withIsSensitive($sensitive);
+    return $parameter;
 }
 
 function union(

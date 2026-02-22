@@ -22,6 +22,8 @@ trait ParameterTrait
 
     private bool $isSensitive = false;
 
+    private string $label = '';
+
     public function __construct(
         private string $description = '',
         bool $isSensitive = false,
@@ -69,6 +71,19 @@ trait ParameterTrait
     public function isSensitive(): bool
     {
         return $this->isSensitive;
+    }
+
+    public function withLabel(string $label): static
+    {
+        $new = clone $this;
+        $new->label = $label;
+
+        return $new;
+    }
+
+    public function label(): string
+    {
+        return $this->label;
     }
 
     abstract private function typeName(): string;

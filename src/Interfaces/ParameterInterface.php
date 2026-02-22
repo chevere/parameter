@@ -53,7 +53,7 @@ interface ParameterInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified description.
      */
-    public function withDescription(string $description): self;
+    public function withDescription(string $description): static;
 
     /**
      * Return an instance with the specified $isSensitive.
@@ -61,7 +61,17 @@ interface ParameterInterface
      * This method MUST retain the state of the current instance, and return
      * an instance that contains the specified $isSensitive.
      */
-    public function withIsSensitive(bool $isSensitive = true): self;
+    public function withIsSensitive(bool $isSensitive = true): static;
 
     public function isSensitive(): bool;
+
+    /**
+     * Return an instance with the specified $label.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified $label.
+     */
+    public function withLabel(string $label): static;
+
+    public function label(): string;
 }

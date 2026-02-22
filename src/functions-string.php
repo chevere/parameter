@@ -23,7 +23,8 @@ function string(
     string|Stringable|BackedEnum $regex = '',
     string $description = '',
     ?string $default = null,
-    bool $sensitive = false
+    bool $sensitive = false,
+    string $label = '',
 ): StringParameterInterface {
     $parameter = new StringParameter($description, $sensitive);
     if ($regex !== '') {
@@ -43,6 +44,9 @@ function string(
     if ($default !== null) {
         $parameter = $parameter->withDefault($default);
     }
+    if ($label !== '') {
+        $parameter = $parameter->withLabel($label);
+    }
 
     return $parameter;
 }
@@ -50,13 +54,15 @@ function string(
 function intString(
     string $description = '',
     ?string $default = null,
-    bool $sensitive = false
+    bool $sensitive = false,
+    string $label = '',
 ): StringParameterInterface {
     return string(
         regex: '/^\d+$/',
         description: $description,
         default: $default,
-        sensitive: $sensitive
+        sensitive: $sensitive,
+        label: $label,
     );
 }
 
@@ -75,11 +81,12 @@ function enum(string $string, string ...$strings): StringParameterInterface
 function date(
     string $description = 'YYYY-MM-DD',
     ?string $default = null,
-    bool $sensitive = false
+    bool $sensitive = false,
+    string $label = '',
 ): StringParameterInterface {
     $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/';
 
-    return string($regex, $description, $default, $sensitive);
+    return string(...get_defined_vars());
 }
 
 /**
@@ -88,11 +95,12 @@ function date(
 function time(
     string $description = 'hh:mm:ss',
     ?string $default = null,
-    bool $sensitive = false
+    bool $sensitive = false,
+    string $label = '',
 ): StringParameterInterface {
     $regex = '/^\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
 
-    return string($regex, $description, $default, $sensitive);
+    return string(...get_defined_vars());
 }
 
 /**
@@ -103,11 +111,13 @@ function datetime(
     ?string $default = null,
     bool $sensitive = false,
     int $precision = 0,
+    string $label = '',
 ): StringParameterInterface {
     $regex = '/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\s{1}\d{2,3}:[0-5][0-9]:[0-5][0-9]$/';
     if ($precision > 0) {
         $regex = str_replace('$/', '(\.\d{1,' . $precision . '})?$/', $regex);
     }
+    unset($precision);
 
-    return string($regex, $description, $default, $sensitive);
+    return string(...get_defined_vars());
 }

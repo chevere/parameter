@@ -28,6 +28,7 @@ function float(
     array $accept = [],
     array $reject = [],
     bool $sensitive = false,
+    string $label = '',
 ): FloatParameterInterface {
     $parameter = new FloatParameter($description, $sensitive);
     if ($accept !== []) {
@@ -45,6 +46,9 @@ function float(
     if ($default !== null) {
         $parameter = $parameter->withDefault($default);
     }
+    if ($label !== '') {
+        $parameter = $parameter->withLabel($label);
+    }
 
     return $parameter;
 }
@@ -61,6 +65,7 @@ function int(
     array $accept = [],
     array $reject = [],
     bool $sensitive = false,
+    string $label = '',
 ): IntParameterInterface {
     $parameter = new IntParameter($description, $sensitive);
     if ($accept !== []) {
@@ -77,6 +82,9 @@ function int(
     }
     if ($default !== null) {
         $parameter = $parameter->withDefault($default);
+    }
+    if ($label !== '') {
+        $parameter = $parameter->withLabel($label);
     }
 
     return $parameter;

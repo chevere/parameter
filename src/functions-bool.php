@@ -21,10 +21,14 @@ function bool(
     string $description = '',
     ?bool $default = null,
     bool $sensitive = false,
+    string $label = '',
 ): BoolParameterInterface {
     $parameter = new BoolParameter($description, $sensitive);
     if ($default !== null) {
         $parameter = $parameter->withDefault($default);
+    }
+    if ($label !== '') {
+        $parameter = $parameter->withLabel($label);
     }
 
     return $parameter;
@@ -34,12 +38,14 @@ function boolInt(
     string $description = '',
     ?int $default = null,
     bool $sensitive = false,
+    string $label = '',
 ): IntParameterInterface {
     return int(
         description: $description,
         default: $default,
         accept: [0, 1],
-        sensitive: $sensitive
+        sensitive: $sensitive,
+        label: $label
     );
 }
 
@@ -47,11 +53,13 @@ function boolString(
     string $description = '',
     ?string $default = null,
     bool $sensitive = false,
+    string $label = '',
 ): StringParameterInterface {
     return string(
         regex: '/^[01]$/',
         description: $description,
         default: $default,
-        sensitive: $sensitive
+        sensitive: $sensitive,
+        label: $label
     );
 }

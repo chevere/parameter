@@ -32,6 +32,7 @@ function nullInt(
     array $accept = [],
     array $reject = [],
     bool $sensitive = false,
+    string $label = '',
 ): UnionParameterInterface {
     return unionNull(
         int(...get_defined_vars())
@@ -50,6 +51,7 @@ function nullFloat(
     array $accept = [],
     array $reject = [],
     bool $sensitive = false,
+    string $label = '',
 ): UnionParameterInterface {
     return unionNull(
         float(...get_defined_vars())
@@ -60,6 +62,7 @@ function nullBool(
     string $description = '',
     ?bool $default = null,
     bool $sensitive = false,
+    string $label = '',
 ): UnionParameterInterface {
     return unionNull(
         bool(...get_defined_vars())
@@ -70,7 +73,8 @@ function nullString(
     string|Stringable|BackedEnum $regex = '',
     string $description = '',
     ?string $default = null,
-    bool $sensitive = false
+    bool $sensitive = false,
+    string $label = '',
 ): UnionParameterInterface {
     $regex = match (true) {
         is_string($regex) => $regex,
@@ -106,6 +110,7 @@ function nullObject(
     string $className,
     string $description = '',
     bool $sensitive = false,
+    string $label = '',
 ): UnionParameterInterface {
     return unionNull(
         object(...get_defined_vars())

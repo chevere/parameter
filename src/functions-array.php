@@ -47,6 +47,8 @@ function file(
     ?StringParameterInterface $tmp_name = null,
     ?IntParameterInterface $size = null,
     ?StringParameterInterface $contents = null,
+    string $description = '',
+    string $label = '',
 ): ArrayParameterInterface {
     $array = arrayp(
         error: $error ?? int(accept: [UPLOAD_ERR_OK]),
@@ -59,6 +61,12 @@ function file(
         $array = $array->withOptional(
             contents: $contents,
         );
+    }
+    if ($description !== '') {
+        $array = $array->withDescription($description);
+    }
+    if ($label !== '') {
+        $array = $array->withLabel($label);
     }
 
     return $array;
