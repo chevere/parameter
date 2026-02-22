@@ -37,16 +37,10 @@ class _int implements ParameterAttributeInterface
         ?int $max = null,
         array $accept = [],
         array $reject = [],
-        bool $sensitive = false
+        bool $sensitive = false,
+        string $label = '',
     ) {
-        $this->parameter = int(
-            description: $description,
-            min: $min,
-            max: $max,
-            accept: $accept,
-            reject: $reject,
-            sensitive: $sensitive
-        );
+        $this->parameter = int(...get_defined_vars());
     }
 
     public function __invoke(int $int): int

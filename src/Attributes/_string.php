@@ -30,15 +30,12 @@ class _string implements ParameterAttributeInterface
     private StringParameterInterface $parameter;
 
     public function __construct(
-        string|Stringable|BackedEnum $pattern = '',
+        string|Stringable|BackedEnum $regex = '',
         string $description = '',
-        bool $sensitive = false
+        bool $sensitive = false,
+        string $label = '',
     ) {
-        $this->parameter = string(
-            regex: $pattern,
-            description: $description,
-            sensitive: $sensitive
-        );
+        $this->parameter = string(...get_defined_vars());
     }
 
     public function __invoke(string $string): string

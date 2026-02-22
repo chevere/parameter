@@ -29,10 +29,9 @@ class _null implements ParameterAttributeInterface
 
     public function __construct(
         string $description = '',
+        string $label = '',
     ) {
-        $this->parameter = null(
-            description: $description,
-        );
+        $this->parameter = null(...get_defined_vars());
     }
 
     public function __invoke(mixed $null): mixed

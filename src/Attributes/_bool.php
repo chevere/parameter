@@ -29,12 +29,10 @@ class _bool implements ParameterAttributeInterface
 
     public function __construct(
         string $description = '',
-        bool $sensitive = false
+        bool $sensitive = false,
+        string $label = '',
     ) {
-        $this->parameter = bool(
-            description: $description,
-            sensitive: $sensitive
-        );
+        $this->parameter = bool(...get_defined_vars());
     }
 
     public function __invoke(bool $bool): bool

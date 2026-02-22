@@ -37,16 +37,10 @@ class _float implements ParameterAttributeInterface
         ?float $max = null,
         array $accept = [],
         array $reject = [],
-        bool $sensitive = false
+        bool $sensitive = false,
+        string $label = '',
     ) {
-        $this->parameter = float(
-            description: $description,
-            min: $min,
-            max: $max,
-            accept: $accept,
-            reject: $reject,
-            sensitive: $sensitive
-        );
+        $this->parameter = float(...get_defined_vars());
     }
 
     public function __invoke(float $float): float

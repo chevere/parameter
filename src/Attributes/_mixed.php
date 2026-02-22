@@ -29,12 +29,10 @@ class _mixed implements ParameterAttributeInterface
 
     public function __construct(
         string $description = '',
-        bool $sensitive = false
+        bool $sensitive = false,
+        string $label = '',
     ) {
-        $this->parameter = mixed(
-            description: $description,
-            sensitive: $sensitive
-        );
+        $this->parameter = mixed(...get_defined_vars());
     }
 
     public function __invoke(mixed $mixed): mixed
