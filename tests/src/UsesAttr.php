@@ -20,7 +20,7 @@ use Chevere\Parameter\Attributes\_enum;
 use Chevere\Parameter\Attributes\_float;
 use Chevere\Parameter\Attributes\_int;
 use Chevere\Parameter\Attributes\_iterable;
-use Chevere\Parameter\Attributes\_null;
+use Chevere\Parameter\Attributes\_mixed;
 use Chevere\Parameter\Attributes\_return;
 use Chevere\Parameter\Attributes\_string;
 use Chevere\Parameter\Attributes\_union;
@@ -54,7 +54,7 @@ final class UsesAttr
         bool $flag = false,
         #[_float(min: 0)]
         float $amount = 0,
-        #[_null()]
+        #[_mixed()]
         mixed $null = null,
         #[_enum('test', 'value')]
         string $enum = 'value',

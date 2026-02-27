@@ -21,6 +21,7 @@ use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionUnionType;
+use SensitiveParameter;
 use Throwable;
 use TypeError;
 use function Chevere\Message\message;
@@ -49,6 +50,12 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         if (isset($attribute, $this->type)) {
             $typeHint = $this->getTypeHint($this->type);
             $attrHint = $attribute->parameter()->type()->typeHinting();
+            $typeHintParts = explode('|', $typeHint);
+            $attrHintParts = explode('|', $attrHint);
+            sort($typeHintParts);
+            sort($attrHintParts);
+            $typeHint = implode('|', $typeHintParts);
+            $attrHint = implode('|', $attrHintParts);
             if ($typeHint !== $attrHint) {
                 throw new TypeError(
                     (string) message(
@@ -65,6 +72,10 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         if ($this->hasDefault && $this->defaultValue !== null) {
             /** @var ParameterInterface $parameter */
             $parameter = $parameter->withDefault($this->defaultValue);
+        }
+        $isSensitive = $reflection->getAttributes(SensitiveParameter::class) !== [];
+        if ($isSensitive) {
+            $parameter = $parameter->withIsSensitive($isSensitive);
         }
         $this->parameter = $parameter;
     }

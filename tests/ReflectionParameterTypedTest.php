@@ -79,13 +79,13 @@ final class ReflectionParameterTypedTest extends TestCase
         $this->assertInstanceOf(UnionParameterInterface::class, $reflected);
     }
 
-    public function testTUnionibuteError(): void
+    public function testUnionAttributeError(): void
     {
         $parameter = $this->getReflection('useWrongTUnion');
         $this->expectException(TypeError::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Parameter \$union of type string|int is not compatible with Chevere\Parameter\UnionParameter attribute
+            Parameter \$union of type int|string is not compatible with Chevere\Parameter\UnionParameter attribute
             PLAIN
         );
         new ReflectionParameterTyped($parameter);
