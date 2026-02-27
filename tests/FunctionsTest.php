@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use BadMethodCallException;
+use Chevere\Parameter\Attributes\_int;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
@@ -23,6 +24,7 @@ use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 use ReflectionProperty;
 use stdClass;
 use TypeError;
@@ -563,6 +565,22 @@ final class FunctionsTest extends TestCase
         $reflection = new ReflectionProperty($class, 'id');
         $parameter = reflectionPropertyToParameter($reflection);
         $this->assertSame(100, $parameter->default());
+    }
+
+    public function testReflectionPropertyToParameterWithAttribute(): void
+    {
+        $object = new class() {
+            #[_int(min: 200)]
+            public int $id = 100;
+        };
+        $reflection = (new ReflectionObject($object))->getProperty('id');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Argument value provided `100` is less than `200`
+            PLAIN
+        );
+        reflectionPropertyToParameter($reflection);
     }
 
     public function testPromotedReflectionPropertyToParameter(): void

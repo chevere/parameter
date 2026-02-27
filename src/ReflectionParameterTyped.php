@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
+use Chevere\Parameter\Exceptions\AttributeNotFoundException;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ReflectionParameterTypedInterface;
 use LogicException;
@@ -22,7 +23,6 @@ use ReflectionParameter;
 use ReflectionProperty;
 use ReflectionUnionType;
 use SensitiveParameter;
-use Throwable;
 use TypeError;
 use function Chevere\Message\message;
 
@@ -44,8 +44,7 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
 
         try {
             $attribute = reflectedParameterAttribute($reflection);
-        } catch (Throwable) {
-            // do nothing
+        } catch (AttributeNotFoundException) {
         }
         if (isset($attribute, $this->type)) {
             $typeHint = $this->getTypeHint($this->type);
