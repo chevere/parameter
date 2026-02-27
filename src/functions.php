@@ -466,38 +466,8 @@ function reflectionToParameters(
 ): ParametersInterface {
     $parameters = parameters();
     foreach ($reflection->getParameters() as $reflectionParameter) {
-        try {
-            $push = reflectedParameterAttribute($reflectionParameter);
-        } catch (AttributeNotFoundException) {
-            $push = new ReflectionParameterTyped($reflectionParameter);
-        }
+        $push = new ReflectionParameterTyped($reflectionParameter);
         $push = $push->parameter();
-        if ($reflectionParameter->isDefaultValueAvailable()
-            && $reflectionParameter->getDefaultValue() !== null
-            && $push->default() === null
-        ) {
-            try {
-                /** @var ParameterInterface $push */
-                $push = $push->withDefault($reflectionParameter->getDefaultValue());
-            } catch (Throwable $e) {
-                $name = $reflectionParameter->getName();
-                $class = $reflectionParameter->getDeclaringClass()?->getName() ?? null;
-                $function = $reflectionParameter->getDeclaringFunction()->getName();
-                $caller = match (true) {
-                    $class === null => $function,
-                    default => $class . '::' . $function,
-                };
-
-                throw new InvalidArgumentException(
-                    (string) message(
-                        'Unable to use default value for parameter `%name%` in `%caller%`: %message%',
-                        name: $name,
-                        caller: $caller,
-                        message: $e->getMessage(),
-                    )
-                );
-            }
-        }
         $withMethod = match ($reflectionParameter->isOptional()) {
             true => 'withOptional',
             default => 'withRequired',

@@ -103,12 +103,16 @@ final class ReflectionFunctionsTest extends TestCase
 
     public function testWithDefaultError(): void
     {
-        $function = 'Chevere\Tests\src\withDefaultError';
+        $function = function (
+            #[_int(min: 2)]
+            int $int = 1
+        ): void {
+        };
         $reflection = new ReflectionFunction($function);
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Unable to use default value for parameter `int` in `Chevere\Tests\src\withDefaultError`: Argument value provided `1` is less than `2`
+            Argument value provided `1` is less than `2`
             PLAIN
         );
         reflectionToParameters($reflection);

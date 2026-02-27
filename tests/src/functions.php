@@ -60,12 +60,6 @@ function noUsesAttr(
     return assertReturn(true);
 }
 
-function withDefaultError(
-    #[_int(min: 2)]
-    int $int = 1
-): void {
-}
-
 #[_return(
     new _int(min: 100, max: 200)
 )]
