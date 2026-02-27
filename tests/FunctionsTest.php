@@ -23,6 +23,7 @@ use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 use stdClass;
 use TypeError;
 use function Chevere\Parameter\arguments;
@@ -42,6 +43,7 @@ use function Chevere\Parameter\object;
 use function Chevere\Parameter\parameterAttribute;
 use function Chevere\Parameter\parameters;
 use function Chevere\Parameter\parametersFrom;
+use function Chevere\Parameter\reflectionPropertyToParameter;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
@@ -551,5 +553,28 @@ final class FunctionsTest extends TestCase
                 )->withIsVariadic(true),
             ],
         ];
+    }
+
+    public function testReflectionPropertyToParameter(): void
+    {
+        $class = new class() {
+            public int $id = 100;
+        };
+        $reflection = new ReflectionProperty($class, 'id');
+        $parameter = reflectionPropertyToParameter($reflection);
+        $this->assertSame(100, $parameter->default());
+    }
+
+    public function testPromotedReflectionPropertyToParameter(): void
+    {
+        $class = new class() {
+            public function __construct(
+                public int $id = 100
+            ) {
+            }
+        };
+        $reflection = new ReflectionProperty($class, 'id');
+        $parameter = reflectionPropertyToParameter($reflection);
+        $this->assertSame(100, $parameter->default());
     }
 }

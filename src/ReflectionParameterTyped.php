@@ -19,6 +19,7 @@ use LogicException;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionParameter;
+use ReflectionProperty;
 use ReflectionUnionType;
 use Throwable;
 use TypeError;
@@ -30,8 +31,12 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
 
     private ParameterInterface $parameter;
 
+    private bool $hasDefault;
+
+    private mixed $defaultValue;
+
     public function __construct(
-        private ReflectionParameter $reflection
+        private ReflectionParameter|ReflectionProperty $reflection
     ) {
         $this->type = $this->getType();
         $parameter = $this->getParameter();
@@ -56,14 +61,10 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             }
             $parameter = $attribute->parameter();
         }
-        if ($this->reflection->isDefaultValueAvailable()
-            && $this->reflection->getDefaultValue() !== null
-        ) {
+        $this->handleDefaultValue();
+        if ($this->hasDefault && $this->defaultValue !== null) {
             /** @var ParameterInterface $parameter */
-            $parameter = $parameter
-                ->withDefault(
-                    $this->reflection->getDefaultValue()
-                );
+            $parameter = $parameter->withDefault($this->defaultValue);
         }
         $this->parameter = $parameter;
     }
@@ -147,5 +148,41 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             $reflectionType instanceof ReflectionIntersectionType => 'intersection',
             default => 'unknown',
         };
+    }
+
+    private function handleDefaultValue(): void
+    {
+        $this->hasDefault = false;
+        $this->defaultValue = null;
+        if (! ($this->reflection instanceof ReflectionProperty)) {
+            $this->hasDefault = $this->reflection->isDefaultValueAvailable();
+            $this->defaultValue = $this->hasDefault
+                ? $this->reflection->getDefaultValue()
+                : $this->defaultValue;
+
+            return;
+        }
+        if (! $this->reflection->isPromoted()) {
+            $this->hasDefault = $this->reflection->hasDefaultValue();
+            $this->defaultValue = $this->hasDefault
+                ? $this->reflection->getDefaultValue()
+                : $this->defaultValue;
+
+            return;
+        }
+        $constructor = $this->reflection->getDeclaringClass()->getConstructor();
+        if ($constructor === null) {
+            return;
+        }
+        foreach ($constructor->getParameters() as $reflectionParameter) {
+            if ($reflectionParameter->getName() === $this->reflection->getName()) {
+                if ($reflectionParameter->isDefaultValueAvailable()) {
+                    $this->hasDefault = true;
+                    $this->defaultValue = $reflectionParameter->getDefaultValue();
+                }
+
+                break;
+            }
+        }
     }
 }

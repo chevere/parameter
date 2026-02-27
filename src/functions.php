@@ -41,6 +41,8 @@ use ReflectionAttribute;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionParameter;
+use ReflectionProperty;
+use SebastianBergmann\Type\Parameter;
 use SensitiveParameter;
 use Throwable;
 use function Chevere\Message\message;
@@ -534,8 +536,17 @@ function reflectionToReturn(
     return $attribute->newInstance()->parameter();
 }
 
+/**
+ * Get a Parameter from a class property reflection.
+ */
+function reflectionPropertyToParameter(
+    ReflectionProperty $reflection
+): ParameterInterface {
+    return (new ReflectionParameterTyped($reflection))->parameter();
+}
+
 function reflectedParameterAttribute(
-    ReflectionParameter $reflection,
+    ReflectionParameter|ReflectionProperty $reflection,
 ): ParameterAttributeInterface {
     $isSensitive = $reflection->getAttributes(SensitiveParameter::class) !== [];
     $attributes = $reflection->getAttributes(
