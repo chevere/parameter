@@ -106,6 +106,9 @@ function nullArrayString(
     );
 }
 
+/**
+ * @param class-string $className
+ */
 function nullObject(
     string $className,
     string $description = '',

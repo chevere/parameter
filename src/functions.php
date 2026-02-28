@@ -108,6 +108,9 @@ function mixed(
     return $parameter;
 }
 
+/**
+ * @param class-string $className
+ */
 function object(
     string $className,
     string $description = '',

@@ -26,6 +26,9 @@ final class ObjectParameter implements ObjectParameterInterface
     use ParameterTrait;
     use SchemaTrait;
 
+    /**
+     * @var class-string
+     */
     private string $className;
 
     private ?object $default = null;

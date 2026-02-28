@@ -23,8 +23,19 @@ interface ObjectParameterInterface extends ParameterInterface
      */
     public function __invoke(object $value): object;
 
+    /**
+     * @return class-string
+     */
     public function className(): string;
 
+    /**
+     * Return an instance with the specified class name.
+     *
+     * This method MUST retain the state of the current instance, and return
+     * an instance that contains the specified class name.
+     *
+     * @param class-string $className
+     */
     public function withClassName(string $className): self;
 
     public function withDefault(object $default): self;
