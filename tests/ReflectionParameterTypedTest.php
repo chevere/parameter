@@ -15,18 +15,21 @@ namespace Chevere\Tests;
 
 use Chevere\Parameter\Attributes\_int;
 use Chevere\Parameter\Interfaces\MixedParameterInterface;
-use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ObjectParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use Chevere\Parameter\ReflectionParameterTyped;
 use Chevere\Tests\src\Depends;
+use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
+use ReflectionObject;
 use ReflectionParameter;
+use ReflectionProperty;
 use stdClass;
 use TypeError;
+use function Chevere\Parameter\reflectionPropertyToParameter;
 
 final class ReflectionParameterTypedTest extends TestCase
 {
@@ -38,15 +41,6 @@ final class ReflectionParameterTypedTest extends TestCase
         $this->assertInstanceOf(MixedParameterInterface::class, $reflected);
         $this->assertSame('default', $reflected->default());
     }
-
-    // public function testUseNull(): void
-    // {
-    //     $parameter = $this->getReflection('useNull');
-    //     $reflection = new ReflectionParameterTyped($parameter);
-    //     $reflected = $reflection->parameter();
-    //     $this->assertInstanceOf(NullParameterInterface::class, $reflected);
-    //     $this->assertSame(null, $reflected->default());
-    // }
 
     public function testParameterObject(): void
     {
@@ -120,6 +114,45 @@ final class ReflectionParameterTypedTest extends TestCase
         $function = function (#[_int(min: 1)] int $param = 100) {};
         $reflection = new ReflectionParameterTyped(new ReflectionParameter($function, 'param'));
         $this->assertSame(100, $reflection->parameter()->default());
+    }
+
+    public function testReflectionPropertyToParameter(): void
+    {
+        $class = new class() {
+            public int $id = 100;
+        };
+        $reflection = new ReflectionProperty($class, 'id');
+        $parameter = reflectionPropertyToParameter($reflection);
+        $this->assertSame(100, $parameter->default());
+    }
+
+    public function testReflectionPropertyToParameterWithAttribute(): void
+    {
+        $object = new class() {
+            #[_int(min: 200)]
+            public int $id = 100;
+        };
+        $reflection = (new ReflectionObject($object))->getProperty('id');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            Argument value provided `100` is less than `200`
+            PLAIN
+        );
+        new ReflectionParameterTyped($reflection);
+    }
+
+    public function testPromotedReflectionPropertyToParameter(): void
+    {
+        $class = new class() {
+            public function __construct(
+                public int $id = 100
+            ) {
+            }
+        };
+        $reflection = new ReflectionProperty($class, 'id');
+        $parameter = (new ReflectionParameterTyped($reflection))->parameter();
+        $this->assertSame(100, $parameter->default());
     }
 
     private function getReflection(string $method, int $pos = 0): ReflectionParameter

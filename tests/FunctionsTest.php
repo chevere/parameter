@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use BadMethodCallException;
-use Chevere\Parameter\Attributes\_int;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
@@ -24,8 +23,6 @@ use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use ReflectionObject;
-use ReflectionProperty;
 use stdClass;
 use TypeError;
 use function Chevere\Parameter\arguments;
@@ -45,7 +42,6 @@ use function Chevere\Parameter\object;
 use function Chevere\Parameter\parameterAttribute;
 use function Chevere\Parameter\parameters;
 use function Chevere\Parameter\parametersFrom;
-use function Chevere\Parameter\reflectionPropertyToParameter;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
@@ -555,44 +551,5 @@ final class FunctionsTest extends TestCase
                 )->withIsVariadic(true),
             ],
         ];
-    }
-
-    public function testReflectionPropertyToParameter(): void
-    {
-        $class = new class() {
-            public int $id = 100;
-        };
-        $reflection = new ReflectionProperty($class, 'id');
-        $parameter = reflectionPropertyToParameter($reflection);
-        $this->assertSame(100, $parameter->default());
-    }
-
-    public function testReflectionPropertyToParameterWithAttribute(): void
-    {
-        $object = new class() {
-            #[_int(min: 200)]
-            public int $id = 100;
-        };
-        $reflection = (new ReflectionObject($object))->getProperty('id');
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            <<<PLAIN
-            Argument value provided `100` is less than `200`
-            PLAIN
-        );
-        reflectionPropertyToParameter($reflection);
-    }
-
-    public function testPromotedReflectionPropertyToParameter(): void
-    {
-        $class = new class() {
-            public function __construct(
-                public int $id = 100
-            ) {
-            }
-        };
-        $reflection = new ReflectionProperty($class, 'id');
-        $parameter = reflectionPropertyToParameter($reflection);
-        $this->assertSame(100, $parameter->default());
     }
 }
