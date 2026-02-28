@@ -27,13 +27,8 @@ trait ParameterAssertArrayTypeTrait
     {
         $parametersCount = $this->parameters->count();
         $providedCount = $parameter->parameters()->count();
-        if ($parametersCount === 0 && $providedCount !== 0) {
-            throw new InvalidArgumentException(
-                (string) message(
-                    'Expecting no parameters, `%provided%` provided',
-                    provided: strval($providedCount)
-                )
-            );
+        if ($parametersCount === 0 || $providedCount === 0) {
+            return;
         }
         foreach ($this->parameters as $name => $item) {
             try {

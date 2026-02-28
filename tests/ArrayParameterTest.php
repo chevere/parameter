@@ -520,4 +520,11 @@ final class ArrayParameterTest extends TestCase
             ])
         );
     }
+
+    public function testCompatibleWithEmpty(): void
+    {
+        $this->expectNotToPerformAssertions();
+        arrayp(foo: string())->assertCompatible(arrayp());
+        arrayp()->assertCompatible(arrayp(foo: string()));
+    }
 }

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use Chevere\Parameter\ArrayStringParameter;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use function Chevere\Parameter\string;
 
@@ -54,13 +53,11 @@ final class ArrayStringParameterTest extends TestCase
 
     public function testAssertCompatible(): void
     {
+        $this->expectNotToPerformAssertions();
         $test = new ArrayStringParameter();
         $test->assertCompatible(new ArrayStringParameter());
-        $notCompatible = (new ArrayStringParameter())
-            ->withRequired(
-                foo: string()
-            );
-        $this->expectException(InvalidArgumentException::class);
-        $test->assertCompatible($notCompatible);
+        $test = $test->withRequired(foo: string('/^[a-z]$/'));
+        $compatible = (new ArrayStringParameter())->withRequired(foo: string('/^[a-z]$/'));
+        $test->assertCompatible($compatible);
     }
 }
