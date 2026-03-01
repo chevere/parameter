@@ -29,7 +29,7 @@ use ReflectionParameter;
 use ReflectionProperty;
 use stdClass;
 use TypeError;
-use function Chevere\Parameter\reflectionPropertyToParameter;
+use function Chevere\Parameter\reflectionToParameter;
 
 final class ReflectionParameterTypedTest extends TestCase
 {
@@ -116,17 +116,17 @@ final class ReflectionParameterTypedTest extends TestCase
         $this->assertSame(100, $reflection->parameter()->default());
     }
 
-    public function testReflectionPropertyToParameter(): void
+    public function testReflectionToParameter(): void
     {
         $class = new class() {
             public int $id = 100;
         };
         $reflection = new ReflectionProperty($class, 'id');
-        $parameter = reflectionPropertyToParameter($reflection);
+        $parameter = reflectionToParameter($reflection);
         $this->assertSame(100, $parameter->default());
     }
 
-    public function testReflectionPropertyToParameterWithAttribute(): void
+    public function testReflectionToParameterWithAttribute(): void
     {
         $object = new class() {
             #[_int(min: 200)]
@@ -142,7 +142,7 @@ final class ReflectionParameterTypedTest extends TestCase
         new ReflectionParameterTyped($reflection);
     }
 
-    public function testPromotedReflectionPropertyToParameter(): void
+    public function testPromotedReflectionToParameter(): void
     {
         $class = new class() {
             public function __construct(

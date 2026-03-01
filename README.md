@@ -1298,9 +1298,19 @@ $attr = parameterAttribute('foo', 'myFunction');
 $attr('bin-123'); // validates
 ```
 
+### reflectionToParameter
+
+Retrieve a `ParameterInterface` instance from a `ReflectionProperty` or `ReflectionParameter`.
+
+```php
+use function Chevere\Parameter\reflectionToParameter;
+;
+$parameter = reflectionToParameter($reflection);
+```
+
 ### reflectionToParameters
 
-Retrieve a `Parameters` instance from a `ReflectionFunction` or `ReflectionMethod`.
+Retrieve a `ParametersInterface` instance from a `ReflectionFunction` or `ReflectionMethod`.
 
 ```php
 use function Chevere\Parameter\reflectionToParameters;
@@ -1310,7 +1320,7 @@ $parameters = reflectionToParameters($reflection);
 
 ### reflectionToReturn
 
-Retrieve a `ParameterInterface` for the return type from a `ReflectionFunction` or `ReflectionMethod`.
+Retrieve a `ParameterInterface` instance for the return type from a `ReflectionFunction` or `ReflectionMethod`.
 
 ```php
 use function Chevere\Parameter\reflectionToReturn;

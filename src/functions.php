@@ -241,7 +241,6 @@ function castValues(
  * Attempt to cast a value to the most appropriate member type declared
  * in a union parameter.
  *
- * Behavior summary:
  * - For string inputs that "look like" numbers, prefer numeric casts
  *   (integer-like strings → int, non-integer numeric strings → float)
  *   when those primitives are present in the union. If numeric members
@@ -419,9 +418,6 @@ function getParameters(
         : $parameter;
 }
 
-/**
- * Retrieves the type of a variable as defined by this library.
- */
 function getType(mixed $variable): string
 {
     $type = \gettype($variable);
@@ -435,9 +431,6 @@ function getType(mixed $variable): string
     };
 }
 
-/**
- * Retrieves a Parameter attribute instance from a function or method parameter.
- */
 function parameterAttribute(
     string $parameter,
     string $function,
@@ -461,23 +454,19 @@ function parameterAttribute(
     );
 }
 
-/**
- * Get Parameters from a function or method reflection.
- */
 function reflectionToParameters(
     ReflectionFunction|ReflectionMethod $reflection
 ): ParametersInterface {
     $parameters = parameters();
     foreach ($reflection->getParameters() as $reflectionParameter) {
-        $push = new ReflectionParameterTyped($reflectionParameter);
-        $push = $push->parameter();
+        $parameter = reflectionToParameter($reflectionParameter);
         $withMethod = match ($reflectionParameter->isOptional()) {
             true => 'withOptional',
             default => 'withRequired',
         };
         $parameters = $parameters->{$withMethod}(
             $reflectionParameter->getName(),
-            $push
+            $parameter
         );
         if ($reflectionParameter->isVariadic()) {
             $parameters = $parameters->withIsVariadic(true);
@@ -487,9 +476,6 @@ function reflectionToParameters(
     return $parameters;
 }
 
-/**
- * Get a return Parameter from a function or method reflection.
- */
 function reflectionToReturn(
     ReflectionFunction|ReflectionMethod $reflection
 ): ParameterInterface {
@@ -509,11 +495,8 @@ function reflectionToReturn(
     return $attribute->newInstance()->parameter();
 }
 
-/**
- * Get a Parameter from a class property reflection.
- */
-function reflectionPropertyToParameter(
-    ReflectionProperty $reflection
+function reflectionToParameter(
+    ReflectionProperty|ReflectionParameter $reflection
 ): ParameterInterface {
     return (new ReflectionParameterTyped($reflection))->parameter();
 }
