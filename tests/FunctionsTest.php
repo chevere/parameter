@@ -45,6 +45,7 @@ use function Chevere\Parameter\parametersFrom;
 use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
+use function Chevere\Parameter\takeOne;
 use function Chevere\Parameter\typed;
 use function Chevere\Parameter\validated;
 use function Chevere\Parameter\valMd;
@@ -340,6 +341,14 @@ final class FunctionsTest extends TestCase
         );
         $this->expectException(OutOfBoundsException::class);
         iterator_to_array(takeFrom($parameters, '404'));
+    }
+
+    public function testTakeOne(): void
+    {
+        $parameter = int(min: 120);
+        $parameters = parameters(foo: $parameter);
+        $takeOne = takeOne($parameters, 'foo');
+        $this->assertSame($parameter, $takeOne);
     }
 
     public function testArrayFrom(): void

@@ -399,6 +399,13 @@ function takeFrom(
     }
 }
 
+function takeOne(
+    ParametersAccessInterface|ParametersInterface $parameter,
+    string|int $name
+): ParameterInterface {
+    return getParameters($parameter)->get(strval($name));
+}
+
 function parametersFrom(
     ParametersAccessInterface|ParametersInterface $parameter,
     string ...$name
