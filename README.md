@@ -1220,6 +1220,24 @@ $keys = takeKeys(arrayp(id: int(), size: int()));
 // ['id', 'size']
 ```
 
+### takeOne
+
+Retrieve a single key-parameter pair as an array.
+
+```php
+use function Chevere\Parameter\takeOne;
+use function Chevere\Parameter\arrayp;
+use function Chevere\Parameter\int;
+use function Chevere\Parameter\string;
+
+$array = arrayp(
+    id: int(min: 0),
+    size: int(min: 100),
+    name: string(),
+);
+$parameter = takeOne($array, 'size');
+```
+
 ### takeFrom
 
 Retrieve an iterator yielding selected key-parameter pairs.
