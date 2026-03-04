@@ -38,8 +38,10 @@ use InvalidArgumentException;
 use Iterator;
 use LogicException;
 use ReflectionAttribute;
+use ReflectionClass;
 use ReflectionFunction;
 use ReflectionMethod;
+use ReflectionObject;
 use ReflectionParameter;
 use ReflectionProperty;
 use SebastianBergmann\Type\Parameter;
@@ -533,8 +535,13 @@ function reflectedParameterAttribute(
 
 function validated(callable $callable, mixed ...$args): mixed
 {
-    // @phpstan-ignore-next-line
-    $reflection = new ReflectionFunction($callable);
+    $reflection = match (true) {
+        is_object($callable) => (new ReflectionObject($callable))->getMethod('__invoke'),
+        // @phpstan-ignore-next-line
+        is_array($callable) => (new ReflectionClass($callable[0]))->getMethod($callable[1]),
+        // @phpstan-ignore-next-line
+        default => new ReflectionFunction($callable),
+    };
 
     try {
         $parameters = reflectionToParameters($reflection);
@@ -564,7 +571,7 @@ function validated(callable $callable, mixed ...$args): mixed
 /**
  * @return array{0: string, 1: Throwable, 2: string, 3: int}
  */
-function getExceptionArguments(Throwable $e, ReflectionFunction $reflection): array
+function getExceptionArguments(Throwable $e, ReflectionFunction|ReflectionMethod $reflection): array
 {
     // @infection-ignore-all
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];

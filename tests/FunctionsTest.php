@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Chevere\Tests;
 
 use BadMethodCallException;
+use Chevere\Parameter\Attributes\_int;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
+use Chevere\Tests\src\CallableClassMethod;
 use InvalidArgumentException;
 use LogicException;
 use OutOfBoundsException;
@@ -478,6 +480,41 @@ final class FunctionsTest extends TestCase
         $function = 'Chevere\Tests\src\validates';
         $this->expectNotToPerformAssertions();
         validated($function, 100, 1, 'Test'); // base, times, name
+    }
+
+    public static function dataProviderValidatedCallables(): array
+    {
+        $object = new class() {
+            public function main(#[_int(min: 10)] int $base): void
+            {
+            }
+        };
+
+        return [
+            [
+                fn (#[_int(min: 10)] int $base) => null,
+            ],
+            ['Chevere\Tests\src\intMin10'],
+            [[CallableClassMethod::class, 'main']],
+            [[$object, 'main']],
+            [new class() {
+                public function __invoke(#[_int(min: 10)] int $base): void
+                {
+                }
+            }],
+        ];
+    }
+
+    #[DataProvider('dataProviderValidatedCallables')]
+    public function testValidatedCallables(callable $callable): void
+    {
+        $this->expectException(ParameterException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            InvalidArgumentException → [base]: Argument value provided `9` is less than `10`
+            PLAIN
+        );
+        validated($callable, 9);
     }
 
     #[DataProvider('dataProviderValMd')]

@@ -83,3 +83,9 @@ function usesSensitiveParameterAttr(
 ): void {
     assertArguments();
 }
+
+function intMin10(
+    #[_int(min: 10)]
+    int $base
+): void {
+}
