@@ -349,6 +349,7 @@ function toUnionParameter(string ...$types): UnionParameterInterface
 
 function toParameter(string $type): ParameterInterface
 {
+    $type = str_replace('?', 'null|', $type);
     if (str_contains($type, '|')) {
         return toUnionParameter(...explode('|', $type));
     }
