@@ -349,6 +349,9 @@ function toUnionParameter(string ...$types): UnionParameterInterface
 
 function toParameter(string $type): ParameterInterface
 {
+    if (str_contains($type, '|')) {
+        return toUnionParameter(...explode('|', $type));
+    }
     $class = TypeInterface::TYPE_TO_PARAMETER[$type]
         ?? null;
     if ($class === null) {
