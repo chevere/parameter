@@ -17,6 +17,7 @@ use BadMethodCallException;
 use Chevere\Parameter\Attributes\_int;
 use Chevere\Parameter\Exceptions\ParameterException;
 use Chevere\Parameter\Exceptions\ReturnException;
+use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\ParametersAccessInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
 use Chevere\Tests\src\CallableClassMethod;
@@ -48,7 +49,10 @@ use function Chevere\Parameter\string;
 use function Chevere\Parameter\takeFrom;
 use function Chevere\Parameter\takeKeys;
 use function Chevere\Parameter\takeOne;
+use function Chevere\Parameter\toParameter;
 use function Chevere\Parameter\typed;
+use function Chevere\Parameter\union;
+use function Chevere\Parameter\unionNull;
 use function Chevere\Parameter\validated;
 use function Chevere\Parameter\valMd;
 
@@ -596,6 +600,25 @@ final class FunctionsTest extends TestCase
                     pairs: mixed(),
                 )->withIsVariadic(true),
             ],
+        ];
+    }
+
+    #[DataProvider('dataProviderToParameter')]
+    public function testToParameter(ParameterInterface $parameter, string $type): void
+    {
+        $this->expectNotToPerformAssertions();
+        $parameter->assertCompatible(toParameter($type));
+    }
+
+    public static function dataProviderToParameter(): array
+    {
+        return [
+            [unionNull(string()), 'null|string'],
+            [unionNull(string()), '?string'],
+            [int(), 'int'],
+            [union(string(), int()), 'string|int'],
+            [union(string(), int()), 'int|string'],
+            [unionNull(string(), int(), float()), 'string|int|?float'],
         ];
     }
 }
