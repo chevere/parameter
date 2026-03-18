@@ -24,6 +24,7 @@ use Chevere\Parameter\Traits\ParameterTrait;
 use InvalidArgumentException;
 use LogicException;
 use Throwable;
+use TypeError;
 use function Chevere\Message\message;
 
 final class UnionParameter implements UnionParameterInterface
@@ -102,7 +103,44 @@ final class UnionParameter implements UnionParameterInterface
 
     public function assertCompatible(UnionParameterInterface $parameter): void
     {
-        $this->assertArrayType($parameter);
+        $types = [];
+        foreach ($this->parameters() as $item) {
+            $types[$item->type()->typeHinting()] = $item;
+        }
+
+        $provided = [];
+        foreach ($parameter->parameters() as $item) {
+            $provided[$item->type()->typeHinting()] = $item;
+        }
+
+        $missing = array_diff_key($types, $provided);
+        $extra = array_diff_key($provided, $types);
+        if ($missing !== [] || $extra !== []) {
+            $expected = implode('|', array_keys($types));
+            $providedTypes = implode('|', array_keys($provided));
+
+            throw new InvalidArgumentException(
+                (string) message(
+                    'Union types `%expected%` not compatible with `%provided%`',
+                    expected: $expected,
+                    provided: $providedTypes,
+                )
+            );
+        }
+
+        foreach ($types as $type => $item) {
+            try {
+                $item->assertCompatible($provided[$type]);
+            } catch (TypeError) {
+                throw new InvalidArgumentException(
+                    (string) message(
+                        'Union type `%type%` is not compatible with provided type `%provided%`',
+                        type: $type,
+                        provided: $provided[$type]::class,
+                    )
+                );
+            }
+        }
     }
 
     public function typeSchema(): string

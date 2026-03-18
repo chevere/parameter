@@ -95,7 +95,7 @@ final class UnionParameterTest extends TestCase
         $parameter->assertCompatible($compatible);
     }
 
-    public function testAssertNotCompatible(): void
+    public function testAssertCompatibleDifferentOrder(): void
     {
         $parameters = parameters(
             string(),
@@ -104,6 +104,22 @@ final class UnionParameterTest extends TestCase
         $parametersAlt = parameters(
             int(),
             string(),
+        );
+        $parameter = new UnionParameter($parameters);
+        $compatible = new UnionParameter($parametersAlt);
+        $this->expectNotToPerformAssertions();
+        $parameter->assertCompatible($compatible);
+    }
+
+    public function testAssertNotCompatibleDifferentTypes(): void
+    {
+        $parameters = parameters(
+            string(),
+            int(),
+        );
+        $parametersAlt = parameters(
+            string(),
+            float(),
         );
         $parameter = new UnionParameter($parameters);
         $compatible = new UnionParameter($parametersAlt);
