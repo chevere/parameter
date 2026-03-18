@@ -30,6 +30,8 @@ interface TypeInterface
 {
     public const BOOL = 'bool';
 
+    public const FALSE = 'false';
+
     public const INT = 'int';
 
     public const FLOAT = 'float';
@@ -63,6 +65,7 @@ interface TypeInterface
         self::ARRAY,
         self::BOOL,
         self::CALLABLE,
+        self::FALSE,
         self::FLOAT,
         self::INT,
         self::ITERABLE,
