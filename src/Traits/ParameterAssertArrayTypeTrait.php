@@ -17,6 +17,7 @@ use Chevere\Parameter\Interfaces\ParametersAccessInterface;
 use Chevere\Parameter\Interfaces\ParametersInterface;
 use InvalidArgumentException;
 use OutOfBoundsException;
+use TypeError;
 use function Chevere\Message\message;
 
 trait ParameterAssertArrayTypeTrait
@@ -44,7 +45,7 @@ trait ParameterAssertArrayTypeTrait
 
             try {
                 $item->assertCompatible($tryParameter);
-            } catch (\TypeError) {
+            } catch (TypeError) {
                 throw new InvalidArgumentException(
                     (string) message(
                         'Parameter `%name%` of type `%type%` is not compatible with type `%provided%`',
