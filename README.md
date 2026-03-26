@@ -120,18 +120,19 @@ $param->schema();
 
 ### Core types
 
-| Type                  | Helper     | Attribute   | Description                               |
-| --------------------- | ---------- | ----------- | ----------------------------------------- |
-| [String](#string)     | `string`   | `_string`   | String, optionally matching a regex       |
-| [Int](#int)           | `int`      | `_int`      | Integer with optional range/accept/reject |
-| [Float](#float)       | `float`    | `_float`    | Float with optional range/accept/reject   |
-| [Bool](#bool)         | `bool`     | `_bool`     | Boolean                                   |
-| [Null](#null)         | `null`     | `_null`     | Null                                      |
-| [Object](#object)     | `object`   | —           | Object of a given class                   |
-| [Mixed](#mixed)       | `mixed`    | `_mixed`    | Any type                                  |
-| [Array](#array)       | `arrayp`   | `_arrayp`   | Array with named parameters               |
-| [Iterable](#iterable) | `iterable` | `_iterable` | Iterable with generic key/value           |
-| [Union](#union)       | `union`    | `_union`    | Value matching at least one parameter     |
+| Type                     | Helper      | Attribute    | Description                                   |
+| ------------------------ | ----------- | ------------ | --------------------------------------------- |
+| [String](#string)        | `string`    | `_string`    | String, optionally matching a regex           |
+| [Int](#int)              | `int`       | `_int`       | Integer with optional range/accept/reject     |
+| [Float](#float)          | `float`     | `_float`     | Float with optional range/accept/reject       |
+| [Bool](#bool)            | `bool`      | `_bool`      | Boolean                                       |
+| [Null](#null)            | `null`      | `_null`      | Null                                          |
+| [Object](#object)        | `object`    | —            | Object of a given class                       |
+| [Mixed](#mixed)          | `mixed`     | `_mixed`     | Any type                                      |
+| [Array](#array)          | `arrayp`    | `_arrayp`    | Array with named parameters                   |
+| [Iterable](#iterable)    | `iterable`  | `_iterable`  | Iterable with generic key/value               |
+| [Union](#union)          | `union`     | `_union`     | Value matching at least one parameter         |
+| [UnionNull](#union-null) | `unionNull` | `_unionNull` | Value matching at least one parameter or null |
 
 ### Derived types
 
@@ -522,6 +523,8 @@ $union('100'); // '100'
 $union(100);   // 100
 ```
 
+## UnionNull
+
 You can also use `unionNull()` as a shorthand for nullable unions:
 
 ```php
@@ -536,13 +539,11 @@ $maybeInt(null); // null
 Attribute notation:
 
 ```php
-use Chevere\Parameter\Attributes\_union;
-use Chevere\Parameter\Attributes\_float;
+use Chevere\Parameter\Attributes\_null;
 use Chevere\Parameter\Attributes\_int;
 
-#[_union(
-    new _int(),
-    new _float()
+#[_unionNull(
+    new _int()
 )]
 ```
 
