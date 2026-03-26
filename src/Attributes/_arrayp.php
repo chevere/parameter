@@ -17,7 +17,6 @@ use Attribute;
 use Chevere\Parameter\ArrayParameter;
 use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 
 #[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER | Attribute::TARGET_CLASS_CONSTANT)]
@@ -46,10 +45,5 @@ class _arrayp implements ParameterAttributeInterface
     public function __invoke(array $array): array
     {
         return $this->parameter->__invoke($array);
-    }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
     }
 }

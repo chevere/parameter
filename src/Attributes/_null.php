@@ -16,7 +16,6 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\NullParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\null;
 
@@ -37,10 +36,5 @@ class _null implements ParameterAttributeInterface
     public function __invoke(mixed $null): mixed
     {
         return $this->parameter->__invoke($null);
-    }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
     }
 }

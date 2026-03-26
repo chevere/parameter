@@ -16,7 +16,6 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\FloatParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\float;
 
@@ -46,10 +45,5 @@ class _float implements ParameterAttributeInterface
     public function __invoke(float $float): float
     {
         return $this->parameter->__invoke($float);
-    }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
     }
 }

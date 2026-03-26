@@ -16,7 +16,6 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\IntParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\int;
 
@@ -46,10 +45,5 @@ class _int implements ParameterAttributeInterface
     public function __invoke(int $int): int
     {
         return $this->parameter->__invoke($int);
-    }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
     }
 }

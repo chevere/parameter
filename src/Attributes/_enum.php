@@ -15,7 +15,6 @@ namespace Chevere\Parameter\Attributes;
 
 use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\StringParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\enum;
@@ -37,10 +36,5 @@ class _enum implements ParameterAttributeInterface
     public function __invoke(string $string): string
     {
         return $this->parameter->__invoke($string);
-    }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
     }
 }

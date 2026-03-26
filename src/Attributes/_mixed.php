@@ -16,7 +16,6 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\MixedParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\mixed;
 
@@ -38,10 +37,5 @@ class _mixed implements ParameterAttributeInterface
     public function __invoke(mixed $mixed): mixed
     {
         return $this->parameter->__invoke($mixed);
-    }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
     }
 }

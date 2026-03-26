@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Traits;
 
+use Chevere\Parameter\Interfaces\ParameterInterface;
+
 trait AttrTrait
 {
     public function withIsSensitive(bool $isSensitive = true): static
@@ -22,5 +24,10 @@ trait AttrTrait
         $new->parameter = $new->parameter->withIsSensitive($isSensitive);
 
         return $new;
+    }
+
+    public function parameter(): ParameterInterface
+    {
+        return $this->parameter;
     }
 }

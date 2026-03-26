@@ -15,7 +15,6 @@ namespace Chevere\Parameter\Attributes;
 
 use Attribute;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\UnionParameterInterface;
 use Chevere\Parameter\Parameters;
 use Chevere\Parameter\Traits\AttrTrait;
@@ -43,10 +42,5 @@ class _union implements ParameterAttributeInterface
     public function __invoke(mixed $mixed): mixed
     {
         return $this->parameter->__invoke($mixed);
-    }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
     }
 }

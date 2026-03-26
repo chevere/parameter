@@ -16,7 +16,6 @@ namespace Chevere\Parameter\Attributes;
 use Attribute;
 use Chevere\Parameter\Interfaces\BoolParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
-use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 use function Chevere\Parameter\bool;
 
@@ -38,10 +37,5 @@ class _bool implements ParameterAttributeInterface
     public function __invoke(bool $bool): bool
     {
         return $this->parameter->__invoke($bool);
-    }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
     }
 }

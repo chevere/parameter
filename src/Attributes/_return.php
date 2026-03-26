@@ -34,9 +34,4 @@ class _return implements ParameterAttributeInterface
     {
         return $this->parameter->__invoke($mixed);
     }
-
-    public function parameter(): ParameterInterface
-    {
-        return $this->parameter;
-    }
 }
