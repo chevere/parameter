@@ -467,12 +467,28 @@ function parameterAttribute(
     );
 }
 
+/**
+ * @param ?array<array<string, mixed>> $violations
+ */
 function reflectionToParameters(
-    ReflectionFunction|ReflectionMethod $reflection
+    ReflectionFunction|ReflectionMethod $reflection,
+    ?array &$violations = null
 ): ParametersInterface {
     $parameters = parameters();
     foreach ($reflection->getParameters() as $reflectionParameter) {
-        $parameter = reflectionToParameter($reflectionParameter);
+        try {
+            $parameter = reflectionToParameter($reflectionParameter);
+        } catch (Throwable $e) {
+            if ($violations === null) {
+                throw $e;
+            }
+            $violations[] = [
+                'parameter' => $reflectionParameter->getName(),
+                'message' => $e->getMessage(),
+            ];
+
+            continue;
+        }
         $withMethod = match ($reflectionParameter->isOptional()) {
             true => 'withOptional',
             default => 'withRequired',
