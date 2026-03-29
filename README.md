@@ -23,6 +23,7 @@
 * **[chevere/action](https://chevere.org/packages/action)**: Implements the action design pattern for encapsulating business logic, utilizing this package for comprehensive parameter validation.
 * **[chevere/router](https://chevere.org/packages/router)**: Offers powerful routing with built-in parameter validation for handling HTTP requests and responses.
 * **[chevere/sql2p](https://chevere.org/packages/sql2p)**: Transforms SQL queries into parameter definitions, enabling automated validation of database inputs and outputs.
+* **[chevere/workflow](https://chevere.org/packages/workflow)**: Provides a workflow engine for defining and executing multi-step processes, using this package for parameter validation across workflow jobs.
 
 ## Installing
 
