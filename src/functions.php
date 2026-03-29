@@ -468,7 +468,7 @@ function parameterAttribute(
 }
 
 /**
- * @param ?array<array<string, mixed>> $violations
+ * @param ?array<array<string, mixed>> $violations Violations for parameters that could not be reflected, null to fail fast
  */
 function reflectionToParameters(
     ReflectionFunction|ReflectionMethod $reflection,

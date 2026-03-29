@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests;
 
+use Chevere\Parameter\Attributes\_float;
 use Chevere\Parameter\Attributes\_int;
 use Chevere\Parameter\Attributes\_return;
 use InvalidArgumentException;
@@ -116,5 +117,33 @@ final class ReflectionFunctionsTest extends TestCase
             PLAIN
         );
         reflectionToParameters($reflection);
+    }
+
+    public function testReflectionToParametersWithViolations(): void
+    {
+        $function = function (
+            #[_int(min: 2)]
+            int $int = 1,
+            #[_float(min: 0.5)]
+            float $float = 0.1
+        ): void {
+        };
+        $reflection = new ReflectionFunction($function);
+        $violations = [];
+        $parameters = reflectionToParameters($reflection, $violations);
+        $this->assertSame(
+            [
+                [
+                    'parameter' => 'int',
+                    'message' => 'Argument value provided `1` is less than `2`',
+                ],
+                [
+                    'parameter' => 'float',
+                    'message' => 'Argument value provided `0.1` is less than `0.5`',
+                ],
+            ],
+            $violations
+        );
+        $this->assertCount(0, $parameters);
     }
 }
