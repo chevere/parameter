@@ -1338,6 +1338,21 @@ use function Chevere\Parameter\reflectionToParameters;
 $parameters = reflectionToParameters($reflection);
 ```
 
+Pass an array by reference as `$violations` to collect all logic violations instead of failing fast on the first one.
+
+```php
+$violations = [];
+$parameters = reflectionToParameters($reflection, $violations);
+// [
+//     [
+//         'parameter' => 'the_parameter',
+//         'message' => 'Error message',
+//     ],
+// ]
+```
+
+When `$violations` is `null` (default), the function throws on the first reflection error. When an array is passed, errors are collected and the function continues processing remaining parameters.
+
 ### reflectionToReturn
 
 Retrieve a `ParameterInterface` instance for the return type from a `ReflectionFunction` or `ReflectionMethod`.
