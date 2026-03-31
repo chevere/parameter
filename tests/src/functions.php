@@ -89,3 +89,12 @@ function intMin10(
     int $base
 ): void {
 }
+
+function usesVariadic(
+    #[_int(min: 1, max: 5)]
+    int $id,
+    #[_enum('hugo', 'paco', 'luis')]
+    string ...$attribute
+): void {
+    assertArguments();
+}

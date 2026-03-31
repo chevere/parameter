@@ -20,6 +20,7 @@ use ReflectionFunction;
 use ReflectionMethod;
 use Throwable;
 use function Chevere\Message\message;
+use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\reflectionToParameters;
 
 /**
@@ -74,12 +75,16 @@ function assertArguments(string ...$name): void
     $parameters = reflectionToParameters($reflection);
     $pos = -1;
     $arguments = [];
-    foreach ($parameters->keys() as $named) {
-        $pos++;
-        if (! isset($args[$pos])) {
-            continue;
+    if ($parameters->isVariadic()) {
+        $arguments = $args;
+    } else {
+        foreach ($parameters->keys() as $named) {
+            $pos++;
+            if (! isset($args[$pos])) {
+                continue;
+            }
+            $arguments[$named] = $args[$pos];
         }
-        $arguments[$named] = $args[$pos];
     }
     if ($name === []) {
         $parameters(...$arguments);
