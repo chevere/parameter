@@ -557,7 +557,6 @@ function validated(callable $callable, mixed ...$args): mixed
 {
     $reflection = match (true) {
         is_object($callable) => (new ReflectionObject($callable))->getMethod('__invoke'),
-        // @phpstan-ignore-next-line
         is_array($callable) => (new ReflectionClass($callable[0]))->getMethod($callable[1]),
         // @phpstan-ignore-next-line
         default => new ReflectionFunction($callable),
