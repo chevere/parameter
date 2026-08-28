@@ -67,9 +67,10 @@ final class IterableParameter implements IterableParameterInterface
         $iterableValue = 'V' . $iterable;
 
         try {
-            foreach ($value as $k => $v) {
+            foreach ($value as $k => &$v) {
                 assertNamedArgument($iterableKey, $this->key, $k);
-                assertNamedArgument($iterableValue, $this->value, $v);
+                $arguments = assertNamedArgument($iterableValue, $this->value, $v);
+                $v = $arguments->get($iterableValue);
             }
         } catch (Throwable $e) {
             $message = $this->getExceptionMessage($e, ': ');

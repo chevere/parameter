@@ -214,4 +214,28 @@ final class IterableParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $parameter([]);
     }
+
+    public function testFiltersArrayKeys(): void
+    {
+        $value = arrayp(
+            name: string(),
+            age: int()
+        );
+        $expected = [
+            [
+                'name' => 'Alice',
+                'age' => 30,
+            ],
+            [
+                'name' => 'Bob',
+                'age' => 25,
+            ],
+        ];
+        $iterable = $expected;
+        $iterable[0]['extra'] = 'ignore';
+        $iterable[1]['extra'] = 'ignore';
+        $parameter = new IterableParameter($value, int());
+        $assert = $parameter($iterable);
+        $this->assertSame($expected, $assert);
+    }
 }
