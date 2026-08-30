@@ -137,9 +137,10 @@ function iterable(
     string $description = '',
     bool $sensitive = false,
     string $label = '',
+    bool $isEmptyAllowed = true
 ): IterableParameterInterface {
     $K ??= int();
-    $parameter = new IterableParameter($V, $K, $description);
+    $parameter = new IterableParameter($V, $K, $description, isEmptyAllowed: $isEmptyAllowed);
     if ($sensitive) {
         $parameter = $parameter->withIsSensitive($sensitive);
     }

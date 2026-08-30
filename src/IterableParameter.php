@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter;
 
-use Chevere\Parameter\Interfaces\ArrayParameterInterface;
 use Chevere\Parameter\Interfaces\IterableParameterInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Interfaces\TypeInterface;
@@ -35,12 +34,11 @@ final class IterableParameter implements IterableParameterInterface
      */
     private ?iterable $default = null;
 
-    private bool $isEmptyAllowed = false;
-
     public function __construct(
         private ParameterInterface $value,
         private ParameterInterface $key,
-        private string $description = ''
+        private string $description = '',
+        private bool $isEmptyAllowed = true
     ) {
         $this->setUp(); // @codeCoverageIgnore
         $this->type = $this->type();
@@ -48,8 +46,6 @@ final class IterableParameter implements IterableParameterInterface
             K: $this->key,
             V: $this->value
         );
-        $this->isEmptyAllowed = $this->value instanceof ArrayParameterInterface
-            && count($this->value->parameters()->requiredKeys()) === 0;
     }
 
     /**

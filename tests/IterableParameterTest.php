@@ -164,7 +164,7 @@ final class IterableParameterTest extends TestCase
         $parameter = iterable(union(int(), string()));
         $parameter($value);
         $this->expectException(InvalidArgumentException::class);
-        $parameter([]);
+        $parameter([10.5]);
     }
 
     public function testKeyError(): void
@@ -210,7 +210,7 @@ final class IterableParameterTest extends TestCase
     {
         $value = arrayp(string());
         $key = string();
-        $parameter = new IterableParameter($value, $key);
+        $parameter = new IterableParameter($value, $key, isEmptyAllowed: false);
         $this->expectException(InvalidArgumentException::class);
         $parameter([]);
     }
