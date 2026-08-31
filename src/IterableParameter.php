@@ -53,7 +53,7 @@ final class IterableParameter implements IterableParameterInterface
      */
     public function __invoke(iterable $value): iterable
     {
-        if (empty($value) && ! $this->isEmptyAllowed) {
+        if (! $this->isEmptyAllowed && $this->isEmpty($value)) {
             throw new InvalidArgumentException(
                 (string) message('Argument value provided is empty')
             );
@@ -110,6 +110,15 @@ final class IterableParameter implements IterableParameterInterface
     public function typeSchema(): string
     {
         return $this->type->primitive();
+    }
+
+    private function isEmpty(iterable $value): bool
+    {
+        foreach ($value as $v) {
+            return false;
+        }
+
+        return true;
     }
 
     private function typeName(): string
