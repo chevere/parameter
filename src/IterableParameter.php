@@ -112,6 +112,9 @@ final class IterableParameter implements IterableParameterInterface
         return $this->type->primitive();
     }
 
+    /**
+     * @param iterable<mixed, mixed> $value
+     */
     private function isEmpty(iterable $value): bool
     {
         foreach ($value as $v) {
