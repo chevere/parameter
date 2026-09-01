@@ -202,9 +202,10 @@ final class Parameters implements ParametersInterface
             $count < 0 => throw new InvalidArgumentException(
                 (string) message('Count must be greater or equal to 0')
             ),
-            $this->optionalKeys()->count() === 0 => throw new BadMethodCallException(
-                (string) message('No optional parameters found')
-            ),
+            $this->optionalKeys()
+                ->count() === 0 => throw new BadMethodCallException(
+                    (string) message('No optional parameters found')
+                ),
             default => null,
         };
         $new = clone $this;

@@ -295,7 +295,9 @@ trait ArgumentsTrait
 
     private function assertArgumentCount(): void
     {
-        $requiredKeys = $this->parameters()->requiredKeys()->toArray();
+        $requiredKeys = $this->parameters()
+            ->requiredKeys()
+            ->toArray();
         if (count($requiredKeys) <= $this->count) {
             return;
         }
@@ -313,7 +315,9 @@ trait ArgumentsTrait
             $missing = array_diff($requiredKeys, $argumentKeys);
         }
         foreach ($missing as &$key) {
-            $label = $this->parameters()->get($key)->label();
+            $label = $this->parameters()
+                ->get($key)
+                ->label();
             if ($label !== '') {
                 $key = $label;
             }
@@ -330,7 +334,9 @@ trait ArgumentsTrait
 
     private function assertMinimumOptional(): void
     {
-        $optional = $this->parameters()->optionalKeys()->toArray();
+        $optional = $this->parameters()
+            ->optionalKeys()
+            ->toArray();
         $providedOptionals = array_intersect(
             $optional,
             array_keys($this->arguments)
@@ -352,7 +358,8 @@ trait ArgumentsTrait
      */
     private function assertSetArgument(string $name, mixed $argument, null|int|string $key = null): void
     {
-        $parameter = $this->parameters()->get($name);
+        $parameter = $this->parameters()
+            ->get($name);
         $label = $parameter->label();
         if ($label === '') {
             $label = $name;
@@ -435,7 +442,9 @@ trait ArgumentsTrait
 
     private function isSkipOptional(string $name): bool
     {
-        return $this->parameters()->optionalKeys()->contains($name)
+        return $this->parameters()
+            ->optionalKeys()
+            ->contains($name)
             && ! $this->has($name);
     }
 }

@@ -53,7 +53,8 @@ trait ArrayParameterTrait
         $items = [];
         foreach ($this->parameters as $name => $parameter) {
             $items[$name] = [
-                'required' => $this->parameters->requiredKeys()->contains($name),
+                'required' => $this->parameters->requiredKeys()
+                    ->contains($name),
             ] + $parameter->schema();
         }
 
@@ -93,7 +94,8 @@ trait ArrayParameterTrait
     public function getIterator(): Iterator
     {
         // @phpstan-ignore-next-line
-        return $this->parameters()->getIterator();
+        return $this->parameters()
+            ->getIterator();
     }
 
     private function typeName(): string

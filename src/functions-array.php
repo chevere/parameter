@@ -84,7 +84,8 @@ function assertArray(
         return (array) $argument;
     }
 
-    return arguments($parameter->parameters(), $argument)->toArray();
+    return arguments($parameter->parameters(), $argument)
+        ->toArray();
 }
 
 /**

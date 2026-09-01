@@ -48,7 +48,9 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         }
         if (isset($attribute, $this->type)) {
             $typeHint = $this->getTypeHint($this->type);
-            $attrHint = $attribute->parameter()->type()->typeHinting();
+            $attrHint = $attribute->parameter()
+                ->type()
+                ->typeHinting();
             $typeHintParts = explode('|', $typeHint);
             $attrHintParts = explode('|', $attrHint);
             sort($typeHintParts);
@@ -96,7 +98,8 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             }
 
             return toUnionParameter(...$types);
-        } elseif ($this->type !== null) {
+        }
+        if ($this->type !== null) {
             if ($this->type->allowsNull() && $this->type->__toString() !== 'mixed') {
                 return toUnionParameter(
                     $this->getTypeHint($this->type),
@@ -180,7 +183,8 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
 
             return;
         }
-        $constructor = $this->reflection->getDeclaringClass()->getConstructor();
+        $constructor = $this->reflection->getDeclaringClass()
+            ->getConstructor();
         if ($constructor === null) {
             return;
         }

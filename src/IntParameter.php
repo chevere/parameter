@@ -114,7 +114,8 @@ final class IntParameter implements IntParameterInterface
     public function schema(): array
     {
         return [
-            'type' => $this->type()->primitive(),
+            'type' => $this->type()
+                ->primitive(),
             'description' => $this->description,
             'default' => $this->default,
             'min' => $this->min,

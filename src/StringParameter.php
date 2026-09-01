@@ -81,10 +81,12 @@ final class StringParameter implements StringParameterInterface
     public function schema(): array
     {
         return [
-            'type' => $this->type()->primitive(),
+            'type' => $this->type()
+                ->primitive(),
             'description' => $this->description(),
             'default' => $this->default(),
-            'regex' => $this->regex()->noDelimiters(),
+            'regex' => $this->regex()
+                ->noDelimiters(),
         ];
     }
 
@@ -98,7 +100,8 @@ final class StringParameter implements StringParameterInterface
             (string) message(
                 'Expected regex `%expected%`, provided `%provided%`',
                 expected: $this->regex->__toString(),
-                provided: $parameter->regex()->__toString()
+                provided: $parameter->regex()
+                    ->__toString()
             )
         );
     }

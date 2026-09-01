@@ -56,7 +56,8 @@ final class Arguments implements ArgumentsInterface
 
     public function get(string $name): mixed
     {
-        $this->parameters()->assertHas($name);
+        $this->parameters()
+            ->assertHas($name);
         if (! array_key_exists($name, $this->arguments)) {
             $name = array_search($name, $this->parameters()->keys(), true);
         }
@@ -81,7 +82,9 @@ final class Arguments implements ArgumentsInterface
     public function optional(string $name): ?TypedInterface
     {
         if ($this->parameters()->has($name)
-            && ! $this->parameters()->optionalKeys()->contains($name)
+            && ! $this->parameters()
+                ->optionalKeys()
+                ->contains($name)
         ) {
             throw new InvalidArgumentException(
                 (string) message(
@@ -100,7 +103,8 @@ final class Arguments implements ArgumentsInterface
 
     public function nested(string $key, string ...$lookup): ArgumentsInterface
     {
-        $currentParameter = $this->parameters()->get($key);
+        $currentParameter = $this->parameters()
+            ->get($key);
         $currentArgument = $this->arguments[$key] ?? null;
         foreach ($lookup as $nestedKey) {
             if (! ($currentParameter instanceof ParametersAccessInterface)) {

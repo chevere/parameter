@@ -27,13 +27,15 @@ trait ParameterAssertArrayTypeTrait
     private function assertArrayType(ParametersAccessInterface $parameter): void
     {
         $parametersCount = $this->parameters->count();
-        $providedCount = $parameter->parameters()->count();
+        $providedCount = $parameter->parameters()
+            ->count();
         if ($parametersCount === 0 || $providedCount === 0) {
             return;
         }
         foreach ($this->parameters as $name => $item) {
             try {
-                $tryParameter = $parameter->parameters()->get($name);
+                $tryParameter = $parameter->parameters()
+                    ->get($name);
             } catch (OutOfBoundsException) {
                 throw new OutOfBoundsException(
                     (string) message(

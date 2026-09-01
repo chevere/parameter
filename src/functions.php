@@ -522,7 +522,8 @@ function reflectionToReturn(
     /** @var ReflectionAttribute<_return> $attribute */
     $attribute = $attributes[0];
 
-    return $attribute->newInstance()->parameter();
+    return $attribute->newInstance()
+        ->parameter();
 }
 
 function reflectionToParameter(
@@ -551,7 +552,8 @@ function reflectedParameterAttribute(
     /** @var ReflectionAttribute<ParameterAttributeInterface> $attribute */
     $attribute = $attributes[0];
 
-    return $attribute->newInstance()->withIsSensitive($isSensitive);
+    return $attribute->newInstance()
+        ->withIsSensitive($isSensitive);
 }
 
 function validated(callable $callable, mixed ...$args): mixed

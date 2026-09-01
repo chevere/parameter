@@ -48,7 +48,8 @@ final class UnionParameter implements UnionParameterInterface
             );
         }
         $types = array_map(
-            fn (ParameterInterface $parameter): string => $parameter->type()->typeHinting(),
+            fn (ParameterInterface $parameter): string => $parameter->type()
+                ->typeHinting(),
             iterator_to_array($this->parameters)
         );
         $this->type = new Type(TypeInterface::UNION, ...$types);

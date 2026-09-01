@@ -38,8 +38,10 @@ function arrayArguments(string $name): ArgumentsInterface
     $parameters = reflectionToParameters($reflection);
     $parameters->assertHas($name);
     $array = match ($parameters->optionalKeys()->contains($name)) {
-        true => $parameters->optional($name)->array(),
-        default => $parameters->required($name)->array(),
+        true => $parameters->optional($name)
+            ->array(),
+        default => $parameters->required($name)
+            ->array(),
     };
     $pos = -1;
     $arguments = [];
@@ -47,14 +49,16 @@ function arrayArguments(string $name): ArgumentsInterface
         $pos++;
         $arguments[$named] = match (true) {
             array_key_exists($pos, $args) => $args[$pos],
-            default => $parameters->get($named)->default(),
+            default => $parameters->get($named)
+                ->default(),
         };
     }
 
-    return $array->parameters()->__invoke(
-        // @phpstan-ignore-next-line
-        ...$arguments[$name]
-    );
+    return $array->parameters()
+        ->__invoke(
+            // @phpstan-ignore-next-line
+            ...$arguments[$name]
+        );
 }
 
 /**

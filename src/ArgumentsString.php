@@ -83,7 +83,9 @@ final class ArgumentsString implements ArgumentsStringInterface
     public function optional(string $name): ?string
     {
         if ($this->parameters()->has($name)
-            && ! $this->parameters()->optionalKeys()->contains($name)
+            && ! $this->parameters()
+                ->optionalKeys()
+                ->contains($name)
         ) {
             throw new InvalidArgumentException(
                 (string) message(

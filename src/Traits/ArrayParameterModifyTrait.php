@@ -68,7 +68,8 @@ trait ArrayParameterModifyTrait
         foreach ($parameter as $name => $item) {
             $name = strval($name);
             $method = match (true) {
-                $new->parameters->optionalKeys()->contains($name) => 'withOptional',
+                $new->parameters->optionalKeys()
+                    ->contains($name) => 'withOptional',
                 default => 'withRequired',
             };
             $new->parameters = $new->parameters->without($name);
