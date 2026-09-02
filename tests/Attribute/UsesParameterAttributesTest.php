@@ -163,7 +163,7 @@ final class UsesParameterAttributesTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(<<<'PLAIN'
-        Argument value provided `0` is less than `1`
+        [bitmask]: Argument value provided `0` is less than `1`
         PLAIN);
 
         function usesAttrNamed(

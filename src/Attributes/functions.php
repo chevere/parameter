@@ -132,6 +132,10 @@ function assertArguments(string ...$name): void
                         . ']',
                     $message,
                 ) ?? $message;
+            } else {
+                $message = <<<PLAIN
+                [{$named}]: {$message}
+                PLAIN;
             }
             $errors[] = $message;
         }
