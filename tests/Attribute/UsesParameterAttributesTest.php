@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\Attribute;
 
+use Chevere\Parameter\Attributes\_int;
 use Chevere\Tests\src\NoUsesAttr;
 use Chevere\Tests\src\UsesAttr;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use function Chevere\Parameter\Attributes\assertArguments;
 
 final class UsesParameterAttributesTest extends TestCase
 {
@@ -79,7 +81,8 @@ final class UsesParameterAttributesTest extends TestCase
                 'union' => 0,
                 'error' => <<<PLAIN
                 [union]: Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\IntParameter>: Argument value provided `0` is less than `1`; Parameter `1` <Chevere\Parameter\StringParameter>: Argument must be of type Stringable|string, int given
-                PLAIN,
+                PLAIN
+                ,
             ]),
         ];
     }
@@ -135,5 +138,25 @@ final class UsesParameterAttributesTest extends TestCase
     {
         $object = new NoUsesAttr();
         $object->run();
+    }
+
+    public function testUsesAttrWithVariadic(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(<<<'PLAIN'
+        [1...permission]: Argument value provided `98` is less than `100`
+        [2...permission]: Argument value provided `99` is less than `100`
+        PLAIN);
+
+        function usesAttr(
+            #[_int(min: 1)]
+            int $bitmask,
+            #[_int(min: 100)]
+            int ...$permission
+        ): void {
+            assertArguments('bitmask');
+            assertArguments('bitmask', 'permission');
+        }
+        usesAttr(1, 98, 99);
     }
 }

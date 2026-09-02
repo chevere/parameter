@@ -73,7 +73,9 @@ final class UsesAttr
         // Pick many
         assertArguments('tags', 'flag', 'amount');
         // Get attribute, validate and return
-        $id = arrayArguments('cols')->required('id')->int();
+        $id = arrayArguments('cols')
+            ->required('id')
+            ->int();
         // Assert return
         assertReturn($id);
     }

@@ -442,9 +442,14 @@ trait ArgumentsTrait
 
     private function isSkipOptional(string $name): bool
     {
+        $index = $name;
+        if ($this->isPositional) {
+            $index = (string) array_search($name, $this->parameters()->keys(), true);
+        }
+
         return $this->parameters()
             ->optionalKeys()
             ->contains($name)
-            && ! $this->has($name);
+            && ! $this->has($index);
     }
 }

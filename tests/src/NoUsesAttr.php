@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Chevere\Tests\src;
 
-use Chevere\Parameter\Exceptions\ParameterException;
+use LogicException;
 use function Chevere\Parameter\Attributes\assertArguments;
 use function Chevere\Parameter\Attributes\assertReturn;
 use function PHPUnit\Framework\assertSame;
@@ -44,7 +44,7 @@ final class NoUsesAttr
 
         try {
             assertArguments('404');
-        } catch (ParameterException $e) {
+        } catch (LogicException $e) {
             assertSame(
                 'Parameter `404` not found',
                 $e->getMessage()

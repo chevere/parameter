@@ -13,15 +13,18 @@ declare(strict_types=1);
 
 namespace Chevere\Parameter\Attributes;
 
-use Chevere\Parameter\Exceptions\ParameterException;
+use Chevere\Parameter\Arguments;
 use Chevere\Parameter\Interfaces\ArgumentsInterface;
+use InvalidArgumentException;
 use LogicException;
 use ReflectionFunction;
 use ReflectionMethod;
 use Throwable;
 use function Chevere\Message\message;
 use function Chevere\Parameter\arguments;
+use function Chevere\Parameter\parameters;
 use function Chevere\Parameter\reflectionToParameters;
+use function Chevere\Parameter\string;
 
 /**
  * Get Arguments for an array parameter.
@@ -77,49 +80,61 @@ function assertArguments(string ...$name): void
         ? new ReflectionMethod($class, $method)
         : new ReflectionFunction($method);
     $parameters = reflectionToParameters($reflection);
-    $pos = -1;
-    $arguments = [];
-    if ($parameters->isVariadic()) {
-        $arguments = $args;
-    } else {
-        foreach ($parameters->keys() as $named) {
-            $pos++;
-            if (! isset($args[$pos])) {
-                continue;
-            }
-            $arguments[$named] = $args[$pos];
+    foreach ($reflection->getParameters() as $parameter) {
+        if (! array_key_exists($parameter->getPosition(), $args) && $parameter->isOptional()) {
+            $args[$parameter->getPosition()] = $parameter->getDefaultValue();
         }
     }
     if ($name === []) {
-        $parameters(...$arguments);
+        $parameters(...$args);
 
         return;
     }
-    foreach ($name as $item) {
-        if ($parameters->optionalKeys()->contains($item)
-            && ! array_key_exists($item, $arguments)
-        ) {
-            continue;
+    $namedKeys = $parameters->keys();
+    $lastIndex = $parameters->count() - 1;
+    $lastName = $namedKeys[$lastIndex];
+    $errors = [];
+    foreach ($name as $named) {
+        if (! $parameters->has($named)) {
+            throw new LogicException(
+                (string) message(
+                    'Parameter `%name%` not found',
+                    name: $named,
+                )
+            );
         }
+        $isVariadicItem = $named === $lastName && $parameters->isVariadic();
 
         try {
-            if (! $parameters->has($item)) {
-                throw new LogicException(
-                    (string) message(
-                        'Parameter `%name%` not found',
-                        name: $item,
-                    )
-                );
+            if ($isVariadicItem) {
+                parameters(
+                    ...[
+                        $named => $parameters->get($named),
+                    ]
+                )->withIsVariadic(true)
+                    ->__invoke(...array_slice($args, $lastIndex, preserve_keys: true));
+            } else {
+                $parameters->get($named)
+                    ->__invoke($args[array_search($named, $namedKeys, true)]);
             }
-            $parameter = $parameters->get($item);
-            $parameter->__invoke($arguments[$item]);
         } catch (Throwable $e) {
-            $invoker = $trace[0];
-            $file = $invoker['file'] ?? 'na';
-            $line = $invoker['line'] ?? 0;
-
-            throw new ParameterException($e->getMessage(), $e, $file, $line);
+            $message = $e->getMessage();
+            if ($isVariadicItem) {
+                $message = preg_replace_callback(
+                    '/\[(\d+)\.\.\.' . preg_quote($named, '/') . '\]/',
+                    fn (array $matches): string => '['
+                        . ((int) $matches[1] + $lastIndex)
+                        . '...'
+                        . $named
+                        . ']',
+                    $message,
+                ) ?? $message;
+            }
+            $errors[] = $message;
         }
+    }
+    if ($errors !== []) {
+        throw new InvalidArgumentException(implode("\n", $errors));
     }
 }
 
