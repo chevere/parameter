@@ -81,7 +81,10 @@ function assertArguments(string ...$name): void
         : new ReflectionFunction($method);
     $parameters = reflectionToParameters($reflection);
     foreach ($reflection->getParameters() as $parameter) {
-        if (! array_key_exists($parameter->getPosition(), $args) && $parameter->isOptional()) {
+        if (! array_key_exists($parameter->getPosition(), $args)
+                && $parameter->isOptional()
+                && $parameter->isDefaultValueAvailable()
+        ) {
             $args[$parameter->getPosition()] = $parameter->getDefaultValue();
         }
     }

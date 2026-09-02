@@ -140,7 +140,7 @@ final class UsesParameterAttributesTest extends TestCase
         $object->run();
     }
 
-    public function testUsesAttrWithVariadic(): void
+    public function testUsesAttrWithVariadicAll(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(<<<'PLAIN'
@@ -148,15 +148,31 @@ final class UsesParameterAttributesTest extends TestCase
         [2...permission]: Argument value provided `99` is less than `100`
         PLAIN);
 
-        function usesAttr(
+        function usesAttrAll(
             #[_int(min: 1)]
             int $bitmask,
             #[_int(min: 100)]
             int ...$permission
         ): void {
-            assertArguments('bitmask');
+            assertArguments();
+        }
+        usesAttrAll(1, 98, 99);
+    }
+
+    public function testUsesAttrWithVariadic(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(<<<'PLAIN'
+        Argument value provided `0` is less than `1`
+        PLAIN);
+
+        function usesAttrNamed(
+            #[_int(min: 1)]
+            int $bitmask,
+            int ...$permission
+        ): void {
             assertArguments('bitmask', 'permission');
         }
-        usesAttr(1, 98, 99);
+        usesAttrNamed(0);
     }
 }
