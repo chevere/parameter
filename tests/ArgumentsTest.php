@@ -521,7 +521,8 @@ final class ArgumentsTest extends TestCase
     {
         $foo = 'foo';
         $var = true;
-        $parameters = parameters()->withOptional($foo, bool());
+        $parameters = parameters()
+            ->withOptional($foo, bool());
         $arguments = new Arguments(
             $parameters,
             [
@@ -595,19 +596,28 @@ final class ArgumentsTest extends TestCase
         $arguments = $parameters(...$values);
         $this->assertSame(
             ['item1', 'item2'],
-            $arguments->nested('0')->required('0')->array()
+            $arguments->nested('0')
+                ->required('0')
+                ->array()
         );
         $this->assertSame(
             'order.created',
-            $arguments->nested('meta')->required('event_name')->string()
+            $arguments->nested('meta')
+                ->required('event_name')
+                ->string()
         );
         $this->assertSame(
             'book_987654321',
-            $arguments->nested('meta', 'custom_data')->required('product_id_external')->string()
+            $arguments->nested('meta', 'custom_data')
+                ->required('product_id_external')
+                ->string()
         );
         $this->assertSame(
             'book_987654321',
-            $arguments->nested('meta')->nested('custom_data')->required('product_id_external')->string()
+            $arguments->nested('meta')
+                ->nested('custom_data')
+                ->required('product_id_external')
+                ->string()
         );
     }
 
@@ -643,7 +653,9 @@ final class ArgumentsTest extends TestCase
         );
         $this->assertSame(
             null,
-            $parameters(foo: null)->required('foo')->nullArray()
+            $parameters(foo: null)
+                ->required('foo')
+                ->nullArray()
         );
         $this->assertSame(
             [],
@@ -653,5 +665,17 @@ final class ArgumentsTest extends TestCase
             [],
             $parameters(foo: [])->required('foo')->array()
         );
+    }
+
+    public function testInvalidPositionalOptionalArgument(): void
+    {
+        $parameters = parameters()
+            ->withOptional(
+                'foo',
+                string('/^[A-Za-z]+$/')
+            );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("[foo]: Argument value provided `b a z` doesn't match the regex `/^[A-Za-z]+$/`");
+        new Arguments($parameters, ['b a z']);
     }
 }
