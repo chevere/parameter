@@ -63,11 +63,11 @@ final class UsesParameterAttributesTest extends TestCase
                 'cols' => [
                     'id' => 0,
                 ],
-                'error' => '[cols]: [id]: Argument value provided `0` is less than `1`',
+                'error' => '[cols:id]: Argument value provided `0` is less than `1`',
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'tags' => [123],
-                'error' => '[tags]: [V *iterable]: Argument must be of type Stringable|string, int given',
+                'error' => '[tags:V *iterable]: Argument must be of type Stringable|string, int given',
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'amount' => -10.5,

@@ -43,7 +43,7 @@ final class FunctionReturnTTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [role]: [tenants]: [V *iterable]: Argument value provided `6` is greater than `5`
+            [spooky:role:tenants:V *iterable]: Argument value provided `6` is greater than `5`
             PLAIN
         );
         usesAttr($value);

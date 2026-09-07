@@ -398,8 +398,12 @@ trait ArgumentsTrait
     private function getExceptionPropertyMessage(string $property, Throwable $e): string
     {
         $message = $this->getExceptionMessage($e);
+        $return = "[{$property}]: {$message}";
 
-        return "[{$property}]: {$message}";
+        return str_starts_with($message, '[')
+            ? (preg_replace('/\[([^\]]*)\]:\s/', "[{$property}:\$1]: ", $message)
+                ?? $return)
+            : $return;
     }
 
     private function assertValues(): void
