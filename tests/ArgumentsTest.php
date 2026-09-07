@@ -595,10 +595,9 @@ final class ArgumentsTest extends TestCase
         ];
         $arguments = $parameters(...$values);
         $this->assertSame(
-            ['item1', 'item2'],
+            [['item1', 'item2']],
             $arguments->nested('0')
-                ->required('0')
-                ->array()
+                ->toArray()
         );
         $this->assertSame(
             'order.created',
