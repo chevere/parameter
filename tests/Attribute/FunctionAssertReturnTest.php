@@ -19,7 +19,7 @@ use function Chevere\Tests\src\noUsesAttr;
 use function Chevere\Tests\src\usesAttr;
 use function Chevere\Tests\src\usesSensitiveParameterAttr;
 
-final class FunctionReturnTTest extends TestCase
+final class FunctionAssertReturnTest extends TestCase
 {
     public function testUsesAttr(): void
     {
@@ -43,7 +43,7 @@ final class FunctionReturnTTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [spooky:role:tenants:V *iterable]: Argument value provided `6` is greater than `5`
+            [spooky/role/tenants/V *iterable]: Argument value provided `6` is greater than `5`
             PLAIN
         );
         usesAttr($value);
