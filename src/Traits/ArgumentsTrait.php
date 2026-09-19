@@ -401,7 +401,7 @@ trait ArgumentsTrait
         $return = "[{$property}]: {$message}";
 
         return str_starts_with($message, '[')
-            ? (preg_replace('/\[([^\]]*)\]:\s/', "[{$property}:\$1]: ", $message)
+            ? (preg_replace('/\[([^\]]*)\]:\s/', "[{$property}/\$1]: ", $message)
                 ?? $return)
             : $return;
     }

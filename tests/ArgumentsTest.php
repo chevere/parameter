@@ -677,4 +677,32 @@ final class ArgumentsTest extends TestCase
         $this->expectExceptionMessage("[foo]: Argument value provided `b a z` doesn't match the regex `/^[A-Za-z]+$/`");
         new Arguments($parameters, ['b a z']);
     }
+
+    public function testNestedPropertyException(): void
+    {
+        $array = arrayp(
+            foo: arrayp(
+                baz: arrayp(
+                    nested: string(),
+                ),
+            ),
+            bar: string('/^[1-9]+$/'),
+        );
+        $values = [
+            'foo' => [
+                'baz' => [
+                    'nested' => null,
+                ],
+            ],
+            'bar' => 'error',
+        ];
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [foo/baz/nested]: Argument must be of type Stringable|string, null given
+            [bar]: Argument value provided `error` doesn't match the regex `/^[1-9]+$/`
+            PLAIN
+        );
+        $array($values);
+    }
 }
