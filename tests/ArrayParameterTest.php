@@ -76,7 +76,7 @@ final class ArrayParameterTest extends TestCase
         $this->expectException(ArgumentCountError::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [test]: Missing required argument
+            [/test]: Missing required argument
             PLAIN
         );
         $parameter->withDefault([]);
@@ -503,8 +503,8 @@ final class ArrayParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [0]: Argument must be of type Stringable|string, int given
-            [1]: Argument must be of type int, string given
+            [/0]: Argument must be of type Stringable|string, int given
+            [/1]: Argument must be of type int, string given
             PLAIN
         );
         $parameter([1, 'foo']);

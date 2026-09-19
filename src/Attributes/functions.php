@@ -125,7 +125,7 @@ function assertArguments(string ...$name): void
             if ($isVariadicItem) {
                 $message = preg_replace_callback(
                     '/\[(\d+)\.\.\.' . preg_quote($named, '/') . '\]/',
-                    fn (array $matches): string => '['
+                    fn (array $matches): string => '[/'
                         . ((int) $matches[1] + $lastIndex)
                         . '...'
                         . $named
@@ -134,7 +134,7 @@ function assertArguments(string ...$name): void
                 ) ?? $message;
             } else {
                 $message = <<<PLAIN
-                [{$named}]: {$message}
+                [/{$named}]: {$message}
                 PLAIN;
             }
             $errors[] = $message;

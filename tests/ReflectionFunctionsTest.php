@@ -62,7 +62,11 @@ final class ReflectionFunctionsTest extends TestCase
         $object = new $class();
         $object->wea(1);
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('[base]: Argument value provided `0` is not an accepted value in `[1,10,100]`');
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [/base]: Argument value provided `0` is not an accepted value in `[1,10,100]`
+            PLAIN
+        );
         arguments($parameters, [
             'base' => 0,
         ]);

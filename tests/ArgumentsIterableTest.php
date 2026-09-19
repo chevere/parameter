@@ -191,7 +191,7 @@ final class ArgumentsIterableTest extends TestCase
             K: string()
         );
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/^\[V \*iterable\]\:.*/');
+        $this->expectExceptionMessageMatches('/^\[\/V \*iterable\]\:.*/');
         $parameter($args);
     }
 }

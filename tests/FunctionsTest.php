@@ -464,7 +464,11 @@ final class FunctionsTest extends TestCase
         $times = 1;
         $name = 'Test';
         $this->expectException(ParameterException::class);
-        $this->expectExceptionMessage("`{$function}` InvalidArgumentException → [base]: Argument value provided `0` is less than `1`");
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            `{$function}` InvalidArgumentException → [/base]: Argument value provided `0` is less than `1`
+            PLAIN
+        );
         validated($function, $base, $times, $name);
     }
 
@@ -475,7 +479,11 @@ final class FunctionsTest extends TestCase
         $times = 1;
         $name = 'Test';
         $this->expectException(ReturnException::class);
-        $this->expectExceptionMessage("`{$function}` InvalidArgumentException → Argument value provided `99` is less than `100`");
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            `{$function}` InvalidArgumentException → Argument value provided `99` is less than `100`
+            PLAIN
+        );
         validated($function, $base, $times, $name);
     }
 
@@ -515,7 +523,7 @@ final class FunctionsTest extends TestCase
         $this->expectException(ParameterException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            InvalidArgumentException → [base]: Argument value provided `9` is less than `10`
+            InvalidArgumentException → [/base]: Argument value provided `9` is less than `10`
             PLAIN
         );
         validated($callable, 9);
@@ -547,7 +555,8 @@ final class FunctionsTest extends TestCase
         array $arguments,
         ParametersInterface|ParametersAccessInterface $parameters,
     ): void {
-        $cast = castArguments($parameters, $arguments)->toArray();
+        $cast = castArguments($parameters, $arguments)
+            ->toArray();
         $this->assertSame($expected, $cast);
     }
 
@@ -582,7 +591,8 @@ final class FunctionsTest extends TestCase
                     'b' => 2,
                     'c' => 3.0,
                 ],
-                parameters()->withIsVariadic(true),
+                parameters()
+                    ->withIsVariadic(true),
             ],
             [
                 [

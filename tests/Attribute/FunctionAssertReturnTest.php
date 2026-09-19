@@ -43,7 +43,7 @@ final class FunctionAssertReturnTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [spooky/role/tenants/V *iterable]: Argument value provided `6` is greater than `5`
+            [/spooky/role/tenants/V *iterable]: Argument value provided `6` is greater than `5`
             PLAIN
         );
         usesAttr($value);
@@ -60,8 +60,8 @@ final class FunctionAssertReturnTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [code]: Argument value provided is less than `1000`
-            [password]: Argument value provided doesn't match the regex `#^super|safe$#`
+            [/code]: Argument value provided is less than `1000`
+            [/password]: Argument value provided doesn't match the regex `#^super|safe$#`
             PLAIN
         );
         usesSensitiveParameterAttr(999, 'password');

@@ -49,38 +49,38 @@ final class UsesParameterAttributesTest extends TestCase
         return [
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'name' => 'Peoples Hernandez',
-                'error' => "[name]: Argument value provided `Peoples Hernandez` doesn't match the regex `/^[A-Za-z]+$/`",
+                'error' => "[/name]: Argument value provided `Peoples Hernandez` doesn't match the regex `/^[A-Za-z]+$/`",
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'age' => 0,
-                'error' => '[age]: Argument value provided `0` is less than `1`',
+                'error' => '[/age]: Argument value provided `0` is less than `1`',
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'age' => 101,
-                'error' => '[age]: Argument value provided `101` is greater than `100`',
+                'error' => '[/age]: Argument value provided `101` is greater than `100`',
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'cols' => [
                     'id' => 0,
                 ],
-                'error' => '[cols/id]: Argument value provided `0` is less than `1`',
+                'error' => '[/cols/id]: Argument value provided `0` is less than `1`',
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'tags' => [123],
-                'error' => '[tags/V *iterable]: Argument must be of type Stringable|string, int given',
+                'error' => '[/tags/V *iterable]: Argument must be of type Stringable|string, int given',
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'amount' => -10.5,
-                'error' => '[amount]: Argument value provided `-10.5` is less than `0`',
+                'error' => '[/amount]: Argument value provided `-10.5` is less than `0`',
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'enum' => 'try',
-                'error' => "[enum]: Argument value provided `try` doesn't match the regex `#^test|value$#`",
+                'error' => "[/enum]: Argument value provided `try` doesn't match the regex `#^test|value$#`",
             ]),
             array_merge(static::DEFAULT_ARGUMENTS, [
                 'union' => 0,
                 'error' => <<<PLAIN
-                [union]: Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\IntParameter>: Argument value provided `0` is less than `1`; Parameter `1` <Chevere\Parameter\StringParameter>: Argument must be of type Stringable|string, int given
+                [/union]: Argument provided doesn't match union: Parameter `0` <Chevere\Parameter\IntParameter>: Argument value provided `0` is less than `1`; Parameter `1` <Chevere\Parameter\StringParameter>: Argument must be of type Stringable|string, int given
                 PLAIN
                 ,
             ]),
@@ -144,8 +144,8 @@ final class UsesParameterAttributesTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(<<<'PLAIN'
-        [1...permission]: Argument value provided `98` is less than `100`
-        [2...permission]: Argument value provided `99` is less than `100`
+        [/1...permission]: Argument value provided `98` is less than `100`
+        [/2...permission]: Argument value provided `99` is less than `100`
         PLAIN);
 
         function usesAttrAll(
@@ -163,7 +163,7 @@ final class UsesParameterAttributesTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(<<<'PLAIN'
-        [bitmask]: Argument value provided `0` is less than `1`
+        [/bitmask]: Argument value provided `0` is less than `1`
         PLAIN);
 
         function usesAttrNamed(

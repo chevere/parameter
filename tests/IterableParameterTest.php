@@ -173,7 +173,7 @@ final class IterableParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [K *iterable]: Argument must be of type int, string given
+            [/K *iterable]: Argument must be of type int, string given
             PLAIN
         );
         $parameter([
@@ -187,7 +187,7 @@ final class IterableParameterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [V *iterable]: Argument must be of type Stringable|string, int given
+            [/V *iterable]: Argument must be of type Stringable|string, int given
             PLAIN
         );
         $parameter([

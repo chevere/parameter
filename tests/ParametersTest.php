@@ -119,7 +119,7 @@ final class ParametersTest extends TestCase
         $this->expectException(ArgumentCountError::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [foo]: Missing required argument
+            [/foo]: Missing required argument
             PLAIN
         );
         $parameters();
@@ -252,12 +252,12 @@ final class ParametersTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [foo...argument]: Argument must be of type Stringable|string, true given
+            [/foo...argument]: Argument must be of type Stringable|string, true given
             PLAIN
         );
         $this->expectExceptionMessage(
             <<<PLAIN
-            [bar...argument]: Argument must be of type Stringable|string, int given
+            [/bar...argument]: Argument must be of type Stringable|string, int given
             PLAIN
         );
         $parameters(

@@ -84,8 +84,8 @@ final class ArgumentsTest extends TestCase
         $this->expectException(ArgumentCountError::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [name]: Missing required argument
-            [email address]: Missing required argument
+            [/name]: Missing required argument
+            [/email address]: Missing required argument
             PLAIN
         );
         new Arguments($parameters, ['123']);
@@ -404,7 +404,7 @@ final class ArgumentsTest extends TestCase
         $this->assertTrue($arguments->has('id', 'name', 'opt'));
         $this->assertFalse($arguments->has('alt'));
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('[name]');
+        $this->expectExceptionMessage('[/name]');
         $arguments = new Arguments(
             $parameters,
             [
@@ -679,7 +679,11 @@ final class ArgumentsTest extends TestCase
                 string('/^[A-Za-z]+$/')
             );
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("[foo]: Argument value provided `b a z` doesn't match the regex `/^[A-Za-z]+$/`");
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [/foo]: Argument value provided `b a z` doesn't match the regex `/^[A-Za-z]+$/`
+            PLAIN
+        );
         new Arguments($parameters, ['b a z']);
     }
 
@@ -704,8 +708,8 @@ final class ArgumentsTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            [foo/baz/nested]: Argument must be of type Stringable|string, null given
-            [bar]: Argument value provided `error` doesn't match the regex `/^[1-9]+$/`
+            [/foo/baz/nested]: Argument must be of type Stringable|string, null given
+            [/bar]: Argument value provided `error` doesn't match the regex `/^[1-9]+$/`
             PLAIN
         );
         $array($values);

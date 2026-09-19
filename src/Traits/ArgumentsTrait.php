@@ -323,7 +323,7 @@ trait ArgumentsTrait
                 $key = $label;
             }
             $errors[] = <<<PLAIN
-            [{$key}]: Missing required argument
+            [/{$key}]: Missing required argument
             PLAIN;
         }
 
@@ -386,11 +386,11 @@ trait ArgumentsTrait
             }
         } catch (TypeError $e) {
             throw new $e(
-                $this->getExceptionPropertyMessage($property, $e)
+                $this->getExceptionPropertyMessage("/{$property}", $e)
             );
         } catch (Throwable $e) {
             throw new InvalidArgumentException(
-                $this->getExceptionPropertyMessage($property, $e)
+                $this->getExceptionPropertyMessage("/{$property}", $e)
             );
         }
     }
@@ -401,7 +401,7 @@ trait ArgumentsTrait
         $return = "[{$property}]: {$message}";
 
         return str_starts_with($message, '[')
-            ? (preg_replace('/\[([^\]]*)\]:\s/', "[{$property}/\$1]: ", $message)
+            ? (preg_replace('/\[([^\]]*)\]:\s/', "[{$property}\$1]: ", $message)
                 ?? $return)
             : $return;
     }
