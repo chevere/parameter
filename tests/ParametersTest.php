@@ -119,7 +119,7 @@ final class ParametersTest extends TestCase
         $this->expectException(ArgumentCountError::class);
         $this->expectExceptionMessage(
             <<<PLAIN
-            Missing required argument(s): `foo`
+            [foo]: Missing required argument
             PLAIN
         );
         $parameters();
@@ -294,10 +294,12 @@ final class ParametersTest extends TestCase
         ]);
         $this->assertSame(
             $parameter,
-            $parameters->required($name)->{$type}()
+            $parameters->required($name)
+                ->{$type}()
         );
         $this->expectException(\TypeError::class);
-        $parameters->required($name)->{$error}();
+        $parameters->required($name)
+            ->{$error}();
     }
 
     public function testGetUnion(): void
@@ -312,10 +314,12 @@ final class ParametersTest extends TestCase
         ]);
         $this->assertSame(
             $parameter,
-            $parameters->required($name)->union()
+            $parameters->required($name)
+                ->union()
         );
         $this->expectException(\TypeError::class);
-        $parameters->required($name)->null();
+        $parameters->required($name)
+            ->null();
     }
 
     public function testGetIterable(): void
@@ -330,10 +334,12 @@ final class ParametersTest extends TestCase
         ]);
         $this->assertSame(
             $parameter,
-            $parameters->required($name)->iterable()
+            $parameters->required($name)
+                ->iterable()
         );
         $this->expectException(\TypeError::class);
-        $parameters->required($name)->null();
+        $parameters->required($name)
+            ->null();
     }
 
     public function testWithOptionalMinimum(): void

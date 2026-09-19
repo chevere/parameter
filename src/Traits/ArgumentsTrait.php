@@ -314,6 +314,7 @@ trait ArgumentsTrait
         } else {
             $missing = array_diff($requiredKeys, $argumentKeys);
         }
+        $errors = [];
         foreach ($missing as &$key) {
             $label = $this->parameters()
                 ->get($key)
@@ -321,14 +322,13 @@ trait ArgumentsTrait
             if ($label !== '') {
                 $key = $label;
             }
-            $key = "`{$key}`";
+            $errors[] = <<<PLAIN
+            [{$key}]: Missing required argument
+            PLAIN;
         }
 
         throw new ArgumentCountError(
-            (string) message(
-                'Missing required argument(s): %missing%',
-                missing: implode(', ', $missing)
-            )
+            implode("\n", $errors)
         );
     }
 

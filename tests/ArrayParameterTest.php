@@ -74,7 +74,11 @@ final class ArrayParameterTest extends TestCase
             ],
         ], $with->schema());
         $this->expectException(ArgumentCountError::class);
-        $this->expectExceptionMessage('Missing required argument(s): `test`');
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [test]: Missing required argument
+            PLAIN
+        );
         $parameter->withDefault([]);
     }
 
@@ -92,11 +96,13 @@ final class ArrayParameterTest extends TestCase
         $this->assertCount(2, $withRequired->parameters());
         $this->assertInstanceOf(
             StringParameterInterface::class,
-            $withRequired->parameters()->get('one')
+            $withRequired->parameters()
+                ->get('one')
         );
         $this->assertInstanceOf(
             IntParameterInterface::class,
-            $withRequired->parameters()->get('two')
+            $withRequired->parameters()
+                ->get('two')
         );
         $this->assertSame([
             'type' => 'array#map',
@@ -118,11 +124,13 @@ final class ArrayParameterTest extends TestCase
         $this->assertTrue($withRequired->parameters()->has('one', 'two', 'three'));
         $this->assertInstanceOf(
             IntParameterInterface::class,
-            $withRequired->parameters()->get('one')
+            $withRequired->parameters()
+                ->get('one')
         );
         $this->assertInstanceOf(
             IntParameterInterface::class,
-            $withRequired->parameters()->get('three')
+            $withRequired->parameters()
+                ->get('three')
         );
     }
 
@@ -135,7 +143,7 @@ final class ArrayParameterTest extends TestCase
             one: $string,
             two: $union
         );
-        $assert = assertArray($with, []); //
+        $assert = assertArray($with, []);
         $this->assertSame([], $assert);
         $expected = [
             'two' => null,
@@ -152,11 +160,13 @@ final class ArrayParameterTest extends TestCase
         $this->assertCount(2, $with->parameters());
         $this->assertInstanceOf(
             StringParameterInterface::class,
-            $with->parameters()->get('one')
+            $with->parameters()
+                ->get('one')
         );
         $this->assertInstanceOf(
             UnionParameterInterface::class,
-            $with->parameters()->get('two')
+            $with->parameters()
+                ->get('two')
         );
         $with = $with->withOptional(
             one: $union,
@@ -165,11 +175,13 @@ final class ArrayParameterTest extends TestCase
         $this->assertTrue($with->parameters()->has('one', 'two', 'three'));
         $this->assertInstanceOf(
             UnionParameterInterface::class,
-            $with->parameters()->get('one')
+            $with->parameters()
+                ->get('one')
         );
         $this->assertInstanceOf(
             UnionParameterInterface::class,
-            $with->parameters()->get('three')
+            $with->parameters()
+                ->get('three')
         );
     }
 
@@ -448,11 +460,13 @@ final class ArrayParameterTest extends TestCase
         $this->assertNotSame($array, $arrayWith);
         $this->assertSame(
             $float,
-            $arrayWith->parameters()->get('foo'),
+            $arrayWith->parameters()
+                ->get('foo'),
         );
         $this->assertSame(
             $int,
-            $arrayWith->parameters()->get('bar'),
+            $arrayWith->parameters()
+                ->get('bar'),
         );
         $this->assertSame(['foo'], $arrayWith->parameters()->requiredKeys()->toArray());
         $this->assertSame(['bar'], $arrayWith->parameters()->optionalKeys()->toArray());
@@ -524,7 +538,9 @@ final class ArrayParameterTest extends TestCase
     public function testCompatibleWithEmpty(): void
     {
         $this->expectNotToPerformAssertions();
-        arrayp(foo: string())->assertCompatible(arrayp());
-        arrayp()->assertCompatible(arrayp(foo: string()));
+        arrayp(foo: string())
+            ->assertCompatible(arrayp());
+        arrayp()
+            ->assertCompatible(arrayp(foo: string()));
     }
 }

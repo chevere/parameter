@@ -82,7 +82,12 @@ final class ArgumentsTest extends TestCase
             email: string(label: 'email address'),
         );
         $this->expectException(ArgumentCountError::class);
-        $this->expectExceptionMessage('Missing required argument(s): `name`, `email address`');
+        $this->expectExceptionMessage(
+            <<<PLAIN
+            [name]: Missing required argument
+            [email address]: Missing required argument
+            PLAIN
+        );
         new Arguments($parameters, ['123']);
     }
 
