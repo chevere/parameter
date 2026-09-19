@@ -154,7 +154,8 @@ final class UnionParameter implements UnionParameterInterface
         string $name,
         Throwable $e
     ): string {
-        $type = $parameter::class;
+        $type = $parameter->type()
+            ->typeHinting();
         $message = $this->getExceptionMessage($e);
 
         return <<<PLAIN
