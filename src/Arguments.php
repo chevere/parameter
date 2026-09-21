@@ -58,11 +58,15 @@ final class Arguments implements ArgumentsInterface
     {
         $this->parameters
             ->assertHas($name);
-        if (! array_key_exists($name, $this->arguments)) {
-            $name = array_search($name, $this->parameters->keys(), true);
+        $find = $name;
+        if (! array_key_exists($find, $this->arguments)) {
+            $find = array_search($find, $this->parameters->keys(), false);
+            if ($find === false) {
+                $find = $name;
+            }
         }
 
-        return $this->arguments[$name] ?? null;
+        return $this->arguments[$find] ?? null;
     }
 
     public function required(string $name): TypedInterface
