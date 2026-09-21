@@ -34,7 +34,8 @@ final class ArgumentsSignatureTest extends TestCase
         );
         $this->assertSame(
             $expect,
-            $parameters(...$expect)->toArray()
+            $parameters(...$expect)
+                ->toArray()
         );
     }
 
@@ -60,10 +61,11 @@ final class ArgumentsSignatureTest extends TestCase
     {
         $expect = [
             'foo' => 'super',
+            'int' => 123,
             'bar' => 'baz',
         ];
-        $arguments = ['super'];
-        $fn = function (string $foo, string $bar = 'baz'): array {
+        $arguments = ['super', 123];
+        $fn = function (string $foo, int $int, string $bar = 'baz'): array {
             return get_defined_vars();
         };
         $parameters = reflectionToParameters(
@@ -76,9 +78,11 @@ final class ArgumentsSignatureTest extends TestCase
         $this->assertSame(
             [
                 0 => 'super',
+                1 => 123,
                 'bar' => 'baz',
             ],
-            $parameters(...$arguments)->toArray()
+            $parameters(...$arguments)
+                ->toArray()
         );
     }
 
@@ -97,7 +101,8 @@ final class ArgumentsSignatureTest extends TestCase
         );
         $this->assertSame(
             $expect,
-            $parameters(...$expect)->toArray()
+            $parameters(...$expect)
+                ->toArray()
         );
     }
 
