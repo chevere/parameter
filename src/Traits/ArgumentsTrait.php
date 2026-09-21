@@ -96,7 +96,14 @@ trait ArgumentsTrait
     public function has(string ...$name): bool
     {
         foreach ($name as $key) {
-            if (! array_key_exists($key, $this->arguments)) {
+            $find = $key;
+            if (! array_key_exists($find, $this->arguments)) {
+                $find = array_search($find, $this->parameters->keys(), false);
+                if ($find === false) {
+                    $find = $key;
+                }
+            }
+            if (! array_key_exists($find, $this->arguments)) {
                 return false;
             }
         }
@@ -377,6 +384,9 @@ trait ArgumentsTrait
         }
 
         try {
+            if ($argument === null && ! $this->has($name)) {
+                throw new InvalidArgumentException('Missing required argument');
+            }
             /** @var TValue $argument */
             $argument = $parameter->__invoke($argument);
             if (isset($key)) {
