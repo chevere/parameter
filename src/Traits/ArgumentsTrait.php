@@ -384,7 +384,7 @@ trait ArgumentsTrait
         }
 
         try {
-            if ($argument === null && ! $this->has($name)) {
+            if ($key === null && $argument === null && ! $this->has($name)) {
                 throw new InvalidArgumentException('Missing required argument');
             }
             /** @var TValue $argument */

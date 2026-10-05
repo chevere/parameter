@@ -16,6 +16,7 @@ namespace Chevere\Tests;
 use ArgumentCountError;
 use Chevere\Parameter\Arguments;
 use Chevere\Parameter\IntParameter;
+use Chevere\Parameter\MixedParameter;
 use Chevere\Parameter\Parameters;
 use Chevere\Regex\Regex;
 use InvalidArgumentException;
@@ -713,5 +714,24 @@ final class ArgumentsTest extends TestCase
             PLAIN
         );
         $array($values);
+    }
+
+    public function testAcceptsNullInMixedVariadic(): void
+    {
+        $parameters = (new Parameters())
+            ->withOptional('values', new MixedParameter())
+            ->withIsVariadic();
+        $arguments = new Arguments($parameters, [
+            'user_id' => null,
+            'app_id' => 74,
+        ]);
+
+        $this->assertSame(
+            [
+                'user_id' => null,
+                'app_id' => 74,
+            ],
+            $arguments->toArray()
+        );
     }
 }
