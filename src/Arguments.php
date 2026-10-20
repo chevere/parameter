@@ -21,7 +21,6 @@ use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use TypeError;
-use function Chevere\Message\message;
 
 final class Arguments implements ArgumentsInterface
 {
@@ -74,9 +73,9 @@ final class Arguments implements ArgumentsInterface
         $this->parameters->assertHas($name);
         if ($this->parameters->optionalKeys()->contains($name)) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Argument `%name%` is optional',
-                    name: $name
+                sprintf(
+                    'Argument `%s` is optional',
+                    $name
                 )
             );
         }
@@ -92,9 +91,9 @@ final class Arguments implements ArgumentsInterface
                 ->contains($name)
         ) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Argument `%name%` is required',
-                    name: $name
+                sprintf(
+                    'Argument `%s` is required',
+                    $name
                 )
             );
         }
@@ -114,28 +113,28 @@ final class Arguments implements ArgumentsInterface
         foreach ($lookup as $nestedKey) {
             if (! ($currentParameter instanceof ParametersAccessInterface)) {
                 throw new TypeError(
-                    (string) message(
-                        'Parameter `%name%` is not a nested set of parameters',
-                        name: $key
+                    sprintf(
+                        'Parameter `%s` is not a nested set of parameters',
+                        $key
                     )
                 );
             }
             $parameters = $currentParameter->parameters();
             if (! $parameters->has($nestedKey)) {
                 throw new InvalidArgumentException(
-                    (string) message(
-                        'Key `%key%` not found in nested parameter `%parent%`',
-                        key: $nestedKey,
-                        parent: $key
+                    sprintf(
+                        'Key `%s` not found in nested parameter `%s`',
+                        $nestedKey,
+                        $key
                     )
                 );
             }
             if (! is_array($currentArgument) || ! array_key_exists($nestedKey, $currentArgument)) {
                 throw new InvalidArgumentException(
-                    (string) message(
-                        'Key `%key%` not found in nested argument `%parent%`',
-                        key: $nestedKey,
-                        parent: $key
+                    sprintf(
+                        'Key `%s` not found in nested argument `%s`',
+                        $nestedKey,
+                        $key
                     )
                 );
             }
@@ -145,9 +144,9 @@ final class Arguments implements ArgumentsInterface
         }
         if (! is_array($currentArgument)) {
             throw new TypeError(
-                (string) message(
-                    'Argument `%name%` is not a nested set of arguments',
-                    name: $key
+                sprintf(
+                    'Argument `%s` is not a nested set of arguments',
+                    $key
                 )
             );
         }
@@ -159,9 +158,9 @@ final class Arguments implements ArgumentsInterface
         }
 
         throw new TypeError(
-            (string) message(
-                'Parameter `%name%` is not a nested set of parameters',
-                name: $key
+            sprintf(
+                'Parameter `%s` is not a nested set of parameters',
+                $key
             )
         );
     }

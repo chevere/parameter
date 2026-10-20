@@ -21,7 +21,6 @@ use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use Chevere\Parameter\Traits\ParameterTrait;
 use InvalidArgumentException;
 use Throwable;
-use function Chevere\Message\message;
 
 final class IterableParameter implements IterableParameterInterface
 {
@@ -55,7 +54,7 @@ final class IterableParameter implements IterableParameterInterface
     {
         if (! $this->isEmptyAllowed && $this->isEmpty($value)) {
             throw new InvalidArgumentException(
-                (string) message('Argument value provided is empty')
+                'Argument value provided is empty'
             );
         }
         $iterable = ' *iterable';

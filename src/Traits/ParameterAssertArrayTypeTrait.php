@@ -18,7 +18,6 @@ use Chevere\Parameter\Interfaces\ParametersInterface;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use TypeError;
-use function Chevere\Message\message;
 
 trait ParameterAssertArrayTypeTrait
 {
@@ -38,9 +37,9 @@ trait ParameterAssertArrayTypeTrait
                     ->get($name);
             } catch (OutOfBoundsException) {
                 throw new OutOfBoundsException(
-                    (string) message(
-                        'Parameter `%name%` not found',
-                        name: $name
+                    sprintf(
+                        'Parameter `%s` not found',
+                        $name
                     )
                 );
             }
@@ -49,11 +48,11 @@ trait ParameterAssertArrayTypeTrait
                 $item->assertCompatible($tryParameter);
             } catch (TypeError) {
                 throw new InvalidArgumentException(
-                    (string) message(
-                        'Parameter `%name%` of type `%type%` is not compatible with type `%provided%`',
-                        name: $name,
-                        type: $item::class,
-                        provided: $tryParameter::class,
+                    sprintf(
+                        'Parameter `%s` of type `%s` is not compatible with type `%s`',
+                        $name,
+                        $item::class,
+                        $tryParameter::class,
                     )
                 );
             }

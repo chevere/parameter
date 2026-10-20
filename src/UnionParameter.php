@@ -25,7 +25,6 @@ use InvalidArgumentException;
 use LogicException;
 use Throwable;
 use TypeError;
-use function Chevere\Message\message;
 
 final class UnionParameter implements UnionParameterInterface
 {
@@ -42,9 +41,7 @@ final class UnionParameter implements UnionParameterInterface
     ) {
         if ($parameters->count() < 2) {
             throw new LogicException(
-                (string) message(
-                    'Must pass at least two parameters for union'
-                )
+                'Must pass at least two parameters for union'
             );
         }
         $types = array_map(
@@ -69,9 +66,9 @@ final class UnionParameter implements UnionParameterInterface
         $message = implode('; ', $messages);
 
         throw new InvalidArgumentException(
-            (string) message(
-                "Argument provided doesn't match union: %message%",
-                message: $message,
+            sprintf(
+                "Argument provided doesn't match union: %s",
+                $message,
             )
         );
     }
@@ -121,10 +118,10 @@ final class UnionParameter implements UnionParameterInterface
             $providedTypes = implode('|', array_keys($provided));
 
             throw new InvalidArgumentException(
-                (string) message(
-                    'Union types `%expected%` not compatible with `%provided%`',
-                    expected: $expected,
-                    provided: $providedTypes,
+                sprintf(
+                    'Union types `%s` not compatible with `%s`',
+                    $expected,
+                    $providedTypes,
                 )
             );
         }
@@ -134,10 +131,10 @@ final class UnionParameter implements UnionParameterInterface
                 $item->assertCompatible($provided[$type]);
             } catch (TypeError) {
                 throw new InvalidArgumentException(
-                    (string) message(
-                        'Union type `%type%` is not compatible with provided type `%provided%`',
-                        type: $type,
-                        provided: $provided[$type]::class,
+                    sprintf(
+                        'Union type `%s` is not compatible with provided type `%s`',
+                        $type,
+                        $provided[$type]::class,
                     )
                 );
             }

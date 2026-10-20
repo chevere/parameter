@@ -47,7 +47,6 @@ use ReflectionProperty;
 use SebastianBergmann\Type\Parameter;
 use SensitiveParameter;
 use Throwable;
-use function Chevere\Message\message;
 
 /**
  * Type-safe access for a variable.
@@ -60,9 +59,9 @@ function typed(mixed $variable, string|int ...$key): TypedInterface
     if ($key !== []) {
         if (! is_array($variable)) {
             throw new BadMethodCallException(
-                (string) message(
-                    'Argument must be array-accessible, %type% provided',
-                    type: gettype($variable)
+                sprintf(
+                    'Argument must be array-accessible, %s provided',
+                    gettype($variable)
                 )
             );
         }
@@ -72,9 +71,9 @@ function typed(mixed $variable, string|int ...$key): TypedInterface
             }
 
             throw new InvalidArgumentException(
-                (string) message(
-                    'Key `%key%` not found in array',
-                    key: $item
+                sprintf(
+                    'Key `%s` not found in array',
+                    $item
                 )
             );
         };
@@ -328,10 +327,10 @@ function assertNamedArgument(
         }
 
         throw new InvalidArgumentException(
-            (string) message(
-                'Argument [%name%]: %message%',
-                name: $name,
-                message: $message,
+            sprintf(
+                'Argument [%s]: %s',
+                $name,
+                $message,
             )
         );
     }
@@ -461,9 +460,9 @@ function parameterAttribute(
     }
 
     throw new LogicException(
-        (string) message(
-            "Parameter `%name%` doesn't exists",
-            name: $parameter
+        sprintf(
+            "Parameter `%s` doesn't exists",
+            $parameter
         )
     );
 }
@@ -542,10 +541,10 @@ function reflectedParameterAttribute(
     );
     if ($attributes === []) {
         throw new AttributeNotFoundException(
-            (string) message(
-                'No `%type%` attribute for parameter `%name%`',
-                type: ParameterAttributeInterface::class,
-                name: $reflection->getName()
+            sprintf(
+                'No `%s` attribute for parameter `%s`',
+                ParameterAttributeInterface::class,
+                $reflection->getName()
             )
         );
     }
@@ -598,11 +597,11 @@ function getExceptionArguments(Throwable $e, ReflectionFunction|ReflectionMethod
     // @infection-ignore-all
     $caller = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1];
     $function = $reflection->getName();
-    $message = (string) message(
-        '`%actor%` %exception% → %message%',
-        exception: $e::class,
-        actor: $function,
-        message: $e->getMessage(),
+    $message = sprintf(
+        '`%s` %s → %s',
+        $function,
+        $e::class,
+        $e->getMessage(),
     );
 
     // @infection-ignore-all

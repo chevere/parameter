@@ -20,7 +20,6 @@ use Chevere\Regex\Interfaces\RegexInterface;
 use Chevere\Regex\Regex;
 use InvalidArgumentException;
 use Stringable;
-use function Chevere\Message\message;
 
 final class StringParameter implements StringParameterInterface
 {
@@ -38,10 +37,10 @@ final class StringParameter implements StringParameterInterface
         }
 
         throw new InvalidArgumentException(
-            (string) message(
-                "Argument value provided%provided% doesn't match the regex `%regex%`",
-                provided: valMd($value, $this->isSensitive),
-                regex: strval($this->regex),
+            sprintf(
+                "Argument value provided%s doesn't match the regex `%s`",
+                valMd($value, $this->isSensitive),
+                strval($this->regex),
             )
         );
     }
@@ -97,10 +96,10 @@ final class StringParameter implements StringParameterInterface
         }
 
         throw new InvalidArgumentException(
-            (string) message(
-                'Expected regex `%expected%`, provided `%provided%`',
-                expected: $this->regex->__toString(),
-                provided: $parameter->regex()
+            sprintf(
+                'Expected regex `%s`, provided `%s`',
+                $this->regex->__toString(),
+                $parameter->regex()
                     ->__toString()
             )
         );

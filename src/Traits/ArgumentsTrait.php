@@ -22,7 +22,6 @@ use InvalidArgumentException;
 use SensitiveParameterValue;
 use Throwable;
 use TypeError;
-use function Chevere\Message\message;
 use function Chevere\Parameter\getParameters;
 
 /**
@@ -351,10 +350,10 @@ trait ArgumentsTrait
         $countProvided = count($providedOptionals);
         if ($countProvided < $this->parameters()->optionalMinimum()) {
             throw new ArgumentCountError(
-                (string) message(
-                    'Requires minimum **%minimum%** optional argument(s), **%provided%** provided',
-                    minimum: strval($this->parameters()->optionalMinimum()),
-                    provided: strval($countProvided)
+                sprintf(
+                    'Requires minimum **%s** optional argument(s), **%s** provided',
+                    strval($this->parameters()->optionalMinimum()),
+                    strval($countProvided)
                 )
             );
         }

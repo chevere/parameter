@@ -19,7 +19,6 @@ use Chevere\Parameter\Traits\ExceptionErrorMessageTrait;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use TypeError;
-use function Chevere\Message\message;
 
 final class ArgumentsString implements ArgumentsStringInterface
 {
@@ -70,9 +69,9 @@ final class ArgumentsString implements ArgumentsStringInterface
     {
         if ($this->parameters()->optionalKeys()->contains($name)) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Argument `%name%` is optional',
-                    name: $name
+                sprintf(
+                    'Argument `%s` is optional',
+                    $name
                 )
             );
         }
@@ -88,9 +87,9 @@ final class ArgumentsString implements ArgumentsStringInterface
                 ->contains($name)
         ) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Argument `%name%` is required',
-                    name: $name
+                sprintf(
+                    'Argument `%s` is required',
+                    $name
                 )
             );
         }

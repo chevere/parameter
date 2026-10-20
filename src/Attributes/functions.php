@@ -20,7 +20,6 @@ use LogicException;
 use ReflectionFunction;
 use ReflectionMethod;
 use Throwable;
-use function Chevere\Message\message;
 use function Chevere\Parameter\arguments;
 use function Chevere\Parameter\parameters;
 use function Chevere\Parameter\reflectionToParameters;
@@ -100,9 +99,9 @@ function assertArguments(string ...$name): void
     foreach ($name as $named) {
         if (! $parameters->has($named)) {
             throw new LogicException(
-                (string) message(
-                    'Parameter `%name%` not found',
-                    name: $named,
+                sprintf(
+                    'Parameter `%s` not found',
+                    $named,
                 )
             );
         }

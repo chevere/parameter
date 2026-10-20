@@ -18,7 +18,6 @@ use Chevere\Parameter\Interfaces\TypeInterface;
 use Chevere\Parameter\Traits\ParameterTrait;
 use Chevere\Parameter\Traits\SchemaTrait;
 use TypeError;
-use function Chevere\Message\message;
 
 final class NullParameter implements NullParameterInterface
 {
@@ -35,7 +34,7 @@ final class NullParameter implements NullParameterInterface
         }
 
         throw new TypeError(
-            (string) message('Argument value provided is not of type `null`')
+            'Argument value provided is not of type `null`'
         );
     }
 

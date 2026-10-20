@@ -17,7 +17,6 @@ use Chevere\Parameter\Interfaces\FloatParameterInterface;
 use Chevere\Parameter\Interfaces\IntParameterInterface;
 use InvalidArgumentException;
 use OverflowException;
-use function Chevere\Message\message;
 use function Chevere\Parameter\valMd;
 
 /**
@@ -39,19 +38,19 @@ trait NumericParameterTrait
 
     private function errorOverflow(string $property, string $topic): string
     {
-        return (string) message(
-            'Cannot set %property% value when %topic% range is set',
-            property: $property,
-            topic: $topic,
+        return sprintf(
+            'Cannot set %s value when %s range is set',
+            $property,
+            $topic,
         );
     }
 
     private function errorMinMaxArgument(string $target, string $conflict): string
     {
-        return (string) message(
-            'Cannot set %target% value greater or equal than %conflict% value',
-            target: $target,
-            conflict: $conflict,
+        return sprintf(
+            'Cannot set %s value greater or equal than %s value',
+            $target,
+            $conflict,
         );
     }
 
@@ -121,10 +120,10 @@ trait NumericParameterTrait
             $reject = implode(', ', $this->reject);
 
             throw new InvalidArgumentException(
-                (string) message(
-                    'Accept list `%accept%` intersects with reject list `%reject%`',
-                    accept: "[{$accept}]",
-                    reject: "[{$reject}]",
+                sprintf(
+                    'Accept list `%s` intersects with reject list `%s`',
+                    "[{$accept}]",
+                    "[{$reject}]",
                 )
             );
         }
@@ -163,11 +162,11 @@ trait NumericParameterTrait
             $provided = implode(', ', $parameter->{$property}());
 
             throw new InvalidArgumentException(
-                (string) message(
-                    'Expected %topic% values in `%expect%`, provided `%provided%`',
-                    topic: $property,
-                    expect: "[{$value}]",
-                    provided: "[{$provided}]",
+                sprintf(
+                    'Expected %s values in `%s`, provided `%s`',
+                    $property,
+                    "[{$value}]",
+                    "[{$provided}]",
                 )
             );
         }
@@ -182,11 +181,11 @@ trait NumericParameterTrait
             $provided = strval($parameter->{$property}() ?? 'null');
 
             throw new InvalidArgumentException(
-                (string) message(
-                    'Expected %topic% value `%value%`, provided `%provided%`',
-                    topic: $property,
-                    value: $value,
-                    provided: $provided,
+                sprintf(
+                    'Expected %s value `%s`, provided `%s`',
+                    $property,
+                    $value,
+                    $provided,
                 )
             );
         }
@@ -205,10 +204,10 @@ trait NumericParameterTrait
             $values = implode(',', $this->accept);
 
             throw new InvalidArgumentException(
-                (string) message(
-                    'Argument value provided%provided% is not an accepted value in `%value%`',
-                    provided: valMd($argument, $this->isSensitive),
-                    value: "[{$values}]"
+                sprintf(
+                    'Argument value provided%s is not an accepted value in `%s`',
+                    valMd($argument, $this->isSensitive),
+                    "[{$values}]"
                 )
             );
         }
@@ -219,28 +218,28 @@ trait NumericParameterTrait
             $values = implode(',', $this->reject);
 
             throw new InvalidArgumentException(
-                (string) message(
-                    'Argument value provided%provided% is on rejected list `%value%`',
-                    provided: valMd($argument, $this->isSensitive),
-                    value: "[{$values}]"
+                sprintf(
+                    'Argument value provided%s is on rejected list `%s`',
+                    valMd($argument, $this->isSensitive),
+                    "[{$values}]"
                 )
             );
         }
         if ($this->min() !== null && $argument < $this->min()) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Argument value provided%provided% is less than `%min%`',
-                    provided: valMd($argument, $this->isSensitive),
-                    min: strval($this->min())
+                sprintf(
+                    'Argument value provided%s is less than `%s`',
+                    valMd($argument, $this->isSensitive),
+                    strval($this->min())
                 )
             );
         }
         if ($this->max !== null && $argument > $this->max) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Argument value provided%provided% is greater than `%max%`',
-                    provided: valMd($argument, $this->isSensitive),
-                    max: strval($this->max)
+                sprintf(
+                    'Argument value provided%s is greater than `%s`',
+                    valMd($argument, $this->isSensitive),
+                    strval($this->max)
                 )
             );
         }

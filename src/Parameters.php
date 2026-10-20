@@ -25,7 +25,6 @@ use Chevere\Parameter\Interfaces\ParameterTypedInterface;
 use InvalidArgumentException;
 use Iterator;
 use OverflowException;
-use function Chevere\Message\message;
 
 final class Parameters implements ParametersInterface
 {
@@ -135,9 +134,9 @@ final class Parameters implements ParametersInterface
             $pos = $new->requiredKeys->find($key);
             if ($pos === null) {
                 throw new InvalidArgumentException(
-                    (string) message(
-                        'Parameter `%name%` is not required',
-                        name: $key
+                    sprintf(
+                        'Parameter `%s` is not required',
+                        $key
                     )
                 );
             }
@@ -160,9 +159,9 @@ final class Parameters implements ParametersInterface
             $pos = $new->optionalKeys->find($key);
             if ($pos === null) {
                 throw new InvalidArgumentException(
-                    (string) message(
-                        'Parameter `%name%` is not optional',
-                        name: $key
+                    sprintf(
+                        'Parameter `%s` is not optional',
+                        $key
                     )
                 );
             }
@@ -200,11 +199,11 @@ final class Parameters implements ParametersInterface
     {
         match (true) {
             $count < 0 => throw new InvalidArgumentException(
-                (string) message('Count must be greater or equal to 0')
+                'Count must be greater or equal to 0'
             ),
             $this->optionalKeys()
                 ->count() === 0 => throw new BadMethodCallException(
-                    (string) message('No optional parameters found')
+                    'No optional parameters found'
                 ),
             default => null,
         };
@@ -250,9 +249,9 @@ final class Parameters implements ParametersInterface
         $parameter = $this->get($name);
         if ($this->optionalKeys()->contains($name)) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Parameter `%name%` is optional',
-                    name: $name
+                sprintf(
+                    'Parameter `%s` is optional',
+                    $name
                 )
             );
         }
@@ -265,9 +264,9 @@ final class Parameters implements ParametersInterface
         $parameter = $this->get($name);
         if (! $this->optionalKeys()->contains($name)) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Parameter `%name%` is required',
-                    name: $name
+                sprintf(
+                    'Parameter `%s` is required',
+                    $name
                 )
             );
         }
@@ -300,9 +299,9 @@ final class Parameters implements ParametersInterface
     {
         if ($this->optionalMinimum > $this->optionalKeys()->count()) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Count must be less or equal to `%optional%`',
-                    optional: strval($this->optionalMinimum)
+                sprintf(
+                    'Count must be less or equal to `%s`',
+                    strval($this->optionalMinimum)
                 )
             );
         }
@@ -312,9 +311,9 @@ final class Parameters implements ParametersInterface
     {
         if ($this->has($name)) {
             throw new OverflowException(
-                (string) message(
-                    'Parameter `%name%` has been already added',
-                    name: $name
+                sprintf(
+                    'Parameter `%s` has been already added',
+                    $name
                 )
             );
         }

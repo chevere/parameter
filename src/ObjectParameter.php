@@ -19,7 +19,6 @@ use Chevere\Parameter\Traits\SchemaTrait;
 use InvalidArgumentException;
 use stdClass;
 use TypeError;
-use function Chevere\Message\message;
 
 final class ObjectParameter implements ObjectParameterInterface
 {
@@ -38,9 +37,9 @@ final class ObjectParameter implements ObjectParameterInterface
         return $value instanceof $this->className
             ? $value
             : throw new TypeError(
-                (string) message(
-                    'Argument value provided is not of type `%type%`',
-                    type: $this->className
+                sprintf(
+                    'Argument value provided is not of type `%s`',
+                    $this->className
                 )
             );
     }
@@ -97,9 +96,9 @@ final class ObjectParameter implements ObjectParameterInterface
         }
 
         throw new InvalidArgumentException(
-            (string) message(
-                'Parameter must be of type `%type%`',
-                type: $this->className
+            sprintf(
+                'Parameter must be of type `%s`',
+                $this->className
             )
         );
     }

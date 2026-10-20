@@ -24,7 +24,6 @@ use ReflectionProperty;
 use ReflectionUnionType;
 use SensitiveParameter;
 use TypeError;
-use function Chevere\Message\message;
 
 final class ReflectionParameterTyped implements ReflectionParameterTypedInterface
 {
@@ -59,11 +58,11 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
             $attrHint = implode('|', $attrHintParts);
             if ($typeHint !== $attrHint) {
                 throw new TypeError(
-                    (string) message(
-                        'Parameter $%name% of type %type% is not compatible with %attr% attribute',
-                        name: $reflection->getName(),
-                        type: $typeHint,
-                        attr: $attribute->parameter()::class
+                    sprintf(
+                        'Parameter $%s of type %s is not compatible with %s attribute',
+                        $reflection->getName(),
+                        $typeHint,
+                        $attribute->parameter()::class
                     )
                 );
             }
@@ -126,10 +125,10 @@ final class ReflectionParameterTyped implements ReflectionParameterTypedInterfac
         $type = $this->getReflectionType($reflection);
 
         throw new LogicException(
-            (string) message(
-                'Parameter %name% of type %type% is not supported',
-                name: $name,
-                type: $type
+            sprintf(
+                'Parameter %s of type %s is not supported',
+                $name,
+                $type
             )
         );
     }

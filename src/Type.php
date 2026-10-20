@@ -15,7 +15,6 @@ namespace Chevere\Parameter;
 
 use Chevere\Parameter\Interfaces\TypeInterface;
 use InvalidArgumentException;
-use function Chevere\Message\message;
 
 final class Type implements TypeInterface
 {
@@ -78,9 +77,9 @@ final class Type implements TypeInterface
     {
         if ($this->primitive === '') {
             throw new InvalidArgumentException(
-                (string) message(
-                    "Type `%type%` doesn't exists",
-                    type: $this->type
+                sprintf(
+                    "Type `%s` doesn't exists",
+                    $this->type
                 )
             );
         }

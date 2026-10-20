@@ -18,7 +18,6 @@ use Chevere\Parameter\Interfaces\ParameterAttributeInterface;
 use Chevere\Parameter\Interfaces\ParameterInterface;
 use Chevere\Parameter\Traits\AttrTrait;
 use InvalidArgumentException;
-use function Chevere\Message\message;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_FUNCTION)]
 class _callable implements ParameterAttributeInterface
@@ -32,9 +31,9 @@ class _callable implements ParameterAttributeInterface
         $return = $callable();
         if ($return === null || ! $return instanceof ParameterInterface) {
             throw new InvalidArgumentException(
-                (string) message(
-                    'Callable must return a `%interface%` instance',
-                    interface: ParameterInterface::class
+                sprintf(
+                    'Callable must return a `%s` instance',
+                    ParameterInterface::class
                 )
             );
         }
