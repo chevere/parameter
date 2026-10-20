@@ -13,7 +13,7 @@ jobs:
           - php: "8.2"
             infection: "0.32.6"
           - php: "8.3"
-            infection: "0.33.0"
+            infection: "0.35.8"
           - php: "8.4"
             infection: "latest"
           - php: "8.5"
