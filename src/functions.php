@@ -276,7 +276,7 @@ function castUnion(
             default => [TypeInterface::STRING],
         };
     } else {
-        $runtime = getType($value);
+        $runtime = gettype($value);
         $candidates = [$runtime];
         if ($runtime === TypeInterface::INT && in_array(TypeInterface::FLOAT, $available, true)) {
             $candidates[] = TypeInterface::FLOAT;
@@ -319,7 +319,7 @@ function assertNamedArgument(
     } catch (Throwable $e) {
         $message = $e->getMessage();
         if (! str_ends_with($name, '*iterable')) {
-            $needle = "[{$name}]: ";
+            $needle = "[/{$name}]: ";
             $pos = strpos($message, $needle);
             if ($pos !== false) {
                 $message = substr_replace($message, '', $pos, strlen($needle));

@@ -224,6 +224,24 @@ final class FunctionsTest extends TestCase
         assertNamedArgument('fail', string(), 13.13);
     }
 
+    public function testFunctionAssertArgumentStripsNamePrefix(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Argument [fail]: Argument must be of type Stringable|string, float given'
+        );
+        assertNamedArgument('fail', string(), 13.13);
+    }
+
+    public function testFunctionAssertArgumentIterableKeepsNamePrefix(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Argument [V *iterable]: [/V *iterable]: Argument must be of type Stringable|string, float given'
+        );
+        assertNamedArgument('V *iterable', string(), 13.13);
+    }
+
     public function testFunctionIterableParameter(): void
     {
         $parameter = iterable(
